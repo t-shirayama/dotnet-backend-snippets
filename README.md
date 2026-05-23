@@ -22,20 +22,22 @@ Target Framework は `net8.0` です。
 ```text
 dotnet-backend-snippets/
   src/
-    DotnetBackendSnippets/
+    DotnetBackendSnippets.Core/
       Collections/
-      Configuration/
       DateAndTime/
-      DependencyInjection/
       ErrorHandling/
-      HttpClient/
       Linq/
-      Logging/
       Numbers/
       Strings/
       TypeSystem/
       Utilities/
       Validation/
+    DotnetBackendSnippets.AspNetCore/
+      Configuration/
+      DependencyInjection/
+      HttpClient/
+      Logging/
+    DotnetBackendSnippets.EntityFrameworkCore/
   tests/
     DotnetBackendSnippets.Tests/
       Collections/
@@ -77,17 +79,19 @@ dotnet-backend-snippets/
 
 新しいスニペットを追加する場合は、原則として以下を同時に追加します。
 
-- 実装コード: `src/DotnetBackendSnippets/<Category>/`
+- 実装コード: `src/DotnetBackendSnippets.Core/<Category>/` または依存に応じた `src/DotnetBackendSnippets.*<Category>/`
 - テストコード: `tests/DotnetBackendSnippets.Tests/<Category>/`
 - 説明ドキュメント: `docs/snippets/<category>/`
 
 例:
 
 ```text
-src/DotnetBackendSnippets/Logging/LoggingSamples.cs
+src/DotnetBackendSnippets.AspNetCore/Logging/LoggingSamples.cs
 tests/DotnetBackendSnippets.Tests/Logging/LoggingSamplesTests.cs
 docs/snippets/logging/basic-logging.md
 ```
+
+純粋な C# のサンプルは `DotnetBackendSnippets.Core` に置き、ASP.NET Core / Microsoft.Extensions 系のサンプルは `DotnetBackendSnippets.AspNetCore` に分けます。Entity Framework Core のサンプルは、追加時に `DotnetBackendSnippets.EntityFrameworkCore` に置きます。
 
 ## 追加済みカテゴリ
 
@@ -165,4 +169,4 @@ dotnet test tests/DotnetBackendSnippets.Tests/DotnetBackendSnippets.Tests.csproj
 
 ## ライセンス
 
-このリポジトリは、個人の学習・開発メモとして利用します。
+MIT License です。コード例は業務コード、社内資料、学習用途などで再利用できます。詳しくは [LICENSE](LICENSE) を確認してください。

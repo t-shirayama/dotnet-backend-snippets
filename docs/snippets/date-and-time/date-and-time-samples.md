@@ -6,7 +6,7 @@
 
 ## 実装
 
-`src/DotnetBackendSnippets/DateAndTime/DateAndTimeSamples.cs`
+`src/DotnetBackendSnippets.Core/DateAndTime/DateAndTimeSamples.cs`
 
 ## テスト
 

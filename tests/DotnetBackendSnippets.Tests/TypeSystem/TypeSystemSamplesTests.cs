@@ -59,8 +59,11 @@ public sealed class TypeSystemSamplesTests
         var success = TypeSystemSamples.CreateResult(succeeds: true, "ok");
         var failure = TypeSystemSamples.CreateResult(succeeds: false, "ignored");
 
-        Assert.IsType<SuccessResult<string>>(success);
-        Assert.IsType<FailureResult>(failure);
+        var successResult = Assert.IsType<Success<string>>(success);
+        var failureResult = Assert.IsType<Failure<string>>(failure);
+
+        Assert.Equal("ok", successResult.Value);
+        Assert.Equal("Operation failed.", failureResult.Error);
     }
 
     [Fact]
@@ -69,6 +72,15 @@ public sealed class TypeSystemSamplesTests
         var result = TypeSystemSamples.FirstOrNone<string>([]);
 
         Assert.False(result.HasValue);
-        Assert.Null(result.Value);
+        Assert.Throws<InvalidOperationException>(() => result.Value);
+    }
+
+    [Fact]
+    public void FirstOrNone_ReturnsMaybeWithValue_ForValueTypes()
+    {
+        var result = TypeSystemSamples.FirstOrNone([42, 100]);
+
+        Assert.True(result.HasValue);
+        Assert.Equal(42, result.Value);
     }
 }

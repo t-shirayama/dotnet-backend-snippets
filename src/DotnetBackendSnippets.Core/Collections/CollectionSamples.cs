@@ -21,6 +21,25 @@ public static class CollectionSamples
             .ToList();
     }
 
+    public static IReadOnlyList<T> FindDuplicatesOnePass<T>(IEnumerable<T> source)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+
+        var seen = new HashSet<T>();
+        var duplicates = new HashSet<T>();
+        var result = new List<T>();
+
+        foreach (var item in source)
+        {
+            if (!seen.Add(item) && duplicates.Add(item))
+            {
+                result.Add(item);
+            }
+        }
+
+        return result;
+    }
+
     public static Dictionary<TKey, TValue> MergeDictionaries<TKey, TValue>(
         IReadOnlyDictionary<TKey, TValue> first,
         IReadOnlyDictionary<TKey, TValue> second)
@@ -63,6 +82,13 @@ public static class CollectionSamples
 
         collection.Add(value);
         return true;
+    }
+
+    public static bool AddIfMissing<T>(ISet<T> set, T value)
+    {
+        ArgumentNullException.ThrowIfNull(set);
+
+        return set.Add(value);
     }
 
     public static IReadOnlyList<IReadOnlyList<T>> ChunkBySize<T>(IEnumerable<T> source, int size)

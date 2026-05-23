@@ -6,7 +6,7 @@ LINQ を使ったフィルタ、射影、グルーピング、並び替え、ペ
 
 ## 実装
 
-`src/DotnetBackendSnippets/Linq/LinqSamples.cs`
+`src/DotnetBackendSnippets.Core/Linq/LinqSamples.cs`
 
 ## テスト
 
@@ -18,7 +18,8 @@ LINQ を使ったフィルタ、射影、グルーピング、並び替え、ペ
 - `SumAmountByCategory` はカテゴリごとに注文金額を合計します。
 - `TopOrders` は金額が大きい順に上位 N 件を返します。
 - `Page` はページ番号と件数から一部だけを取り出します。
-- `DistinctByKey` は指定したキーが同じ要素のうち、最初の要素だけを残します。
+- `DistinctByKey` は .NET 標準の `DistinctBy` を使い、指定したキーが同じ要素のうち最初の要素だけを残します。
+- `DistinctByKeyWithGroupBy` は `GroupBy` で同じ処理を書く学習用の比較例です。
 - `LeftJoinCustomerOrders` は注文がない顧客も残して集計します。
 - `Flatten` は入れ子のコレクションを1つのコレクションにします。
 
@@ -26,3 +27,5 @@ LINQ を使ったフィルタ、射影、グルーピング、並び替え、ペ
 
 - LINQ は読みやすい反面、遅延実行や複数回列挙に注意が必要です。このスニペットでは戻り値を `ToList` などで確定しています。
 - データベース向け LINQ とメモリ上の LINQ では使えるメソッドや性能特性が違う場合があります。
+- `Page` は大きいページ番号でも `int` の掛け算でオーバーフローしないよう、スキップ件数を `long` で計算します。
+- `Flatten` は内側のコレクションが `null` でない前提です。`null` が混ざる場合は呼び出し側で空コレクションに変換するか、事前に検証します。

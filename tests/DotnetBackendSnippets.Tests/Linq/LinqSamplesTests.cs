@@ -46,9 +46,25 @@ public sealed class LinqSamplesTests
     }
 
     [Fact]
+    public void Page_DoesNotOverflow_WhenSkipCountIsVeryLarge()
+    {
+        var result = LinqSamples.Page([1, 2, 3], pageNumber: int.MaxValue, pageSize: int.MaxValue);
+
+        Assert.Empty(result);
+    }
+
+    [Fact]
     public void DistinctByKey_KeepsFirstItemForEachKey()
     {
         var result = LinqSamples.DistinctByKey(Orders, order => order.CustomerId);
+
+        Assert.Equal([1, 3, 4], result.Select(order => order.Id));
+    }
+
+    [Fact]
+    public void DistinctByKeyWithGroupBy_KeepsFirstItemForEachKey()
+    {
+        var result = LinqSamples.DistinctByKeyWithGroupBy(Orders, order => order.CustomerId);
 
         Assert.Equal([1, 3, 4], result.Select(order => order.Id));
     }
@@ -75,5 +91,15 @@ public sealed class LinqSamplesTests
         var result = LinqSamples.Flatten(new[] { new[] { 1, 2 }, [], new[] { 3 } });
 
         Assert.Equal([1, 2, 3], result);
+    }
+
+    [Fact]
+    public void Flatten_Throws_WhenNestedCollectionIsNull()
+    {
+        IEnumerable<int>?[] source = [[1], null];
+
+        var exception = Assert.Throws<ArgumentException>(() => LinqSamples.Flatten(source!));
+
+        Assert.Equal("source", exception.ParamName);
     }
 }

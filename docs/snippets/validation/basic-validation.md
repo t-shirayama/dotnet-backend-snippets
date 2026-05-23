@@ -6,7 +6,7 @@
 
 ## 実装
 
-`src/DotnetBackendSnippets/Validation/ValidationSamples.cs`
+`src/DotnetBackendSnippets.Core/Validation/ValidationSamples.cs`
 
 ## テスト
 

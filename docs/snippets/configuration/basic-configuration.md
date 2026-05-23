@@ -6,7 +6,7 @@
 
 ## 実装
 
-`src/DotnetBackendSnippets/Configuration/ConfigurationSamples.cs`
+`src/DotnetBackendSnippets.AspNetCore/Configuration/ConfigurationSamples.cs`
 
 ## テスト
 

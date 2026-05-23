@@ -2,8 +2,6 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <RollForward>Major</RollForward>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
@@ -22,7 +20,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\DotnetBackendSnippets\DotnetBackendSnippets.csproj" />
+    <ProjectReference Include="..\..\src\DotnetBackendSnippets.AspNetCore\DotnetBackendSnippets.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\src\DotnetBackendSnippets.Core\DotnetBackendSnippets.Core.csproj" />
+    <ProjectReference Include="..\..\src\DotnetBackendSnippets.EntityFrameworkCore\DotnetBackendSnippets.EntityFrameworkCore.csproj" />
   </ItemGroup>
 
   <ItemGroup>

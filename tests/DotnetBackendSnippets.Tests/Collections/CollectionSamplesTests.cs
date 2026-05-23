@@ -24,6 +24,14 @@ public sealed class CollectionSamplesTests
     }
 
     [Fact]
+    public void FindDuplicatesOnePass_ReturnsValuesThatAppearMoreThanOnce()
+    {
+        var result = CollectionSamples.FindDuplicatesOnePass(["a", "b", "a", "c", "b", "a"]);
+
+        Assert.Equal(["a", "b"], result);
+    }
+
+    [Fact]
     public void MergeDictionaries_UsesSecondDictionaryWhenKeysOverlap()
     {
         var first = new Dictionary<string, int> { ["a"] = 1, ["b"] = 2 };
@@ -57,6 +65,18 @@ public sealed class CollectionSamplesTests
         Assert.True(firstAdded);
         Assert.False(secondAdded);
         Assert.Equal(["a", "b", "c"], values);
+    }
+
+    [Fact]
+    public void AddIfMissing_AddsToSetUsingSetLookup()
+    {
+        var values = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "a" };
+
+        var firstAdded = CollectionSamples.AddIfMissing(values, "B");
+        var secondAdded = CollectionSamples.AddIfMissing(values, "b");
+
+        Assert.True(firstAdded);
+        Assert.False(secondAdded);
     }
 
     [Fact]

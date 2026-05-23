@@ -9,13 +9,29 @@ public enum OrderStatus
 
 public sealed record Money(decimal Amount, string Currency);
 
-public sealed record SuccessResult<T>(T Value);
+public abstract record Result<T>;
 
-public sealed record FailureResult(string Error);
+public sealed record Success<T>(T Value) : Result<T>;
 
-public readonly record struct Maybe<T>(T? Value)
+public sealed record Failure<T>(string Error) : Result<T>;
+
+public readonly record struct Maybe<T>
 {
-    public bool HasValue => Value is not null;
+    private readonly T _value;
+
+    public Maybe(T value)
+    {
+        _value = value;
+        HasValue = true;
+    }
+
+    public bool HasValue { get; }
+
+    public T Value => HasValue
+        ? _value
+        : throw new InvalidOperationException("Maybe does not contain a value.");
+
+    public static Maybe<T> None => default;
 }
 
 public static class TypeSystemSamples
@@ -57,18 +73,21 @@ public static class TypeSystemSamples
         };
     }
 
-    public static object CreateResult(bool succeeds, string value)
+    public static Result<string> CreateResult(bool succeeds, string value)
     {
         return succeeds
-            ? new SuccessResult<string>(value)
-            : new FailureResult("Operation failed.");
+            ? new Success<string>(value)
+            : new Failure<string>("Operation failed.");
     }
 
     public static Maybe<T> FirstOrNone<T>(IEnumerable<T> source)
-        where T : class
     {
         ArgumentNullException.ThrowIfNull(source);
 
-        return new Maybe<T>(source.FirstOrDefault());
+        using var enumerator = source.GetEnumerator();
+
+        return enumerator.MoveNext()
+            ? new Maybe<T>(enumerator.Current)
+            : Maybe<T>.None;
     }
 }

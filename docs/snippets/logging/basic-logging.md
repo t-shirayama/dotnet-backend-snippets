@@ -6,7 +6,7 @@
 
 ## 実装
 
-`src/DotnetBackendSnippets/Logging/LoggingSamples.cs`
+`src/DotnetBackendSnippets.AspNetCore/Logging/LoggingSamples.cs`
 
 ## テスト
 

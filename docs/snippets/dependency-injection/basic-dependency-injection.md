@@ -6,7 +6,7 @@
 
 ## 実装
 
-`src/DotnetBackendSnippets/DependencyInjection/DependencyInjectionSamples.cs`
+`src/DotnetBackendSnippets.AspNetCore/DependencyInjection/DependencyInjectionSamples.cs`
 
 ## テスト
 

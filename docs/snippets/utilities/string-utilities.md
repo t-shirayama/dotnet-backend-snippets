@@ -6,7 +6,7 @@
 
 ## 実装
 
-`src/DotnetBackendSnippets/Utilities/StringUtilities.cs`
+`src/DotnetBackendSnippets.Core/Utilities/StringUtilities.cs`
 
 ## テスト
 

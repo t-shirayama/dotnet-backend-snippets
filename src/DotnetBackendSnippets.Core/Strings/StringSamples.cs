@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace DotnetBackendSnippets.Strings;
@@ -14,10 +15,25 @@ public static partial class StringSamples
 
     public static string ToSlug(string value)
     {
+        return ToAsciiSlug(value);
+    }
+
+    public static string ToAsciiSlug(string value)
+    {
+        ArgumentNullException.ThrowIfNull(value);
+
+        var normalized = RemoveDiacritics(value).Trim().ToLower(CultureInfo.InvariantCulture);
+        var slug = NonAlphaNumericRegex().Replace(normalized, "-");
+
+        return DuplicateHyphenRegex().Replace(slug, "-").Trim('-');
+    }
+
+    public static string ToUnicodeSlug(string value)
+    {
         ArgumentNullException.ThrowIfNull(value);
 
         var normalized = value.Trim().ToLower(CultureInfo.InvariantCulture);
-        var slug = NonAlphaNumericRegex().Replace(normalized, "-");
+        var slug = NonLetterOrDigitRegex().Replace(normalized, "-");
 
         return DuplicateHyphenRegex().Replace(slug, "-").Trim('-');
     }
@@ -91,11 +107,30 @@ public static partial class StringSamples
         return NormalizeWhitespace(value).ToUpperInvariant();
     }
 
+    private static string RemoveDiacritics(string value)
+    {
+        var normalized = value.Normalize(NormalizationForm.FormD);
+        var builder = new StringBuilder(capacity: normalized.Length);
+
+        foreach (var character in normalized)
+        {
+            if (CharUnicodeInfo.GetUnicodeCategory(character) != UnicodeCategory.NonSpacingMark)
+            {
+                builder.Append(character);
+            }
+        }
+
+        return builder.ToString().Normalize(NormalizationForm.FormC);
+    }
+
     [GeneratedRegex(@"\s+")]
     private static partial Regex WhitespaceRegex();
 
     [GeneratedRegex(@"[^a-z0-9]+")]
     private static partial Regex NonAlphaNumericRegex();
+
+    [GeneratedRegex(@"[^\p{L}\p{Nd}]+")]
+    private static partial Regex NonLetterOrDigitRegex();
 
     [GeneratedRegex(@"-+")]
     private static partial Regex DuplicateHyphenRegex();

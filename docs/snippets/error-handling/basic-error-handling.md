@@ -6,7 +6,7 @@
 
 ## 実装
 
-`src/DotnetBackendSnippets/ErrorHandling/ErrorHandlingSamples.cs`
+`src/DotnetBackendSnippets.Core/ErrorHandling/ErrorHandlingSamples.cs`
 
 ## テスト
 

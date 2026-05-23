@@ -59,8 +59,10 @@ public static class LinqSamples
             throw new ArgumentOutOfRangeException(nameof(pageSize), "Page size must be one or greater.");
         }
 
+        var skipCount = ((long)pageNumber - 1) * pageSize;
+
         return source
-            .Skip((pageNumber - 1) * pageSize)
+            .SkipLong(skipCount)
             .Take(pageSize)
             .ToList();
     }
@@ -70,10 +72,15 @@ public static class LinqSamples
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(keySelector);
 
-        return source
-            .GroupBy(keySelector)
-            .Select(group => group.First())
-            .ToList();
+        return source.DistinctBy(keySelector).ToList();
+    }
+
+    public static IReadOnlyList<T> DistinctByKeyWithGroupBy<T, TKey>(IEnumerable<T> source, Func<T, TKey> keySelector)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(keySelector);
+
+        return source.GroupBy(keySelector).Select(group => group.First()).ToList();
     }
 
     public static IReadOnlyList<CustomerOrderSummary> LeftJoinCustomerOrders(
@@ -99,6 +106,32 @@ public static class LinqSamples
     {
         ArgumentNullException.ThrowIfNull(source);
 
-        return source.SelectMany(items => items).ToList();
+        var flattened = new List<T>();
+
+        foreach (var items in source)
+        {
+            if (items is null)
+            {
+                throw new ArgumentException("Nested collections must not be null.", nameof(source));
+            }
+
+            flattened.AddRange(items);
+        }
+
+        return flattened;
+    }
+
+    private static IEnumerable<T> SkipLong<T>(this IEnumerable<T> source, long count)
+    {
+        foreach (var item in source)
+        {
+            if (count > 0)
+            {
+                count--;
+                continue;
+            }
+
+            yield return item;
+        }
     }
 }

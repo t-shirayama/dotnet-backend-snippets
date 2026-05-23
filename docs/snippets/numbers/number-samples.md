@@ -6,7 +6,7 @@
 
 ## 実装
 
-`src/DotnetBackendSnippets/Numbers/NumberSamples.cs`
+`src/DotnetBackendSnippets.Core/Numbers/NumberSamples.cs`
 
 ## テスト
 

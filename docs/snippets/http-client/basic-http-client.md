@@ -6,7 +6,7 @@
 
 ## 実装
 
-`src/DotnetBackendSnippets/HttpClient/HttpClientSamples.cs`
+`src/DotnetBackendSnippets.AspNetCore/HttpClient/HttpClientSamples.cs`
 
 ## テスト
 
