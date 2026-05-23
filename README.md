@@ -23,31 +23,50 @@ Target Framework は `net8.0` です。
 dotnet-backend-snippets/
   src/
     DotnetBackendSnippets/
+      Collections/
       Configuration/
+      DateAndTime/
       DependencyInjection/
       ErrorHandling/
       HttpClient/
+      Linq/
       Logging/
+      Numbers/
+      Strings/
+      TypeSystem/
       Utilities/
       Validation/
   tests/
     DotnetBackendSnippets.Tests/
+      Collections/
       Configuration/
+      DateAndTime/
       DependencyInjection/
       ErrorHandling/
       HttpClient/
+      Linq/
       Logging/
+      Numbers/
+      Strings/
+      TypeSystem/
       Utilities/
       Validation/
   docs/
     snippets/
+      collections/
       configuration/
+      date-and-time/
       dependency-injection/
       error-handling/
       http-client/
+      linq/
       logging/
+      numbers/
+      strings/
+      type-system/
       utilities/
       validation/
+      README.md
   .gitignore
   dotnet-backend-snippets.sln
   AGENTS.md
@@ -72,13 +91,19 @@ docs/snippets/logging/basic-logging.md
 
 ## 追加済みカテゴリ
 
+- Collections
 - Configuration
+- Date and Time
 - Dependency Injection
-- Logging
-- Validation
-- HttpClient
 - Error Handling
+- HttpClient
+- LINQ
+- Logging
+- Numbers
+- Strings
+- Type System
 - Utilities
+- Validation
 
 ## テスト実行方法
 
@@ -132,6 +157,11 @@ dotnet test tests/DotnetBackendSnippets.Tests/DotnetBackendSnippets.Tests.csproj
 - Docker
 - DTO Mapping
 - Repository Pattern
+- Async / Await
+- File I/O
+- Regular Expressions
+- Caching
+- Serialization
 
 ## ライセンス
 
