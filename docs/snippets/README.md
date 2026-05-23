@@ -35,6 +35,10 @@
 - [コレクション操作](collections/collection-samples.md)
 - [型システム](type-system/type-system-samples.md)
 
+## 計画・棚卸し
+
+- [C# 言語機能の追加候補](language-features/csharp-language-feature-coverage.md)
+
 ## 逆引き
 
 - 文字列の余分な空白を整えたい → [文字列操作: NormalizeWhitespace](strings/string-samples.md)
@@ -57,6 +61,7 @@
 - EF Core の読み取りクエリを書きたい → [Entity Framework Core の基本](entity-framework-core/ef-core-samples.md)
 - ファイルアップロードを検証したい → [ファイルアップロード検証](file-handling/file-upload-samples.md)
 - API や処理のエラーを値として扱いたい → [Error Handling の基本](error-handling/basic-error-handling.md)
+- C# 言語機能の未カバー項目を確認したい → [C# 言語機能の追加候補](language-features/csharp-language-feature-coverage.md)
 
 ## 開発・運用の逆引き
 

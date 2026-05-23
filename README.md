@@ -72,6 +72,9 @@ dotnet-backend-snippets/
       Validation/
   docs/
     snippets/
+      api/
+      async/
+      background-services/
       collections/
       configuration/
       date-and-time/
@@ -81,6 +84,7 @@ dotnet-backend-snippets/
       file-handling/
       http-client/
       http-client-factory/
+      language-features/
       linq/
       logging/
       numbers/

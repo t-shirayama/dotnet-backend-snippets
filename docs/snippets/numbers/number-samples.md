@@ -28,15 +28,15 @@
 
 ## 実務逆引き
 
-### 目的
+### 使い方
 
 バックエンド開発で数値処理をするときに毎回調べがちな内容を、困りごとから探せる逆引きとしてまとめます。
 
-実装済みの項目は [数値計算](number-samples.md) と `NumberSamples.cs` のメソッド名を示します。未実装の項目は「追加候補」として残します。
+実装済みの項目は `NumberSamples.cs` のメソッド名を示します。未実装の項目は「追加候補」として残します。
 
 ### decimal / int の基本
 
-- 金額計算に `decimal` を使うべきか判断したい → [数値計算](number-samples.md) のメモ
+- 金額計算に `decimal` を使うべきか判断したい → このページのメモ
 - 件数やページ番号に `int` を使うべきか決めたい → 追加候補
 - DB の `decimal(18,2)` と C# の `decimal` を合わせたい → 追加候補
 - `double` と `decimal` の丸め誤差の違いを説明したい → 追加候補
@@ -49,23 +49,23 @@
 
 ### 丸め
 
-- 金額を小数第2位で丸めたい → 実装済み: [RoundCurrency](number-samples.md)
-- 0.005 を直感どおり切り上げたい → 実装済み: [RoundCurrency](number-samples.md)
-- `MidpointRounding.AwayFromZero` を使う場面を知りたい → [数値計算](number-samples.md) のメモ
+- 金額を小数第2位で丸めたい → 実装済み: `RoundCurrency`
+- 0.005 を直感どおり切り上げたい → 実装済み: `RoundCurrency`
+- `MidpointRounding.AwayFromZero` を使う場面を知りたい → このページのメモ
 - 銀行丸めと通常の四捨五入を使い分けたい → 追加候補
 - 小数第0位に丸めて整数表示したい → 追加候補
 - 切り上げで請求単位を作りたい → 追加候補
 - 切り捨てでポイントを計算したい → 追加候補
 - 100円単位で丸めたい → 追加候補
 - 税込後に丸めるか明細ごとに丸めるか整理したい → 追加候補
-- 丸め桁数を引数で受けたい → 実装済み: [Percentage](number-samples.md)
+- 丸め桁数を引数で受けたい → 実装済み: `Percentage`
 
 ### 割合 / 比率
 
-- 分子と分母からパーセントを出したい → 実装済み: [Percentage](number-samples.md)
-- 分母が0のときに0%として扱いたい → 実装済み: [Percentage](number-samples.md)
-- ゼロ除算を避けて既定値を返したい → 実装済み: [DivideOrDefault](number-samples.md)
-- 達成率を小数第1位で表示したい → 実装済み: [Percentage](number-samples.md)
+- 分子と分母からパーセントを出したい → 実装済み: `Percentage`
+- 分母が0のときに0%として扱いたい → 実装済み: `Percentage`
+- ゼロ除算を避けて既定値を返したい → 実装済み: `DivideOrDefault`
+- 達成率を小数第1位で表示したい → 実装済み: `Percentage`
 - 変化率を計算したい → 追加候補
 - 前年比を計算したい → 追加候補
 - 構成比を合計100%に近づけたい → 追加候補
@@ -75,8 +75,8 @@
 
 ### 税 / 料金
 
-- 税抜金額から税込金額を出したい → 実装済み: [AddTax](number-samples.md)
-- 税率が負数なら例外にしたい → 実装済み: [AddTax](number-samples.md)
+- 税抜金額から税込金額を出したい → 実装済み: `AddTax`
+- 税率が負数なら例外にしたい → 実装済み: `AddTax`
 - 税込金額から税抜金額を逆算したい → 追加候補
 - 税額だけを計算したい → 追加候補
 - 軽減税率など複数税率を扱いたい → 追加候補
@@ -96,27 +96,27 @@
 - 小数通貨と整数通貨を分けて扱いたい → 追加候補
 - 為替レートを掛けた後の丸めを決めたい → 追加候補
 - 金額がマイナスなら返金として扱いたい → 追加候補
-- 金額の上限を超えたら拒否したい → 実装済み: [IsBetween](number-samples.md)
-- 金額入力を範囲内に収めたい → 実装済み: [Clamp](number-samples.md)
+- 金額の上限を超えたら拒否したい → 実装済み: `IsBetween`
+- 金額入力を範囲内に収めたい → 実装済み: `Clamp`
 
 ### 範囲チェック / バリデーション
 
-- 値を最小値と最大値の間に収めたい → 実装済み: [Clamp](number-samples.md)
-- 値が範囲内か判定したい → 実装済み: [IsBetween](number-samples.md)
-- 境界値を含む範囲判定をしたい → 実装済み: [IsBetween](number-samples.md)
-- 境界値を含まない範囲判定をしたい → 実装済み: [IsBetween](number-samples.md)
-- 最小値が最大値より大きい設定を検出したい → 実装済み: [Clamp](number-samples.md), [IsBetween](number-samples.md)
+- 値を最小値と最大値の間に収めたい → 実装済み: `Clamp`
+- 値が範囲内か判定したい → 実装済み: `IsBetween`
+- 境界値を含む範囲判定をしたい → 実装済み: `IsBetween`
+- 境界値を含まない範囲判定をしたい → 実装済み: `IsBetween`
+- 最小値が最大値より大きい設定を検出したい → 実装済み: `Clamp`, `IsBetween`
 - 年齢や数量など正の整数だけ許可したい → 追加候補
-- 0以上100以下のスコアを検証したい → 実装済み: [IsBetween](number-samples.md)
+- 0以上100以下のスコアを検証したい → 実装済み: `IsBetween`
 - API の query parameter の範囲を検証したい → 追加候補
 - 設定値の min/max を起動時に検証したい → 追加候補
-- 範囲外の値を例外にするか補正するか決めたい → 実装済み: [Clamp](number-samples.md), [IsBetween](number-samples.md)
+- 範囲外の値を例外にするか補正するか決めたい → 実装済み: `Clamp`, `IsBetween`
 
 ### ページング計算
 
 - `pageNumber` と `pageSize` から `Skip` 件数を出したい → 追加候補
 - `pageNumber` が1未満なら拒否したい → 追加候補
-- `pageSize` の最大値を制限したい → 実装済み: [Clamp](number-samples.md)
+- `pageSize` の最大値を制限したい → 実装済み: `Clamp`
 - `Skip` 計算の `int` オーバーフローを防ぎたい → 追加候補
 - 総件数から総ページ数を計算したい → 追加候補
 - 最終ページかどうか判定したい → 追加候補
@@ -130,13 +130,13 @@
 - 合計金額を計算したい → 追加候補
 - 平均値を計算したい → 追加候補
 - 最小値と最大値をまとめて出したい → 追加候補
-- 件数0の平均を安全に扱いたい → 実装済み: [DivideOrDefault](number-samples.md)
+- 件数0の平均を安全に扱いたい → 実装済み: `DivideOrDefault`
 - カテゴリ別に金額を合計したい → 追加候補
 - 加重平均を計算したい → 追加候補
 - 中央値を計算したい → 追加候補
 - パーセンタイルを計算したい → 追加候補
 - 外れ値を除外して集計したい → 追加候補
-- 集計結果の丸めタイミングを決めたい → 実装済み: [RoundCurrency](number-samples.md), [Percentage](number-samples.md)
+- 集計結果の丸めタイミングを決めたい → 実装済み: `RoundCurrency`, `Percentage`
 
 ### オーバーフロー / 安全な計算
 
@@ -147,16 +147,16 @@
 - `Math.BigMul` を使う場面を知りたい → 追加候補
 - ID や件数を `long` にする基準を決めたい → 追加候補
 - 大きい数値を安全に比較したい → 追加候補
-- 分母が極小の比率計算を避けたい → 実装済み: [DivideOrDefault](number-samples.md)
+- 分母が極小の比率計算を避けたい → 実装済み: `DivideOrDefault`
 - 計算結果が `NaN` や `Infinity` になる型を避けたい → 追加候補
 - バッチ集計で累積誤差を避けたい → 追加候補
 
 ### 表示フォーマット
 
 - 3桁区切りで表示したい → 追加候補
-- パーセントを `12.34%` と表示したい → 実装済み: [Percentage](number-samples.md)
+- パーセントを `12.34%` と表示したい → 実装済み: `Percentage`
 - 小数点以下の不要な0を消したい → 追加候補
-- 小数点以下を必ず2桁表示したい → 実装済み: [RoundCurrency](number-samples.md)
+- 小数点以下を必ず2桁表示したい → 実装済み: `RoundCurrency`
 - 負数を括弧付きで表示したい → 追加候補
 - 単位付きで `10 kg` のように表示したい → 追加候補
 - ファイルサイズを KB / MB / GB に変換したい → 追加候補
@@ -164,8 +164,8 @@
 - API レスポンスでは数値を文字列化すべきか決めたい → 追加候補
 - ログでは計算前の値と丸め後の値を両方出したい → 追加候補
 
-### メモ
+### 補足
 
 - 金額、税、割合は `decimal` を基本にします。
 - DB、API、画面表示で丸めタイミングがずれると差分が出るため、境界を明確にします。
-- 実装済みの小さな部品は [数値計算](number-samples.md) にあります。
+- 実装済みの小さな部品は `NumberSamples.cs` にあります。

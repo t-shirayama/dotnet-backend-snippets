@@ -30,7 +30,7 @@
 
 業務バックエンドで毎回調べがちな日付・時刻処理を、困りごとから探せる形でまとめます。
 
-既存実装は [date-and-time-samples.md](./date-and-time-samples.md) と `src/DotnetBackendSnippets.Core/DateAndTime/DateAndTimeSamples.cs` を参照してください。未実装のものは「追加候補」として示します。
+既存実装はこのページと `src/DotnetBackendSnippets.Core/DateAndTime/DateAndTimeSamples.cs` を参照してください。未実装のものは「追加候補」として示します。
 
 ### DateOnly / TimeOnly / DateTimeOffset
 

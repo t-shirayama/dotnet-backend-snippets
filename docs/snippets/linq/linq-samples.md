@@ -34,7 +34,7 @@ LINQ を使ったフィルタ、射影、グルーピング、並び替え、ペ
 
 業務バックエンドで毎回調べがちな LINQ の使い方を、目的から探せる形でまとめます。
 
-実装済みの項目は [LINQ 操作](linq-samples.md) と [`LinqSamples.cs`](../../../src/DotnetBackendSnippets.Core/Linq/LinqSamples.cs) の名前を示します。未実装の項目は「追加候補」として扱います。
+実装済みの項目は [`LinqSamples.cs`](../../../src/DotnetBackendSnippets.Core/Linq/LinqSamples.cs) の名前を示します。未実装の項目は「追加候補」として扱います。
 
 ### 絞り込みと条件分岐
 

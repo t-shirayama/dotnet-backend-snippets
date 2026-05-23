@@ -35,7 +35,7 @@
 
 ### 正規化・空白
 
-- 連続する空白・改行・タブを1つの半角スペースにまとめたい: 実装済み [NormalizeWhitespace](string-samples.md)
+- 連続する空白・改行・タブを1つの半角スペースにまとめたい: 実装済み `NormalizeWhitespace`
 - 先頭と末尾の空白を取り除きたい: 追加候補 `TrimOrEmpty`
 - 全角スペースも含めて前後の空白を取り除きたい: 追加候補 `TrimJapaneseWhitespace`
 - 改行を半角スペースに置き換えて1行にしたい: 追加候補 `NormalizeToSingleLine`
@@ -44,28 +44,28 @@
 - アクセント記号を落として検索用文字列を作りたい: 追加候補 `RemoveDiacriticsForSearch`
 - 連続するハイフンやアンダースコアを1つにまとめたい: 追加候補 `CollapseSeparators`
 - null と空白だけの文字列を同じ扱いにしたい: 追加候補 `NullIfWhiteSpace`
-- 表示用に余分な空白だけ整えて意味は変えたくない: 実装済み [NormalizeWhitespace](string-samples.md)
+- 表示用に余分な空白だけ整えて意味は変えたくない: 実装済み `NormalizeWhitespace`
 
 ### Slug・URL
 
-- URL 向けに ASCII slug を作りたい: 実装済み [ToAsciiSlug](string-samples.md)
-- 日本語を残した Unicode slug を作りたい: 実装済み [ToUnicodeSlug](string-samples.md)
-- 互換用の slug メソッドを使いたい: 実装済み [ToSlug](string-samples.md)
+- URL 向けに ASCII slug を作りたい: 実装済み `ToAsciiSlug`
+- 日本語を残した Unicode slug を作りたい: 実装済み `ToUnicodeSlug`
+- 互換用の slug メソッドを使いたい: 実装済み `ToSlug`
 - slug が空になったときの fallback を入れたい: 追加候補 `ToSlugOrDefault`
 - slug の最大長を制限したい: 追加候補 `TruncateSlug`
 - URL path segment を安全にエンコードしたい: 追加候補 `EncodePathSegment`
 - query string の値をエンコードしたい: 追加候補 `EncodeQueryValue`
 - ファイル名から URL 向け slug を作りたい: 追加候補 `FileNameToSlug`
 - slug の重複を避けるため連番を付けたい: 追加候補 `AppendSlugSuffix`
-- 外部公開 URL と管理画面 URL で slug 方針を分けたい: 実装済み [ToAsciiSlug](string-samples.md) / [ToUnicodeSlug](string-samples.md)
+- 外部公開 URL と管理画面 URL で slug 方針を分けたい: 実装済み `ToAsciiSlug` / `ToUnicodeSlug`
 
 ### マスク・表示
 
-- ID やトークンの中央だけ隠したい: 実装済み [MaskMiddle](string-samples.md)
+- ID やトークンの中央だけ隠したい: 実装済み `MaskMiddle`
 - メールアドレスのローカル部を一部だけ隠したい: 追加候補 `MaskEmail`
 - 電話番号の下4桁だけ残したい: 追加候補 `MaskPhoneNumber`
 - クレジットカード番号の末尾4桁だけ残したい: 追加候補 `MaskCardNumber`
-- 長い文字列を指定文字数で省略したい: 実装済み [Truncate](string-samples.md)
+- 長い文字列を指定文字数で省略したい: 実装済み `Truncate`
 - サロゲートペアや絵文字を壊さず省略したい: 追加候補 `TruncateTextElements`
 - ログ出力前に secret らしい値を伏せたい: 追加候補 `RedactSecrets`
 - JSON の一部フィールドだけマスクしたい: 追加候補 `MaskJsonFields`
@@ -74,8 +74,8 @@
 
 ### 分割・抽出
 
-- OS 差を吸収して行単位に分割したい: 実装済み [SplitLines](string-samples.md)
-- 空行を除外して行単位に分割したい: 実装済み [SplitLines](string-samples.md)
+- OS 差を吸収して行単位に分割したい: 実装済み `SplitLines`
+- 空行を除外して行単位に分割したい: 実装済み `SplitLines`
 - カンマ区切りを空白 trim 付きで分割したい: 追加候補 `SplitCsvLikeValues`
 - key=value 形式を辞書にしたい: 追加候補 `ParseKeyValueLines`
 - 先頭の区切り文字より前だけ取りたい: 追加候補 `Before`
@@ -87,7 +87,7 @@
 
 ### 検索・比較
 
-- 大文字小文字と余分な空白を無視する比較キーを作りたい: 実装済み [NormalizeKey](string-samples.md)
+- 大文字小文字と余分な空白を無視する比較キーを作りたい: 実装済み `NormalizeKey`
 - 大文字小文字を無視して含まれるか確認したい: 追加候補 `ContainsIgnoreCase`
 - 前方一致を大小文字無視で判定したい: 追加候補 `StartsWithIgnoreCase`
 - 後方一致を大小文字無視で判定したい: 追加候補 `EndsWithIgnoreCase`
@@ -117,7 +117,7 @@
 - CSV 1行を作りたい: 追加候補 `JoinCsvRow`
 - TSV 1行を作りたい: 追加候補 `JoinTsvRow`
 - ログ用に改行を `\n` 表記へ逃がしたい: 追加候補 `SanitizeForSingleLineLog`
-- ログに出す最大文字数を制限したい: 実装済み [Truncate](string-samples.md)
+- ログに出す最大文字数を制限したい: 実装済み `Truncate`
 - ログ用に個人情報っぽい値をマスクしたい: 追加候補 `RedactPersonalData`
 - 複数行メッセージにインデントを付けたい: 追加候補 `IndentLines`
 - 箇条書き用に prefix を付けたい: 追加候補 `PrefixLines`
@@ -126,8 +126,8 @@
 
 ### キー生成・識別子
 
-- 設定キー比較用に表記ゆれを吸収したい: 実装済み [NormalizeKey](string-samples.md)
-- ユーザー入力から辞書キーを作りたい: 実装済み [NormalizeKey](string-samples.md)
+- 設定キー比較用に表記ゆれを吸収したい: 実装済み `NormalizeKey`
+- ユーザー入力から辞書キーを作りたい: 実装済み `NormalizeKey`
 - ランダムな短いコードを作りたい: 追加候補 `CreateRandomCode`
 - 数字だけのワンタイムコードを作りたい: 追加候補 `CreateNumericCode`
 - URL 安全なランダムトークンを作りたい: 追加候補 `CreateUrlSafeToken`
@@ -161,4 +161,4 @@
 - バイト数表示を人間向けに整えたい: 追加候補 `FormatBytes`
 - 文字列を UTF-8 byte 数で制限したい: 追加候補 `TruncateUtf8Bytes`
 - 環境変数名向けに大文字スネークケースへ変換したい: 追加候補 `ToEnvironmentVariableName`
-- 画面表示用と永続化用で文字列変換を分けたい: 実装済み [NormalizeWhitespace](string-samples.md) / [NormalizeKey](string-samples.md)
+- 画面表示用と永続化用で文字列変換を分けたい: 実装済み `NormalizeWhitespace` / `NormalizeKey`

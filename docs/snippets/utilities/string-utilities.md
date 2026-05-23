@@ -16,6 +16,12 @@
 
 `StringUtilities.NormalizeWhitespace(value)` は前後の空白を取り除き、連続する空白や改行を1つの半角スペースにまとめます。`RequireNonEmpty(value, parameterName)` は空文字や空白だけの値を拒否します。
 
+## 実務逆引き
+
+- ユーザー入力の余分な空白を保存前に整えたい → `NormalizeWhitespace`
+- 必須の文字列引数を早めに拒否したい → `RequireNonEmpty`
+- 小さな共通処理をアプリ層から切り出したい → `StringUtilities`
+
 ## メモ
 
 - 小さなユーティリティでもテストを用意すると、後から安心して再利用できます。
