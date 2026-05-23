@@ -1,72 +1,66 @@
 # dotnet-backend-snippets
 
-C# / .NET のバックエンド開発で使うスニペット集です。ASP.NET Core、Entity Framework Core、Dependency Injection、Configuration、Logging、HttpClient、Background Service、テストなどの実装パターンを整理します。
+C# / .NET のバックエンド開発でよく使う実装パターンを、**テストで動作確認できるスニペット集** として管理するリポジトリです。
 
-このリポジトリでは、単なるコード片ではなく **動作確認できるスニペット** として管理することを重視します。各スニペットは、可能な限り実装コード・テストコード・説明ドキュメントをセットで用意します。
+各スニペットは、原則として次の3点をセットで用意します。
 
-## 方針
+1. 実装コード
+2. テストコード
+3. 説明ドキュメント
 
-- 実行可能、またはテストで検証できる形でコード例を管理する
-- スニペットごとに目的、使いどころ、注意点を記録する
-- 将来の .NET バージョンアップや実装変更に追従しやすい構成にする
-- README は利用者向けの概要、`AGENTS.md` は coding agent 向けの作業ルールとして分ける
+Target Framework は `net8.0` です。
 
-## 扱う内容
+## 目的
 
-- ASP.NET Core Web API
-- Controller / Minimal API / Middleware
-- Dependency Injection
-- Configuration
-- Logging
-- Error Handling
-- Validation
-- Entity Framework Core
-- Authentication / Authorization
-- HttpClient
-- Background Service
-- Unit Test / Integration Test
-- Docker
-- Utilities
+- バックエンド開発で再利用しやすい C# / .NET のコード例を整理する
+- `dotnet test` でスニペットの動作を確認できる状態にする
+- 実装の使いどころ、注意点、テスト観点を日本語ドキュメントとして残す
+- 学習用にも実務の下書きにも使いやすい、小さく読みやすいサンプルを保つ
 
-## 想定ディレクトリ構成
+## ディレクトリ構成
 
 ```text
 dotnet-backend-snippets/
   src/
     DotnetBackendSnippets/
-      <Category>/
+      Configuration/
+      DependencyInjection/
+      ErrorHandling/
+      HttpClient/
+      Logging/
+      Utilities/
+      Validation/
   tests/
     DotnetBackendSnippets.Tests/
-      <Category>/
+      Configuration/
+      DependencyInjection/
+      ErrorHandling/
+      HttpClient/
+      Logging/
+      Utilities/
+      Validation/
   docs/
     snippets/
-      <category>/
+      configuration/
+      dependency-injection/
+      error-handling/
+      http-client/
+      logging/
+      utilities/
+      validation/
+  .gitignore
+  dotnet-backend-snippets.sln
   AGENTS.md
   README.md
 ```
 
-カテゴリ例:
+## スニペット追加時のルール
 
-- `AspNetCore`
-- `DependencyInjection`
-- `Configuration`
-- `Logging`
-- `ErrorHandling`
-- `Validation`
-- `EntityFrameworkCore`
-- `Authentication`
-- `Authorization`
-- `HttpClient`
-- `BackgroundServices`
-- `Utilities`
+新しいスニペットを追加する場合は、原則として以下を同時に追加します。
 
-## スニペットの追加単位
-
-スニペットは、原則として以下の3点をセットで追加します。
-
-1. 実装コード
-2. テストコード
-3. 説明ドキュメント
+- 実装コード: `src/DotnetBackendSnippets/<Category>/`
+- テストコード: `tests/DotnetBackendSnippets.Tests/<Category>/`
+- 説明ドキュメント: `docs/snippets/<category>/`
 
 例:
 
@@ -76,39 +70,17 @@ tests/DotnetBackendSnippets.Tests/Logging/LoggingSamplesTests.cs
 docs/snippets/logging/basic-logging.md
 ```
 
-## ドキュメント構成
+## 追加済みカテゴリ
 
-各スニペットの説明ドキュメントは、できるだけ以下の形式で整理します。
+- Configuration
+- Dependency Injection
+- Logging
+- Validation
+- HttpClient
+- Error Handling
+- Utilities
 
-```markdown
-# スニペット名
-
-## 目的
-
-このスニペットをいつ、何のために使うのかを説明します。
-
-## 実装
-
-対象の実装コードへのリンクを書きます。
-
-## テスト
-
-対象のテストコードへのリンクを書きます。
-
-## 使い方
-
-利用例や呼び出し例を書きます。
-
-## メモ
-
-- 注意点
-- よくあるミス
-- 関連する補足
-```
-
-## テスト実行
-
-ソリューションまたはプロジェクトを追加した後は、可能な範囲で以下を実行します。
+## テスト実行方法
 
 ```bash
 dotnet restore
@@ -116,11 +88,50 @@ dotnet build
 dotnet test
 ```
 
+フォーマット確認:
+
+```bash
+dotnet format --verify-no-changes
+```
+
 特定のテストプロジェクトだけを確認する場合:
 
 ```bash
 dotnet test tests/DotnetBackendSnippets.Tests/DotnetBackendSnippets.Tests.csproj
 ```
+
+## ドキュメント構成
+
+各スニペットの説明ドキュメントは、次の構成を基本にします。
+
+```markdown
+# スニペット名
+
+## 目的
+
+## 実装
+
+## テスト
+
+## 使い方
+
+## メモ
+```
+
+`実装` と `テスト` には、対象ファイルへの相対パスを記載します。
+
+## 今後追加したいカテゴリ
+
+- ASP.NET Core Web API
+- Minimal API
+- Middleware
+- Entity Framework Core
+- Authentication
+- Authorization
+- Background Services
+- Docker
+- DTO Mapping
+- Repository Pattern
 
 ## ライセンス
 
