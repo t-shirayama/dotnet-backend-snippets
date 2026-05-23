@@ -27,3 +27,16 @@
 - API key の検証では、通常は保存側にも平文ではなくハッシュを持たせます。このサンプルは比較部分だけを小さく切り出しています。
 - secret 検出は静的チェックの補助です。誤検知や検知漏れはあるため、CI の secret scanning やレビューと併用します。
 - SQL の値は文字列連結せず、必ず ADO.NET や ORM のパラメータを使います。`QuoteSqlIdentifier` は値ではなく、どうしても動的に選ぶ必要がある列名などの識別子向けです。
+
+## 実務逆引き
+
+- password hash を検証したい → `HashPassword` / `VerifyPassword`
+- API key を定数時間で比較したい → `AreApiKeysEqual`
+- secret を設定ファイルに直書きしていないか見たい → `FindPotentialSecrets`
+- HTML 表示用に入力をエンコードしたい → `HtmlEncodeForDisplay`
+- SQL 識別子をホワイトリスト検証したい → `QuoteSqlIdentifier`
+- JWT bearer authentication を設定したい → 追加候補
+- policy based authorization を設定したい → 追加候補
+- role と claim を使い分けたい → 追加候補
+- current user id を取得したい → 追加候補
+- rate limiting を設定したい → 追加候補

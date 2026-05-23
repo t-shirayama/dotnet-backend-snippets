@@ -20,3 +20,11 @@
 
 - サンプルではシンプルな singleton 登録を使っています。
 - 実務では状態を持つサービスや外部リソースを扱う場合、lifetime の選択に注意してください。
+
+## 実務逆引き
+
+- DI にサービスを登録したい → `AddGreetingService`
+- singleton / scoped / transient を使い分けたい → 追加候補
+- keyed service を登録したい → 追加候補
+- テスト用に DI 登録を差し替えたい → 追加候補
+- HostedService を DI で動かしたい → [BackgroundService 向け worker ループ](../background-services/background-worker-loop.md)

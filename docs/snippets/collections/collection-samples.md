@@ -28,3 +28,12 @@
 - `Dictionary` のキーには `notnull` 制約を付けています。null キーを避けるためです。
 - 順序が重要な場合は `List`、キー検索が重要な場合は `Dictionary` など、用途に合う型を選びます。
 - 重複排除を主目的にする場合は、`List<T>` より `HashSet<T>` や `ISet<T>` が向いています。
+
+## 実務逆引き
+
+- 重複値を検出したい → `FindDuplicates` / `FindDuplicatesOnePass`
+- 辞書のカウントを増やしたい → `IncrementCount`
+- 辞書を後勝ちでマージしたい → `MergeDictionaries`
+- 必須キーがない場合に早めに失敗させたい → `GetRequired`
+- 重複を避けて追加したい → `AddIfMissing`
+- 一定件数ごとに分割したい → `ChunkBySize`

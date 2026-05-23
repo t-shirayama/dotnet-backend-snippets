@@ -43,3 +43,10 @@ services.AddBackgroundWorker<CleanupWorker>(options =>
 - 例外が発生した場合、`ContinueOnError = true` ならログを出して次のループに進みます。
 - `OperationCanceledException` は停止要求として扱い、正常にループを抜けます。
 - 実処理は `IBackgroundWorker` に寄せると、`BackgroundService` のライフサイクルと業務ロジックを分けてテストできます。
+
+## 実務逆引き
+
+- HostedService を DI で動かしたい → `AddBackgroundWorker<TWorker>`
+- worker ループを1回だけテストしたい → `RunOnceAsync`
+- 例外後も次のループへ進めたい → `ContinueOnError`
+- 停止要求をキャンセルとして扱いたい → `OperationCanceledException` の分岐

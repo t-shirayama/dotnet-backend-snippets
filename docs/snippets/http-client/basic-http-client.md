@@ -20,3 +20,11 @@
 
 - テストでは `FakeHttpMessageHandler` を使い、ネットワークへ接続しません。
 - `EnsureSuccessStatusCode()` により、失敗ステータスは例外として扱います。
+
+## 実務逆引き
+
+- 外部通信なしで `HttpClient` をテストしたい → `FakeHttpMessageHandler`
+- JSON レスポンスを読みたい → `MessageApiClient`
+- 失敗ステータスを例外として扱いたい → `EnsureSuccessStatusCode`
+- typed client と bearer token を使いたい → [HttpClientFactory の typed client](../http-client-factory/http-client-factory-samples.md)
+- API レスポンスの null や不正 JSON を検証したい → 追加候補

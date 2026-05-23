@@ -70,3 +70,13 @@ TimedOperationResult<string> result = await ObservabilitySamples.MeasureAndLogAs
 - `BeginScope` の状態は構造化ログのプロパティとして扱えるよう、辞書で渡しています。
 - `MeasureAndLogAsync` はしきい値以上なら warning、それ未満なら information としてログを出します。
 - OpenTelemetry やメトリクス基盤を追加する場合も、まず操作名、correlation id、処理時間をそろえておくと移行しやすくなります。
+
+## 実務逆引き
+
+- 例外付きログを出したい → `LogOperationError`
+- `BeginScope` でリクエスト単位の情報を持たせたい → `CreateScopeState` / `BeginOperationScope`
+- correlation id をログに入れたい → `GetOrCreateCorrelationId`
+- health check を作りたい → `CreateHealthCheckResult`
+- 遅い処理をログに出したい → `MeasureAndLogAsync`
+- OpenTelemetry の trace を追加したい → 追加候補
+- メトリクスをカウンターで出したい → 追加候補

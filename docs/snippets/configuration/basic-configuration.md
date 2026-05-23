@@ -20,3 +20,11 @@
 
 - 設定値は文字列として読まれるため、数値などは明示的に検証します。
 - 起動時に設定を検証すると、実行中の予期しない失敗を減らせます。
+
+## 実務逆引き
+
+- 設定値を必須として読みたい → `GetRequiredValue`
+- 設定セクションを型に変換したい → `ReadAppSettings`
+- 数値設定を不正値として検出したい → `ReadAppSettings`
+- 環境変数で設定を上書きしたい → `ConfigurationBuilder` の provider 順を調整する
+- user secrets をローカル開発で使いたい → 追加候補

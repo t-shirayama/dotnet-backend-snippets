@@ -20,3 +20,11 @@
 
 - テストでは `ListLogger` を使い、実際のログ出力先に依存しないようにしています。
 - ログは戻り値の代わりではないため、重要な結果は戻り値や例外で検証できるようにします。
+
+## 実務逆引き
+
+- 構造化ログを出したい → `CountProcessedItems`
+- ログ出力をテストしたい → `ListLogger`
+- 例外付きログを出したい → [Observability の基本](../observability/observability-samples.md)
+- correlation id をログに入れたい → [Observability の基本](../observability/observability-samples.md)
+- 本番ではログレベルを設定で変えたい → 追加候補

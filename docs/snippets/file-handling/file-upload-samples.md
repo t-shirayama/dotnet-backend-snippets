@@ -24,3 +24,11 @@
 - Content-Type はクライアントから送られる値なので、単独では信用しません。早期 reject の補助として使い、重要な用途ではファイルの中身や保存後のスキャンも検討します。
 - 拡張子だけで安全性は保証できません。保存先の分離、ランダムな保存名、実行権限のないディレクトリ、ウイルススキャンなどと組み合わせます。
 - サイズ上限はアプリ側だけでなく、Web サーバーや reverse proxy 側にも設定します。
+
+## 実務逆引き
+
+- file upload の拡張子・サイズ・MIME を検証したい → `ValidateUpload`
+- 拡張子の表記揺れを揃えたい → `NormalizeExtension`
+- 空ファイルを拒否したい → `ValidateUpload`
+- 大きすぎるファイルを拒否したい → `FileUploadRules.MaxBytes`
+- Content-Type を早期 reject に使いたい → `FileUploadRules.AllowedContentTypes`

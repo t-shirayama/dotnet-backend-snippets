@@ -23,3 +23,11 @@
 - `IOptions<T>` は設定値を型安全に読む基本形です。
 - `IOptionsMonitor<T>` は現在値を読むための仕組みで、設定の再読み込みに対応する場面で使いやすいです。
 - `ValidateOnStart()` を付けると、ホスト起動時に検証する設計へ寄せられます。
+
+## 実務逆引き
+
+- `IOptions<T>` を登録したい → `AddNotificationOptions`
+- `IOptionsMonitor<T>` の現在値を読みたい → `NotificationOptionsReader`
+- 設定を bind して検証したい → `AddNotificationOptions`
+- 起動時に設定漏れを検出したい → `ValidateOnStart`
+- `IOptionsSnapshot<T>` を使い分けたい → 追加候補

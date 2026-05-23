@@ -91,7 +91,6 @@ dotnet-backend-snippets/
       type-system/
       utilities/
       validation/
-      backend-practical-100.md
       README.md
   .gitignore
   dotnet-backend-snippets.sln
@@ -164,7 +163,9 @@ dotnet test tests/DotnetBackendSnippets.Tests/DotnetBackendSnippets.Tests.csproj
 
 ## ドキュメント構成
 
-スニペットを困りごとから探す場合は、[バックエンド実務で毎回ググるやつ100選](docs/snippets/backend-practical-100.md) も参照してください。
+スニペットを困りごとから探す場合は、[スニペット索引](docs/snippets/README.md) の逆引きも参照してください。
+
+基礎カテゴリを深掘りする逆引きとして、[文字列操作の実務逆引き](docs/snippets/strings/string-samples.md#実務逆引き)、[数値処理の実務逆引き](docs/snippets/numbers/number-samples.md#実務逆引き)、[日付・時刻処理の実務逆引き](docs/snippets/date-and-time/date-and-time-samples.md#実務逆引き)、[LINQ 実務逆引き](docs/snippets/linq/linq-samples.md#実務逆引き) も用意しています。
 
 各スニペットの説明ドキュメントは、次の構成を基本にします。
 

@@ -25,3 +25,13 @@
 - typed client は、外部 API ごとの呼び出し処理をクラスに閉じ込められます。
 - `DelegatingHandler` を使うと、認証ヘッダーなどの横断的な処理を分離できます。
 - テストでは primary handler を差し替え、外部通信なしでリクエスト内容を検証します。
+
+## 実務逆引き
+
+- `HttpClient` を DI で登録したい → `AddProductApiClient`
+- `IHttpClientFactory` で typed client を作りたい → `ProductApiClient`
+- bearer token を付けて呼びたい → `BearerTokenHandler`
+- query string を安全に組み立てたい → `QueryStringSamples.BuildProductSearchPath`
+- 失敗レスポンスを例外ではなく結果型で扱いたい → `ExternalApiResult<T>`
+- timeout を設定したい → `AddProductApiClient`
+- retry / backoff を設定したい → 追加候補

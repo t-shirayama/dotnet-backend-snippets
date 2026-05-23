@@ -24,3 +24,11 @@
 - `PageAsync` はページ番号とページサイズから計算するスキップ件数を `long` で扱い、極端に大きい値でも `int` の掛け算でオーバーフローしないようにしています。
 - `WhenAllSettledAsync` は各処理を内部で捕捉してから `Task.WhenAll` するため、最後まで待って集約できます。呼び出し元で即時キャンセルしたい処理は、別途 `CancellationToken` を受け取る設計にしてください。
 - `CancellationToken` はメソッドの引数に受け取るだけでなく、`Task.Delay`、非同期列挙、下位の処理関数へ渡すことが重要です。
+
+## 実務逆引き
+
+- `IAsyncEnumerable<T>` をページングしたい → `PageAsync`
+- `Task.WhenAll` で複数処理を安全に待ちたい → `WhenAllSettledAsync`
+- キャンセル可能な遅延処理を書きたい → `DelayAsync`
+- `CancellationToken` を下位処理へ渡したい → `ProcessSequentiallyAsync`
+- 大きいページ番号でも overflow を避けたい → `PageAsync`

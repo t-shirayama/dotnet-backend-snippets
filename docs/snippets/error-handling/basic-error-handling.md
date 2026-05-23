@@ -20,3 +20,10 @@
 
 - 入力エラーなど想定できる失敗は結果オブジェクトで返すと扱いやすくなります。
 - 不正な状態やプログラム上の前提違反は例外で早めに検出します。
+
+## 実務逆引き
+
+- 例外ではなく結果型で失敗を返したい → `OperationResult<T>`
+- 正の整数だけ parse したい → `TryParsePositiveInt`
+- 不正な状態なら例外を投げたい → `ThrowIfInvalidState`
+- domain exception を HTTP status に変換したい → [ASP.NET Core API の小さな実務ヘルパー](../api/api-samples.md)

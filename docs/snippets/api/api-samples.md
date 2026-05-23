@@ -36,3 +36,16 @@ Controller で使う場合は `ApiSamples.ToActionResult(result)` で `ActionRes
 - validation error は例外ではなく `ValidationProblemDetails` に変換すると、複数フィールドのエラーをまとめて返せます。
 - middleware や endpoint filter の実体はフレームワークに登録しますが、判定ロジックは `RequireHeader` や `ShouldShortCircuitForMaintenance` のように分けると単体テストしやすくなります。
 - Swagger/OpenAPI 用の追加パッケージは使わず、`OperationId`、`Summary`、`Tags` のようなメタデータだけをサンプル化しています。
+
+## 実務逆引き
+
+- Minimal API の endpoint を定義したい → `DescribeCreateTodoEndpoint`
+- request body を DTO として受けたい → `CreateTodoRequest`
+- Controller で `ActionResult<T>` を返したい → `ToActionResult`
+- `ProblemDetails` でエラー応答を統一したい → `CreateProblem`
+- validation error を `ProblemDetails` に変換したい → `CreateValidationProblem`
+- domain exception を HTTP status に変換したい → `MapDomainException`
+- route parameter と query parameter を扱いたい → `ReadTodoRouteAndQuery`
+- endpoint filter や middleware の判定をテストしたい → `RequireHeader` / `ShouldShortCircuitForMaintenance`
+- CORS policy 名を定数化したい → `CorsPolicyNames`
+- Swagger / OpenAPI の詳細設定をしたい → 追加候補

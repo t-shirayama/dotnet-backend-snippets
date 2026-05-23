@@ -20,3 +20,10 @@
 
 - 例外ではなく結果オブジェクトで返すと、画面や API レスポンスにエラーを変換しやすくなります。
 - 複数のエラーをまとめて返すと、利用者が一度に修正しやすくなります。
+
+## 実務逆引き
+
+- DTO の必須項目を検証したい → `ValidateUserRegistration`
+- 複数の検証エラーをまとめて返したい → `ValidationResult`
+- validation error を API 応答に変換したい → [ASP.NET Core API の小さな実務ヘルパー](../api/api-samples.md)
+- FluentValidation を DI と組み合わせたい → 追加候補
