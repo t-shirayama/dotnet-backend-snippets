@@ -23,32 +23,49 @@ Target Framework は `net8.0` です。
 dotnet-backend-snippets/
   src/
     DotnetBackendSnippets.Core/
+      Async/
       Collections/
       DateAndTime/
       ErrorHandling/
+      FileHandling/
       Linq/
       Numbers/
+      Security/
       Strings/
       TypeSystem/
       Utilities/
       Validation/
     DotnetBackendSnippets.AspNetCore/
+      Api/
+      BackgroundServices/
       Configuration/
       DependencyInjection/
       HttpClient/
+      HttpClientFactory/
       Logging/
+      Observability/
+      Options/
     DotnetBackendSnippets.EntityFrameworkCore/
   tests/
     DotnetBackendSnippets.Tests/
+      Api/
+      Async/
+      BackgroundServices/
       Collections/
       Configuration/
       DateAndTime/
       DependencyInjection/
+      EntityFrameworkCore/
       ErrorHandling/
+      FileHandling/
       HttpClient/
+      HttpClientFactory/
       Linq/
       Logging/
       Numbers/
+      Observability/
+      Options/
+      Security/
       Strings/
       TypeSystem/
       Utilities/
@@ -59,11 +76,17 @@ dotnet-backend-snippets/
       configuration/
       date-and-time/
       dependency-injection/
+      entity-framework-core/
       error-handling/
+      file-handling/
       http-client/
+      http-client-factory/
       linq/
       logging/
       numbers/
+      observability/
+      options/
+      security/
       strings/
       type-system/
       utilities/
@@ -96,15 +119,24 @@ docs/snippets/logging/basic-logging.md
 
 ## 追加済みカテゴリ
 
+- API
+- Async / Await
+- Background Services
 - Collections
 - Configuration
 - Date and Time
 - Dependency Injection
+- Entity Framework Core
 - Error Handling
+- File Handling
 - HttpClient
+- HttpClientFactory
 - LINQ
 - Logging
 - Numbers
+- Observability
+- Options
+- Security
 - Strings
 - Type System
 - Utilities
@@ -154,18 +186,11 @@ dotnet test tests/DotnetBackendSnippets.Tests/DotnetBackendSnippets.Tests.csproj
 
 ## 今後追加したいカテゴリ
 
-- ASP.NET Core Web API
-- Minimal API
-- Middleware
-- Entity Framework Core
 - Authentication
 - Authorization
-- Background Services
 - Docker
 - DTO Mapping
 - Repository Pattern
-- Async / Await
-- File I/O
 - Regular Expressions
 - Caching
 - Serialization
