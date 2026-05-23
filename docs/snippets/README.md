@@ -2,6 +2,8 @@
 
 このディレクトリには、各スニペットの目的・実装・テスト・使い方をまとめています。
 
+- [バックエンド実務で毎回ググるやつ100選](backend-practical-100.md)
+
 ## バックエンド開発
 
 - [Configuration の必須値読み取り](configuration/basic-configuration.md)

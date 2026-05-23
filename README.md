@@ -68,6 +68,7 @@ dotnet-backend-snippets/
       type-system/
       utilities/
       validation/
+      backend-practical-100.md
       README.md
   .gitignore
   dotnet-backend-snippets.sln
@@ -130,6 +131,8 @@ dotnet test tests/DotnetBackendSnippets.Tests/DotnetBackendSnippets.Tests.csproj
 ```
 
 ## ドキュメント構成
+
+スニペットを困りごとから探す場合は、[バックエンド実務で毎回ググるやつ100選](docs/snippets/backend-practical-100.md) も参照してください。
 
 各スニペットの説明ドキュメントは、次の構成を基本にします。
 
