@@ -71,7 +71,7 @@ public static class PatternMatchingSamples
             (0, 0) => "origin",
             (0, _) => "y-axis",
             (_, 0) => "x-axis",
-            (> 0, > 0) => "quadrant-1",
+            ( > 0, > 0) => "quadrant-1",
             _ => "other",
         };
     }
