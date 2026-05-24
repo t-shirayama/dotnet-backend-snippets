@@ -46,3 +46,24 @@ python scripts/check_markdown_links.py
 ```
 
 ローカルに .NET 8 runtime がない環境では、通常の `dotnet test --no-build --configuration Release` が実行できない場合があります。その場合も CI は `.github/workflows/dotnet-ci.yml` で .NET SDK 8.0.x をセットアップして確認します。
+
+## 依存関係と Target Framework
+
+- 現在の基準は `net8.0` です。
+- patch / minor の NuGet 更新は、Dependabot PR と CI 結果を確認して取り込みます。
+- xUnit v3、EF Core 9 / 10、.NET 9 / 10 などのメジャー更新は、移行 PR として扱います。
+- メジャー更新では、テスト実行方法、CI の SDK、サンプルの対象読者、docs の Target Framework 記載を同時に確認します。
+
+## CI とマージ条件
+
+- PR は `dotnet-ci`、`format`、`docs`、`codeql` が通っている状態でマージします。
+- GitHub の branch protection では、上記チェックを必須にする運用を推奨します。
+- Markdown リンクチェックは docs と実装ファイルの乖離を早めに見つけるための最低限の防波堤です。ファイル移動時は説明ドキュメントも同じ PR で更新してください。
+
+## テストプロジェクト分割方針
+
+当面は `DotnetBackendSnippets.Tests` に集約します。次のどれかに当てはまるようになったら、`DotnetBackendSnippets.Core.Tests`、`DotnetBackendSnippets.AspNetCore.Tests`、`DotnetBackendSnippets.EntityFrameworkCore.Tests` のように実装プロジェクト単位で分割を検討します。
+
+- `dotnet test` の実行時間が日常的な確認を妨げる。
+- ASP.NET Core / EF Core / unsafe などで必要なテスト設定が大きく分かれる。
+- カテゴリごとの所有やレビュー範囲を分けた方が読みやすい。
