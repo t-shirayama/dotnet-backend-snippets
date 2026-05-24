@@ -8,13 +8,18 @@
 
 `src/DotnetBackendSnippets.Core/DateAndTime/DateAndTimeSamples.cs`
 
-`src/DotnetBackendSnippets.Core/DateAndTime/DateAndTimeReverseLookupSamples.cs`
+- `src/DotnetBackendSnippets.Core/DateAndTime/DateAndTimeConstructionSamples.cs`
+- `src/DotnetBackendSnippets.Core/DateAndTime/DateAndTimeRangeSamples.cs`
+- `src/DotnetBackendSnippets.Core/DateAndTime/DateAndTimeBusinessDaySamples.cs`
+- `src/DotnetBackendSnippets.Core/DateAndTime/DateAndTimeZoneSamples.cs`
+- `src/DotnetBackendSnippets.Core/DateAndTime/DateAndTimeExpiryValidationSamples.cs`
+- `src/DotnetBackendSnippets.Core/DateAndTime/DateAndTimeRangeTypes.cs`
 
 ## テスト
 
 `tests/DotnetBackendSnippets.Tests/DateAndTime/DateAndTimeSamplesTests.cs`
 
-`tests/DotnetBackendSnippets.Tests/DateAndTime/DateAndTimeReverseLookupSamplesTests.cs`
+- `tests/DotnetBackendSnippets.Tests/DateAndTime/DateAndTime*SamplesTests.cs`
 
 ## 使い方
 
@@ -29,12 +34,13 @@
 
 - 日付だけを扱う処理には `DateOnly` を使っています。時刻やタイムゾーンを混ぜたくない場合に便利です。
 - 2月29日生まれの年齢計算では、うるう年でない年の誕生日を2月28日として扱います。
+- 逆引き用の `DateAndTimeReverseLookupSamples` は partial class として分類別ファイルに分割しています。
 
 ## 実務逆引き
 
 業務バックエンドで毎回調べがちな日付・時刻処理を、困りごとから探せる形でまとめます。
 
-既存実装はこのページと `src/DotnetBackendSnippets.Core/DateAndTime/DateAndTimeSamples.cs`、逆引き用の `src/DotnetBackendSnippets.Core/DateAndTime/DateAndTimeReverseLookupSamples.cs` を参照してください。逆引き項目は実装済みメソッド名を記載しています。
+既存実装はこのページと `src/DotnetBackendSnippets.Core/DateAndTime/DateAndTimeSamples.cs`、逆引き用の分類別 `DateAndTime*Samples.cs` を参照してください。逆引き項目は実装済みメソッド名を記載しています。
 
 `DateAndTimeReverseLookupSamples` は、検索条件や期限判定のような業務コードでそのまま使いやすい処理を、困りごとから探せる名前でまとめています。
 

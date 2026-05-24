@@ -7,12 +7,17 @@ LINQ を使ったフィルタ、射影、グルーピング、並び替え、ペ
 ## 実装
 
 - `src/DotnetBackendSnippets.Core/Linq/LinqSamples.cs`
-- `src/DotnetBackendSnippets.Core/Linq/LinqReverseLookupSamples.cs`
+- `src/DotnetBackendSnippets.Core/Linq/LinqFilteringProjectionSamples.cs`
+- `src/DotnetBackendSnippets.Core/Linq/LinqSortingPagingSamples.cs`
+- `src/DotnetBackendSnippets.Core/Linq/LinqGroupingSetSamples.cs`
+- `src/DotnetBackendSnippets.Core/Linq/LinqJoinLookupSamples.cs`
+- `src/DotnetBackendSnippets.Core/Linq/LinqFlattenMaterializationSamples.cs`
+- `src/DotnetBackendSnippets.Core/Linq/LinqReverseLookupTypes.cs`
 
 ## テスト
 
 - `tests/DotnetBackendSnippets.Tests/Linq/LinqSamplesTests.cs`
-- `tests/DotnetBackendSnippets.Tests/Linq/LinqReverseLookupSamplesTests.cs`
+- `tests/DotnetBackendSnippets.Tests/Linq/Linq*SamplesTests.cs`
 
 ## 使い方
 
@@ -35,6 +40,7 @@ LINQ を使ったフィルタ、射影、グルーピング、並び替え、ペ
 - `ToDictionaryLastWins` はキー重複時に最後の値を採用します。
 - `ToLookupDictionary` は1つのキーに複数値を持たせます。
 - `SelectManyWithParent` は親の情報を残したまま子コレクションを展開します。
+- 逆引き用の `LinqReverseLookupSamples` は partial class として分類別ファイルに分割しています。
 
 ## メモ
 
@@ -47,7 +53,7 @@ LINQ を使ったフィルタ、射影、グルーピング、並び替え、ペ
 
 業務バックエンドで毎回調べがちな LINQ の使い方を、目的から探せる形でまとめます。
 
-実装済みの項目は [`LinqSamples.cs`](../../../src/DotnetBackendSnippets.Core/Linq/LinqSamples.cs) または [`LinqReverseLookupSamples.cs`](../../../src/DotnetBackendSnippets.Core/Linq/LinqReverseLookupSamples.cs) の名前を示します。逆引き項目は実装済みメソッド名を記載しています。
+実装済みの項目は [`LinqSamples.cs`](../../../src/DotnetBackendSnippets.Core/Linq/LinqSamples.cs) または分類別の `Linq*Samples.cs` の名前を示します。逆引き項目は実装済みメソッド名を記載しています。
 
 ### 絞り込みと条件分岐
 

@@ -7,12 +7,19 @@
 ## 実装
 
 - `src/DotnetBackendSnippets.Core/Numbers/NumberSamples.cs`
-- `src/DotnetBackendSnippets.Core/Numbers/NumberReverseLookupSamples.cs`
+- `src/DotnetBackendSnippets.Core/Numbers/NumberParsingValidationSamples.cs`
+- `src/DotnetBackendSnippets.Core/Numbers/NumberRoundingRatioTaxSamples.cs`
+- `src/DotnetBackendSnippets.Core/Numbers/NumberPagingSamples.cs`
+- `src/DotnetBackendSnippets.Core/Numbers/NumberAggregationSamples.cs`
+- `src/DotnetBackendSnippets.Core/Numbers/NumberOverflowSamples.cs`
+- `src/DotnetBackendSnippets.Core/Numbers/NumberFormattingSamples.cs`
+- `src/DotnetBackendSnippets.Core/Numbers/NumberTypes.cs`
+- `src/DotnetBackendSnippets.Core/Numbers/NumberReverseLookupSamples.Helpers.cs`
 
 ## テスト
 
 - `tests/DotnetBackendSnippets.Tests/Numbers/NumberSamplesTests.cs`
-- `tests/DotnetBackendSnippets.Tests/Numbers/NumberReverseLookupSamplesTests.cs`
+- `tests/DotnetBackendSnippets.Tests/Numbers/Number*SamplesTests.cs`
 
 ## 使い方
 
@@ -28,6 +35,7 @@
 
 - 金額には `decimal` を使っています。`double` よりも10進数の丸め誤差を避けやすいためです。
 - 丸めは `MidpointRounding.AwayFromZero` を使い、0.005 のような値を直感的に切り上げます。
+- 逆引き用の `NumberReverseLookupSamples` は partial class として分類別ファイルに分割しています。
 
 ## 実務逆引き
 
@@ -35,7 +43,7 @@
 
 バックエンド開発で数値処理をするときに毎回調べがちな内容を、困りごとから探せる逆引きとしてまとめます。
 
-実装済みの項目は `NumberSamples.cs` または `NumberReverseLookupSamples.cs` のメソッド名を示します。逆引き項目は実装済みメソッド名を記載しています。
+実装済みの項目は `NumberSamples.cs` または分類別の `Number*Samples.cs` のメソッド名を示します。逆引き項目は実装済みメソッド名を記載しています。
 
 ### decimal / int の基本
 
@@ -171,4 +179,4 @@
 
 - 金額、税、割合は `decimal` を基本にします。
 - DB、API、画面表示で丸めタイミングがずれると差分が出るため、境界を明確にします。
-- 実装済みの小さな部品は `NumberSamples.cs` と `NumberReverseLookupSamples.cs` にあります。
+- 実装済みの小さな部品は `NumberSamples.cs` と分類別の `Number*Samples.cs` にあります。

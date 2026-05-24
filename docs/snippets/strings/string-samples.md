@@ -6,11 +6,21 @@
 
 ## 実装
 
-`src/DotnetBackendSnippets.Core/Strings/StringSamples.cs`
+- `src/DotnetBackendSnippets.Core/Strings/StringSamples.cs`
+- `src/DotnetBackendSnippets.Core/Strings/StringInspectionSamples.cs`
+- `src/DotnetBackendSnippets.Core/Strings/StringExtractionSamples.cs`
+- `src/DotnetBackendSnippets.Core/Strings/StringNormalizationSamples.cs`
+- `src/DotnetBackendSnippets.Core/Strings/StringSplitJoinSamples.cs`
+- `src/DotnetBackendSnippets.Core/Strings/StringValidationSamples.cs`
+- `src/DotnetBackendSnippets.Core/Strings/StringConversionSamples.cs`
+- `src/DotnetBackendSnippets.Core/Strings/StringEscapingSamples.cs`
+- `src/DotnetBackendSnippets.Core/Strings/StringReplacementSamples.cs`
+- `src/DotnetBackendSnippets.Core/Strings/StringReverseLookupSamples.Helpers.cs`
 
 ## テスト
 
-`tests/DotnetBackendSnippets.Tests/Strings/StringSamplesTests.cs`
+- `tests/DotnetBackendSnippets.Tests/Strings/StringSamplesTests.cs`
+- `tests/DotnetBackendSnippets.Tests/Strings/String*SamplesTests.cs`
 
 ## 使い方
 
@@ -27,6 +37,7 @@
 
 - ASCII 前提の URL や外部システム連携では `ToAsciiSlug`、日本語を含む表示向け URL では `ToUnicodeSlug` のように用途を分けます。
 - マスク処理は表示用の補助であり、秘密情報そのものを安全に保存する仕組みではありません。
+- 逆引き用の `StringReverseLookupSamples` は partial class として分類別ファイルに分割しています。
 
 ## 実務逆引き
 
