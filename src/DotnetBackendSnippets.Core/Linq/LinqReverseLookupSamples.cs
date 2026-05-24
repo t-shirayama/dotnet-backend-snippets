@@ -1,29 +1,83 @@
 namespace DotnetBackendSnippets.Linq;
 
+/// <summary>
+/// 注文一覧の並び替え列です。
+/// </summary>
 public enum OrderSortColumn
 {
+    /// <summary>
+    /// 注文 ID で並び替えます。
+    /// </summary>
     Id,
+
+    /// <summary>
+    /// 顧客 ID で並び替えます。
+    /// </summary>
     CustomerId,
+
+    /// <summary>
+    /// カテゴリで並び替えます。
+    /// </summary>
     Category,
+
+    /// <summary>
+    /// 金額で並び替えます。
+    /// </summary>
     Amount,
 }
 
+/// <summary>
+/// 並び替え方向です。
+/// </summary>
 public enum SortDirection
 {
+    /// <summary>
+    /// 昇順で並び替えます。
+    /// </summary>
     Ascending,
+
+    /// <summary>
+    /// 降順で並び替えます。
+    /// </summary>
     Descending,
 }
 
+/// <summary>
+/// 注文検索条件です。
+/// </summary>
+/// <param name="CustomerId">絞り込む顧客 ID。</param>
+/// <param name="Category">絞り込むカテゴリ。</param>
+/// <param name="MinimumAmount">最小金額。</param>
+/// <param name="MaximumAmount">最大金額。</param>
 public sealed record OrderSearchCriteria(
     int? CustomerId = null,
     string? Category = null,
     decimal? MinimumAmount = null,
     decimal? MaximumAmount = null);
 
+/// <summary>
+/// 注文一覧に表示する項目です。
+/// </summary>
+/// <param name="Id">注文 ID。</param>
+/// <param name="CustomerId">顧客 ID。</param>
+/// <param name="Category">カテゴリ。</param>
+/// <param name="Amount">金額。</param>
 public sealed record OrderListItem(int Id, int CustomerId, string Category, decimal Amount);
 
+/// <summary>
+/// LINQ で逆引きしやすい実務向けサンプルを提供します。
+/// </summary>
 public static class LinqReverseLookupSamples
 {
+    /// <summary>
+    /// 条件が true のときだけ Where を適用します。
+    /// </summary>
+    /// <typeparam name="T">要素の型。</typeparam>
+    /// <param name="source">入力シーケンス。</param>
+    /// <param name="condition">フィルターを適用するかどうか。</param>
+    /// <param name="predicate">フィルター条件。</param>
+    /// <returns>条件適用後の一覧。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="source"/> または <paramref name="predicate"/> が null です。</exception>
     public static IReadOnlyList<T> WhereIf<T>(IEnumerable<T> source, bool condition, Func<T, bool> predicate)
     {
         ArgumentNullException.ThrowIfNull(source);
@@ -32,6 +86,14 @@ public static class LinqReverseLookupSamples
         return (condition ? source.Where(predicate) : source).ToList();
     }
 
+    /// <summary>
+    /// 注文を検索条件で絞り込みます。
+    /// </summary>
+    /// <param name="orders">注文の一覧。</param>
+    /// <param name="criteria">検索条件。</param>
+    /// <returns>条件に一致した注文一覧。</returns>
+    /// <exception cref="ArgumentNullException">いずれかの引数が null です。</exception>
+    /// <exception cref="ArgumentException">最小金額が最大金額を超えています。</exception>
     public static IReadOnlyList<Order> SearchOrders(IEnumerable<Order> orders, OrderSearchCriteria criteria)
     {
         ArgumentNullException.ThrowIfNull(orders);
@@ -69,6 +131,17 @@ public static class LinqReverseLookupSamples
         return query.ToList();
     }
 
+    /// <summary>
+    /// ID 一覧に一致する要素だけを抽出します。
+    /// </summary>
+    /// <typeparam name="T">要素の型。</typeparam>
+    /// <typeparam name="TKey">キーの型。</typeparam>
+    /// <param name="source">入力シーケンス。</param>
+    /// <param name="ids">抽出対象の ID。</param>
+    /// <param name="keySelector">要素からキーを取り出す関数。</param>
+    /// <param name="comparer">任意のキー比較器。</param>
+    /// <returns>ID に一致した要素一覧。</returns>
+    /// <exception cref="ArgumentNullException">必須引数が null です。</exception>
     public static IReadOnlyList<T> FilterByIds<T, TKey>(
         IEnumerable<T> source,
         IEnumerable<TKey> ids,
@@ -89,6 +162,12 @@ public static class LinqReverseLookupSamples
         return source.Where(item => idSet.Contains(keySelector(item))).ToList();
     }
 
+    /// <summary>
+    /// 注文を一覧表示用の項目に変換します。
+    /// </summary>
+    /// <param name="orders">注文の一覧。</param>
+    /// <returns>一覧表示用項目の一覧。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="orders"/> が null です。</exception>
     public static IReadOnlyList<OrderListItem> ToOrderListItems(IEnumerable<Order> orders)
     {
         ArgumentNullException.ThrowIfNull(orders);
@@ -98,6 +177,15 @@ public static class LinqReverseLookupSamples
             .ToList();
     }
 
+    /// <summary>
+    /// 指定列と方向で注文を並び替えます。
+    /// </summary>
+    /// <param name="orders">注文の一覧。</param>
+    /// <param name="sortColumn">並び替え列。</param>
+    /// <param name="sortDirection">並び替え方向。</param>
+    /// <returns>並び替え済みの注文一覧。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="orders"/> が null です。</exception>
+    /// <exception cref="ArgumentOutOfRangeException">並び替えオプションが未定義です。</exception>
     public static IReadOnlyList<Order> SortOrders(
         IEnumerable<Order> orders,
         OrderSortColumn sortColumn,
@@ -133,6 +221,16 @@ public static class LinqReverseLookupSamples
             : sorted.ThenBy(order => order.Id).ToList();
     }
 
+    /// <summary>
+    /// キーごとの件数を数えます。
+    /// </summary>
+    /// <typeparam name="T">要素の型。</typeparam>
+    /// <typeparam name="TKey">キーの型。</typeparam>
+    /// <param name="source">入力シーケンス。</param>
+    /// <param name="keySelector">キーを取り出す関数。</param>
+    /// <param name="comparer">任意のキー比較器。</param>
+    /// <returns>キーごとの件数。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="source"/> または <paramref name="keySelector"/> が null です。</exception>
     public static IReadOnlyDictionary<TKey, int> CountByKey<T, TKey>(
         IEnumerable<T> source,
         Func<T, TKey> keySelector,
@@ -149,6 +247,17 @@ public static class LinqReverseLookupSamples
         return groups.ToDictionary(group => group.Key, group => group.Count(), comparer);
     }
 
+    /// <summary>
+    /// キーごとに最新の要素を取得します。
+    /// </summary>
+    /// <typeparam name="T">要素の型。</typeparam>
+    /// <typeparam name="TKey">キーの型。</typeparam>
+    /// <param name="source">入力シーケンス。</param>
+    /// <param name="keySelector">キーを取り出す関数。</param>
+    /// <param name="timestampSelector">比較する日時を取り出す関数。</param>
+    /// <param name="comparer">任意のキー比較器。</param>
+    /// <returns>キーごとの最新要素。</returns>
+    /// <exception cref="ArgumentNullException">必須引数が null です。</exception>
     public static IReadOnlyList<T> LatestPerKey<T, TKey>(
         IEnumerable<T> source,
         Func<T, TKey> keySelector,
@@ -167,6 +276,16 @@ public static class LinqReverseLookupSamples
         return groups.Select(group => group.MaxBy(timestampSelector)!).ToList();
     }
 
+    /// <summary>
+    /// 重複しているキーを取得します。
+    /// </summary>
+    /// <typeparam name="T">要素の型。</typeparam>
+    /// <typeparam name="TKey">キーの型。</typeparam>
+    /// <param name="source">入力シーケンス。</param>
+    /// <param name="keySelector">キーを取り出す関数。</param>
+    /// <param name="comparer">任意のキー比較器。</param>
+    /// <returns>重複キーの一覧。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="source"/> または <paramref name="keySelector"/> が null です。</exception>
     public static IReadOnlyList<TKey> FindDuplicateKeys<T, TKey>(
         IEnumerable<T> source,
         Func<T, TKey> keySelector,
@@ -186,6 +305,16 @@ public static class LinqReverseLookupSamples
             .ToList();
     }
 
+    /// <summary>
+    /// 同じキーでは後勝ちにして辞書を作成します。
+    /// </summary>
+    /// <typeparam name="T">要素の型。</typeparam>
+    /// <typeparam name="TKey">キーの型。</typeparam>
+    /// <param name="source">入力シーケンス。</param>
+    /// <param name="keySelector">キーを取り出す関数。</param>
+    /// <param name="comparer">任意のキー比較器。</param>
+    /// <returns>後勝ちで作成した辞書。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="source"/> または <paramref name="keySelector"/> が null です。</exception>
     public static IReadOnlyDictionary<TKey, T> ToDictionaryLastWins<T, TKey>(
         IEnumerable<T> source,
         Func<T, TKey> keySelector,
@@ -207,6 +336,16 @@ public static class LinqReverseLookupSamples
         return dictionary;
     }
 
+    /// <summary>
+    /// キーごとの要素一覧を持つ辞書を作成します。
+    /// </summary>
+    /// <typeparam name="T">要素の型。</typeparam>
+    /// <typeparam name="TKey">キーの型。</typeparam>
+    /// <param name="source">入力シーケンス。</param>
+    /// <param name="keySelector">キーを取り出す関数。</param>
+    /// <param name="comparer">任意のキー比較器。</param>
+    /// <returns>キーごとの要素一覧。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="source"/> または <paramref name="keySelector"/> が null です。</exception>
     public static IReadOnlyDictionary<TKey, IReadOnlyList<T>> ToLookupDictionary<T, TKey>(
         IEnumerable<T> source,
         Func<T, TKey> keySelector,
@@ -226,6 +365,17 @@ public static class LinqReverseLookupSamples
             comparer);
     }
 
+    /// <summary>
+    /// 親要素と子要素の組み合わせから結果を作成します。
+    /// </summary>
+    /// <typeparam name="TParent">親要素の型。</typeparam>
+    /// <typeparam name="TChild">子要素の型。</typeparam>
+    /// <typeparam name="TResult">結果の型。</typeparam>
+    /// <param name="source">親要素の入力シーケンス。</param>
+    /// <param name="childrenSelector">親から子要素を取り出す関数。</param>
+    /// <param name="resultSelector">親と子から結果を作る関数。</param>
+    /// <returns>平坦化された結果一覧。</returns>
+    /// <exception cref="ArgumentNullException">必須引数が null です。</exception>
     public static IReadOnlyList<TResult> SelectManyWithParent<TParent, TChild, TResult>(
         IEnumerable<TParent> source,
         Func<TParent, IEnumerable<TChild>?> childrenSelector,

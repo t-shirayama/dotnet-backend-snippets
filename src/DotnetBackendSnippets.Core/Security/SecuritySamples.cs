@@ -5,6 +5,9 @@ using System.Text.RegularExpressions;
 
 namespace DotnetBackendSnippets.Security;
 
+/// <summary>
+/// セキュリティ関連の基本的な実装例を提供します。
+/// </summary>
 public static partial class SecuritySamples
 {
     private const string PasswordHashAlgorithm = "PBKDF2-SHA256";
@@ -25,6 +28,16 @@ public static partial class SecuritySamples
         "token",
     ];
 
+    /// <summary>
+    /// PBKDF2-SHA256 でパスワードをハッシュ化します。
+    /// </summary>
+    /// <param name="password">ハッシュ化するパスワード。</param>
+    /// <param name="iterations">PBKDF2 の反復回数。</param>
+    /// <param name="saltSize">生成するソルトのバイト数。</param>
+    /// <param name="hashSize">生成するハッシュのバイト数。</param>
+    /// <returns>アルゴリズム、反復回数、ソルト、ハッシュを含む文字列。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="password"/> が <see langword="null"/> の場合。</exception>
+    /// <exception cref="ArgumentOutOfRangeException">反復回数、ソルトサイズ、またはハッシュサイズが小さすぎる場合。</exception>
     public static string HashPassword(
         string password,
         int iterations = DefaultIterations,
@@ -64,6 +77,13 @@ public static partial class SecuritySamples
             Convert.ToBase64String(hash));
     }
 
+    /// <summary>
+    /// パスワードが保存済みハッシュと一致するか検証します。
+    /// </summary>
+    /// <param name="password">検証するパスワード。</param>
+    /// <param name="encodedHash">保存済みハッシュ文字列。</param>
+    /// <returns>一致する場合は <see langword="true"/>。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="password"/> または <paramref name="encodedHash"/> が <see langword="null"/> の場合。</exception>
     public static bool VerifyPassword(string password, string encodedHash)
     {
         ArgumentNullException.ThrowIfNull(password);
@@ -84,6 +104,13 @@ public static partial class SecuritySamples
         return CryptographicOperations.FixedTimeEquals(actualHash, expectedHash);
     }
 
+    /// <summary>
+    /// API キーを固定時間比較で照合します。
+    /// </summary>
+    /// <param name="providedApiKey">利用者が提示した API キー。</param>
+    /// <param name="expectedApiKey">期待する API キー。</param>
+    /// <returns>一致する場合は <see langword="true"/>。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="providedApiKey"/> または <paramref name="expectedApiKey"/> が <see langword="null"/> の場合。</exception>
     public static bool AreApiKeysEqual(string providedApiKey, string expectedApiKey)
     {
         ArgumentNullException.ThrowIfNull(providedApiKey);
@@ -95,6 +122,12 @@ public static partial class SecuritySamples
         return CryptographicOperations.FixedTimeEquals(providedHash, expectedHash);
     }
 
+    /// <summary>
+    /// 設定値から秘密情報らしい項目を検出します。
+    /// </summary>
+    /// <param name="configurationValues">設定キーと値の一覧。</param>
+    /// <returns>秘密情報の可能性がある項目一覧。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="configurationValues"/> が <see langword="null"/> の場合。</exception>
     public static IReadOnlyList<SecretFinding> FindPotentialSecrets(
         IEnumerable<KeyValuePair<string, string?>> configurationValues)
     {
@@ -124,6 +157,12 @@ public static partial class SecuritySamples
         return findings;
     }
 
+    /// <summary>
+    /// 表示用に HTML エンコードします。
+    /// </summary>
+    /// <param name="value">エンコードする文字列。</param>
+    /// <returns>HTML エンコード後の文字列。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="value"/> が <see langword="null"/> の場合。</exception>
     public static string HtmlEncodeForDisplay(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -131,6 +170,12 @@ public static partial class SecuritySamples
         return WebUtility.HtmlEncode(value);
     }
 
+    /// <summary>
+    /// SQL Server 形式で識別子を安全に引用します。
+    /// </summary>
+    /// <param name="identifier">引用する識別子。</param>
+    /// <returns>角括弧で引用した識別子。</returns>
+    /// <exception cref="ArgumentException"><paramref name="identifier"/> が空、または許可されない形式の場合。</exception>
     public static string QuoteSqlIdentifier(string identifier)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(identifier);
@@ -207,4 +252,9 @@ public static partial class SecuritySamples
     private static partial Regex SqlIdentifierRegex();
 }
 
+/// <summary>
+/// 秘密情報の可能性がある設定項目を表します。
+/// </summary>
+/// <param name="Key">検出された設定キー。</param>
+/// <param name="Reason">検出理由。</param>
 public sealed record SecretFinding(string Key, string Reason);

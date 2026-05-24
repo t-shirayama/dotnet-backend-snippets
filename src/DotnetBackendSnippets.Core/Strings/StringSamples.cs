@@ -4,8 +4,17 @@ using System.Text.RegularExpressions;
 
 namespace DotnetBackendSnippets.Strings;
 
+/// <summary>
+/// 文字列処理でよく使う実装例を提供します。
+/// </summary>
 public static partial class StringSamples
 {
+    /// <summary>
+    /// 連続する空白を 1 つの半角スペースに正規化します。
+    /// </summary>
+    /// <param name="value">正規化する文字列。</param>
+    /// <returns>前後の空白を除去し、内部空白をまとめた文字列。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="value"/> が <see langword="null"/> の場合。</exception>
     public static string NormalizeWhitespace(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -13,11 +22,23 @@ public static partial class StringSamples
         return WhitespaceRegex().Replace(value.Trim(), " ");
     }
 
+    /// <summary>
+    /// 文字列を ASCII スラッグに変換します。
+    /// </summary>
+    /// <param name="value">変換する文字列。</param>
+    /// <returns>URL などで使いやすい ASCII スラッグ。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="value"/> が <see langword="null"/> の場合。</exception>
     public static string ToSlug(string value)
     {
         return ToAsciiSlug(value);
     }
 
+    /// <summary>
+    /// 発音記号を除去して ASCII スラッグを作成します。
+    /// </summary>
+    /// <param name="value">変換する文字列。</param>
+    /// <returns>ASCII 文字だけで構成したスラッグ。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="value"/> が <see langword="null"/> の場合。</exception>
     public static string ToAsciiSlug(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -28,6 +49,12 @@ public static partial class StringSamples
         return DuplicateHyphenRegex().Replace(slug, "-").Trim('-');
     }
 
+    /// <summary>
+    /// Unicode の文字と数字を残したスラッグを作成します。
+    /// </summary>
+    /// <param name="value">変換する文字列。</param>
+    /// <returns>Unicode 文字を含められるスラッグ。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="value"/> が <see langword="null"/> の場合。</exception>
     public static string ToUnicodeSlug(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -38,6 +65,15 @@ public static partial class StringSamples
         return DuplicateHyphenRegex().Replace(slug, "-").Trim('-');
     }
 
+    /// <summary>
+    /// 文字列を指定長に切り詰めます。
+    /// </summary>
+    /// <param name="value">対象文字列。</param>
+    /// <param name="maxLength">最大長。</param>
+    /// <param name="suffix">切り詰め時に末尾へ付ける文字列。</param>
+    /// <returns>切り詰め後の文字列。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="value"/> または <paramref name="suffix"/> が <see langword="null"/> の場合。</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="maxLength"/> が 0 未満の場合。</exception>
     public static string Truncate(string value, int maxLength, string suffix = "...")
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -66,6 +102,16 @@ public static partial class StringSamples
         return string.Concat(value.AsSpan(0, maxLength - suffix.Length), suffix);
     }
 
+    /// <summary>
+    /// 先頭と末尾を残して中央部分をマスクします。
+    /// </summary>
+    /// <param name="value">マスクする文字列。</param>
+    /// <param name="visibleStart">先頭に残す文字数。</param>
+    /// <param name="visibleEnd">末尾に残す文字数。</param>
+    /// <param name="mask">マスクに使う文字。</param>
+    /// <returns>マスク後の文字列。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="value"/> が <see langword="null"/> の場合。</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="visibleStart"/> または <paramref name="visibleEnd"/> が 0 未満の場合。</exception>
     public static string MaskMiddle(string value, int visibleStart, int visibleEnd, char mask = '*')
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -92,6 +138,13 @@ public static partial class StringSamples
         return $"{prefix}{new string(mask, maskedLength)}{suffix}";
     }
 
+    /// <summary>
+    /// 改行コードの違いを吸収して行ごとに分割します。
+    /// </summary>
+    /// <param name="value">分割する文字列。</param>
+    /// <param name="removeEmptyLines">空行を除外するかどうか。</param>
+    /// <returns>行の一覧。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="value"/> が <see langword="null"/> の場合。</exception>
     public static IReadOnlyList<string> SplitLines(string value, bool removeEmptyLines = false)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -102,6 +155,12 @@ public static partial class StringSamples
             .Split('\n', removeEmptyLines ? StringSplitOptions.RemoveEmptyEntries : StringSplitOptions.None);
     }
 
+    /// <summary>
+    /// キー比較用に空白を正規化し、大文字へ変換します。
+    /// </summary>
+    /// <param name="value">正規化するキー文字列。</param>
+    /// <returns>正規化後のキー。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="value"/> が <see langword="null"/> の場合。</exception>
     public static string NormalizeKey(string value)
     {
         return NormalizeWhitespace(value).ToUpperInvariant();

@@ -8,20 +8,32 @@ using System.Text.RegularExpressions;
 
 namespace DotnetBackendSnippets.Strings;
 
+/// <summary>
+/// 文字列処理で逆引きしやすい実務向けサンプルを提供します。
+/// </summary>
 public static partial class StringReverseLookupSamples
 {
     private const string TokenAlphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
+    /// <summary>
+    /// 文字列をトリムし、null の場合は空文字列を返します。
+    /// </summary>
     public static string TrimOrEmpty(string? value)
     {
         return value?.Trim() ?? string.Empty;
     }
 
+    /// <summary>
+    /// 通常の空白と全角空白を取り除きます。
+    /// </summary>
     public static string TrimJapaneseWhitespace(string? value)
     {
         return value?.Trim().Trim('\u3000') ?? string.Empty;
     }
 
+    /// <summary>
+    /// 文字列を単一行に正規化します。
+    /// </summary>
     public static string NormalizeToSingleLine(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -29,6 +41,9 @@ public static partial class StringReverseLookupSamples
         return StringSamples.NormalizeWhitespace(value);
     }
 
+    /// <summary>
+    /// 改行コードを指定した改行文字へ統一します。
+    /// </summary>
     public static string NormalizeLineEndings(string value, string newline = "\n")
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -37,6 +52,9 @@ public static partial class StringReverseLookupSamples
         return value.Replace("\r\n", "\n", StringComparison.Ordinal).Replace("\r", "\n", StringComparison.Ordinal).Replace("\n", newline, StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// 文字列を指定した Unicode 正規化形式へ変換します。
+    /// </summary>
     public static string NormalizeUnicode(string value, NormalizationForm normalizationForm = NormalizationForm.FormC)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -44,6 +62,9 @@ public static partial class StringReverseLookupSamples
         return value.Normalize(normalizationForm);
     }
 
+    /// <summary>
+    /// 検索用にダイアクリティカルマークを除去します。
+    /// </summary>
     public static string RemoveDiacriticsForSearch(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -62,6 +83,9 @@ public static partial class StringReverseLookupSamples
         return builder.ToString().Normalize(NormalizationForm.FormC);
     }
 
+    /// <summary>
+    /// 連続する区切り文字を 1 つにまとめます。
+    /// </summary>
     public static string CollapseSeparators(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -69,11 +93,17 @@ public static partial class StringReverseLookupSamples
         return SeparatorRegex().Replace(value, "$1").Trim('-', '_');
     }
 
+    /// <summary>
+    /// 空白文字列を null に変換します。
+    /// </summary>
     public static string? NullIfWhiteSpace(string? value)
     {
         return string.IsNullOrWhiteSpace(value) ? null : value;
     }
 
+    /// <summary>
+    /// 文字列を ASCII スラッグへ変換し、空の場合は既定値を返します。
+    /// </summary>
     public static string ToSlugOrDefault(string value, string fallback = "item")
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -84,6 +114,9 @@ public static partial class StringReverseLookupSamples
         return string.IsNullOrEmpty(slug) ? fallback : slug;
     }
 
+    /// <summary>
+    /// スラッグを指定長に切り詰めます。
+    /// </summary>
     public static string TruncateSlug(string slug, int maxLength)
     {
         ArgumentNullException.ThrowIfNull(slug);
@@ -96,6 +129,9 @@ public static partial class StringReverseLookupSamples
         return StringSamples.ToAsciiSlug(StringSamples.Truncate(slug, maxLength, suffix: string.Empty));
     }
 
+    /// <summary>
+    /// URL パスセグメントとして安全にエンコードします。
+    /// </summary>
     public static string EncodePathSegment(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -103,11 +139,17 @@ public static partial class StringReverseLookupSamples
         return Uri.EscapeDataString(value);
     }
 
+    /// <summary>
+    /// URL クエリ値として安全にエンコードします。
+    /// </summary>
     public static string EncodeQueryValue(string value)
     {
         return UrlEncode(value);
     }
 
+    /// <summary>
+    /// ファイル名から拡張子を除いたスラッグを作成します。
+    /// </summary>
     public static string FileNameToSlug(string fileName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(fileName);
@@ -115,6 +157,9 @@ public static partial class StringReverseLookupSamples
         return ToSlugOrDefault(Path.GetFileNameWithoutExtension(fileName));
     }
 
+    /// <summary>
+    /// スラッグに連番サフィックスを付けます。
+    /// </summary>
     public static string AppendSlugSuffix(string slug, int suffix)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(slug);
@@ -127,6 +172,9 @@ public static partial class StringReverseLookupSamples
         return $"{slug}-{suffix}";
     }
 
+    /// <summary>
+    /// メールアドレスのローカル部をマスクします。
+    /// </summary>
     public static string MaskEmail(string email)
     {
         ArgumentNullException.ThrowIfNull(email);
@@ -143,6 +191,9 @@ public static partial class StringReverseLookupSamples
         return $"{StringSamples.MaskMiddle(localPart, 1, localPart.Length > 2 ? 1 : 0)}{domain}";
     }
 
+    /// <summary>
+    /// 電話番号の数字部分をマスクします。
+    /// </summary>
     public static string MaskPhoneNumber(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -152,11 +203,17 @@ public static partial class StringReverseLookupSamples
         return StringSamples.MaskMiddle(digits, 0, Math.Min(4, digits.Length));
     }
 
+    /// <summary>
+    /// カード番号を下 4 桁相当だけ残してマスクします。
+    /// </summary>
     public static string MaskCardNumber(string value)
     {
         return MaskPhoneNumber(value);
     }
 
+    /// <summary>
+    /// 結合文字を考慮して文字列を切り詰めます。
+    /// </summary>
     public static string TruncateTextElements(string value, int maxTextElements, string suffix = "...")
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -183,6 +240,9 @@ public static partial class StringReverseLookupSamples
         return value[..cutIndex] + suffix;
     }
 
+    /// <summary>
+    /// 秘密情報らしい代入値を伏せ字にします。
+    /// </summary>
     public static string RedactSecrets(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -190,6 +250,9 @@ public static partial class StringReverseLookupSamples
         return SecretAssignmentRegex().Replace(value, match => $"{match.Groups[1].Value}=***");
     }
 
+    /// <summary>
+    /// 指定した JSON フィールドの値をマスクします。
+    /// </summary>
     public static string MaskJsonFields(string json, ISet<string> fieldNames)
     {
         ArgumentNullException.ThrowIfNull(json);
@@ -205,6 +268,9 @@ public static partial class StringReverseLookupSamples
         return Encoding.UTF8.GetString(stream.ToArray());
     }
 
+    /// <summary>
+    /// 表示幅を考慮して文字列を切り詰めます。
+    /// </summary>
     public static string TruncateByDisplayWidth(string value, int maxWidth, string suffix = "...")
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -233,6 +299,9 @@ public static partial class StringReverseLookupSamples
         return builder.ToString();
     }
 
+    /// <summary>
+    /// 空文字列を指定した既定値へ置き換えます。
+    /// </summary>
     public static string DefaultIfEmpty(string? value, string fallback)
     {
         ArgumentNullException.ThrowIfNull(fallback);
@@ -240,6 +309,9 @@ public static partial class StringReverseLookupSamples
         return string.IsNullOrEmpty(value) ? fallback : value;
     }
 
+    /// <summary>
+    /// カンマ区切りの値をトリムして分割します。
+    /// </summary>
     public static IReadOnlyList<string> SplitCsvLikeValues(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -247,6 +319,9 @@ public static partial class StringReverseLookupSamples
         return value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
     }
 
+    /// <summary>
+    /// キーと値の行を辞書へ変換します。
+    /// </summary>
     public static IReadOnlyDictionary<string, string> ParseKeyValueLines(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -257,16 +332,25 @@ public static partial class StringReverseLookupSamples
             .ToDictionary(parts => parts[0], parts => parts[1], StringComparer.OrdinalIgnoreCase);
     }
 
+    /// <summary>
+    /// 最初の区切り文字より前の部分を取得します。
+    /// </summary>
     public static string Before(string value, string separator)
     {
         return SplitAround(value, separator).Before;
     }
 
+    /// <summary>
+    /// 最初の区切り文字より後の部分を取得します。
+    /// </summary>
     public static string After(string value, string separator)
     {
         return SplitAround(value, separator).After;
     }
 
+    /// <summary>
+    /// 最後の区切り文字より前の部分を取得します。
+    /// </summary>
     public static string BeforeLast(string value, string separator)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -277,6 +361,9 @@ public static partial class StringReverseLookupSamples
         return index < 0 ? value : value[..index];
     }
 
+    /// <summary>
+    /// 最後の区切り文字より後の部分を取得します。
+    /// </summary>
     public static string AfterLast(string value, string separator)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -287,6 +374,9 @@ public static partial class StringReverseLookupSamples
         return index < 0 ? string.Empty : value[(index + separator.Length)..];
     }
 
+    /// <summary>
+    /// 文字列から数字だけを抽出します。
+    /// </summary>
     public static string ExtractDigits(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -294,6 +384,9 @@ public static partial class StringReverseLookupSamples
         return DigitsRegex().Replace(value, string.Empty);
     }
 
+    /// <summary>
+    /// ログ行から correlation id を抽出します。
+    /// </summary>
     public static string? ExtractCorrelationId(string logLine)
     {
         ArgumentNullException.ThrowIfNull(logLine);
@@ -303,6 +396,9 @@ public static partial class StringReverseLookupSamples
         return match.Success ? match.Groups["value"].Value : null;
     }
 
+    /// <summary>
+    /// 大文字小文字を無視して部分一致を判定します。
+    /// </summary>
     public static bool ContainsIgnoreCase(string value, string search)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -311,6 +407,9 @@ public static partial class StringReverseLookupSamples
         return value.Contains(search, StringComparison.OrdinalIgnoreCase);
     }
 
+    /// <summary>
+    /// 大文字小文字を無視して前方一致を判定します。
+    /// </summary>
     public static bool StartsWithIgnoreCase(string value, string prefix)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -319,6 +418,9 @@ public static partial class StringReverseLookupSamples
         return value.StartsWith(prefix, StringComparison.OrdinalIgnoreCase);
     }
 
+    /// <summary>
+    /// 大文字小文字を無視して後方一致を判定します。
+    /// </summary>
     public static bool EndsWithIgnoreCase(string value, string suffix)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -327,11 +429,17 @@ public static partial class StringReverseLookupSamples
         return value.EndsWith(suffix, StringComparison.OrdinalIgnoreCase);
     }
 
+    /// <summary>
+    /// OrdinalIgnoreCase で文字列の等価性を判定します。
+    /// </summary>
     public static bool EqualsOrdinalIgnoreCase(string? left, string? right)
     {
         return string.Equals(left, right, StringComparison.OrdinalIgnoreCase);
     }
 
+    /// <summary>
+    /// 検索用にかな文字を正規化します。
+    /// </summary>
     public static string NormalizeKanaForSearch(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -349,6 +457,9 @@ public static partial class StringReverseLookupSamples
         return builder.ToString();
     }
 
+    /// <summary>
+    /// すべてのキーワードを含むかを判定します。
+    /// </summary>
     public static bool ContainsAllKeywords(string value, IEnumerable<string> keywords)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -357,6 +468,9 @@ public static partial class StringReverseLookupSamples
         return keywords.All(keyword => ContainsIgnoreCase(value, keyword));
     }
 
+    /// <summary>
+    /// いずれかのキーワードを含むかを判定します。
+    /// </summary>
     public static bool ContainsAnyKeyword(string value, IEnumerable<string> keywords)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -365,6 +479,9 @@ public static partial class StringReverseLookupSamples
         return keywords.Any(keyword => ContainsIgnoreCase(value, keyword));
     }
 
+    /// <summary>
+    /// 単語単位で含まれているかを判定します。
+    /// </summary>
     public static bool ContainsWholeWord(string value, string word)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -373,6 +490,9 @@ public static partial class StringReverseLookupSamples
         return Regex.IsMatch(value, $@"\b{Regex.Escape(word)}\b", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
     }
 
+    /// <summary>
+    /// 正規表現パターンとして安全にエスケープします。
+    /// </summary>
     public static string EscapeRegexPattern(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -380,6 +500,9 @@ public static partial class StringReverseLookupSamples
         return Regex.Escape(value);
     }
 
+    /// <summary>
+    /// HTML として安全にエンコードします。
+    /// </summary>
     public static string HtmlEncode(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -387,6 +510,9 @@ public static partial class StringReverseLookupSamples
         return WebUtility.HtmlEncode(value);
     }
 
+    /// <summary>
+    /// JavaScript 文字列として安全にエンコードします。
+    /// </summary>
     public static string JavaScriptStringEncode(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -394,6 +520,9 @@ public static partial class StringReverseLookupSamples
         return JavaScriptEncoder.Default.Encode(value);
     }
 
+    /// <summary>
+    /// URL 用に文字列をエンコードします。
+    /// </summary>
     public static string UrlEncode(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -401,6 +530,9 @@ public static partial class StringReverseLookupSamples
         return WebUtility.UrlEncode(value);
     }
 
+    /// <summary>
+    /// URL エンコードされた文字列をデコードします。
+    /// </summary>
     public static string UrlDecode(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -408,6 +540,9 @@ public static partial class StringReverseLookupSamples
         return WebUtility.UrlDecode(value);
     }
 
+    /// <summary>
+    /// UTF-8 文字列を Base64 へ変換します。
+    /// </summary>
     public static string ToBase64(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -415,6 +550,9 @@ public static partial class StringReverseLookupSamples
         return Convert.ToBase64String(Encoding.UTF8.GetBytes(value));
     }
 
+    /// <summary>
+    /// UTF-8 文字列を Base64Url へ変換します。
+    /// </summary>
     public static string ToBase64Url(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -422,6 +560,9 @@ public static partial class StringReverseLookupSamples
         return Convert.ToBase64String(Encoding.UTF8.GetBytes(value)).TrimEnd('=').Replace('+', '-').Replace('/', '_');
     }
 
+    /// <summary>
+    /// Base64Url 文字列を UTF-8 文字列へ戻します。
+    /// </summary>
     public static string FromBase64Url(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -433,11 +574,17 @@ public static partial class StringReverseLookupSamples
         return Encoding.UTF8.GetString(Convert.FromBase64String(base64));
     }
 
+    /// <summary>
+    /// 正規表現用のエスケープ処理を行います。
+    /// </summary>
     public static string RegexEscape(string value)
     {
         return EscapeRegexPattern(value);
     }
 
+    /// <summary>
+    /// SQL LIKE パターン用にワイルドカードをエスケープします。
+    /// </summary>
     public static string EscapeSqlLikePattern(string value, char escapeCharacter = '\\')
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -449,6 +596,9 @@ public static partial class StringReverseLookupSamples
             .Replace("[", $"{escapeCharacter}[", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// 制御文字をログなどで見える形にエスケープします。
+    /// </summary>
     public static string EscapeControlCharacters(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -460,6 +610,9 @@ public static partial class StringReverseLookupSamples
             .Replace("\t", "\\t", StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// CSV フィールドとして必要な場合にクォートします。
+    /// </summary>
     public static string EscapeCsvField(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -472,6 +625,9 @@ public static partial class StringReverseLookupSamples
         return $"\"{value.Replace("\"", "\"\"", StringComparison.Ordinal)}\"";
     }
 
+    /// <summary>
+    /// 値を CSV 行として結合します。
+    /// </summary>
     public static string JoinCsvRow(IEnumerable<string> values)
     {
         ArgumentNullException.ThrowIfNull(values);
@@ -479,6 +635,9 @@ public static partial class StringReverseLookupSamples
         return string.Join(",", values.Select(EscapeCsvField));
     }
 
+    /// <summary>
+    /// 値を TSV 行として結合します。
+    /// </summary>
     public static string JoinTsvRow(IEnumerable<string> values)
     {
         ArgumentNullException.ThrowIfNull(values);
@@ -486,11 +645,17 @@ public static partial class StringReverseLookupSamples
         return string.Join('\t', values.Select(value => value.Replace("\t", " ", StringComparison.Ordinal)));
     }
 
+    /// <summary>
+    /// 単一行ログ向けに制御文字を無害化します。
+    /// </summary>
     public static string SanitizeForSingleLineLog(string value)
     {
         return EscapeControlCharacters(value);
     }
 
+    /// <summary>
+    /// 個人情報らしい文字列を伏せ字にします。
+    /// </summary>
     public static string RedactPersonalData(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -498,6 +663,9 @@ public static partial class StringReverseLookupSamples
         return EmailRegex().Replace(value, "***@***");
     }
 
+    /// <summary>
+    /// 各行の先頭に空白インデントを付けます。
+    /// </summary>
     public static string IndentLines(string value, int spaces)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -512,6 +680,9 @@ public static partial class StringReverseLookupSamples
         return string.Join('\n', StringSamples.SplitLines(value).Select(line => prefix + line));
     }
 
+    /// <summary>
+    /// 各行の先頭に指定プレフィックスを付けます。
+    /// </summary>
     public static string PrefixLines(string value, string prefix)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -520,6 +691,9 @@ public static partial class StringReverseLookupSamples
         return string.Join('\n', StringSamples.SplitLines(value).Select(line => prefix + line));
     }
 
+    /// <summary>
+    /// 必要な場合だけ左側にパディングします。
+    /// </summary>
     public static string PadLeftSafe(string value, int totalWidth)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -527,6 +701,9 @@ public static partial class StringReverseLookupSamples
         return value.Length >= totalWidth ? value : value.PadLeft(totalWidth);
     }
 
+    /// <summary>
+    /// 必要な場合だけ右側にパディングします。
+    /// </summary>
     public static string PadRightSafe(string value, int totalWidth)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -534,16 +711,25 @@ public static partial class StringReverseLookupSamples
         return value.Length >= totalWidth ? value : value.PadRight(totalWidth);
     }
 
+    /// <summary>
+    /// 英数字のランダムコードを作成します。
+    /// </summary>
     public static string CreateRandomCode(int length)
     {
         return CreateRandomFromAlphabet(length, TokenAlphabet);
     }
 
+    /// <summary>
+    /// 数字だけのランダムコードを作成します。
+    /// </summary>
     public static string CreateNumericCode(int length)
     {
         return CreateRandomFromAlphabet(length, "0123456789");
     }
 
+    /// <summary>
+    /// URL で扱いやすいランダムトークンを作成します。
+    /// </summary>
     public static string CreateUrlSafeToken(int byteLength = 32)
     {
         if (byteLength < 1)
@@ -554,11 +740,17 @@ public static partial class StringReverseLookupSamples
         return Convert.ToBase64String(RandomNumberGenerator.GetBytes(byteLength)).TrimEnd('=').Replace('+', '-').Replace('/', '_');
     }
 
+    /// <summary>
+    /// GUID を短い URL 安全文字列へ変換します。
+    /// </summary>
     public static string ToShortGuid(Guid value)
     {
         return Convert.ToBase64String(value.ToByteArray()).TrimEnd('=').Replace('+', '-').Replace('/', '_');
     }
 
+    /// <summary>
+    /// ファイル名として使いやすい文字列へ変換します。
+    /// </summary>
     public static string ToSafeFileName(string value)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(value);
@@ -574,6 +766,9 @@ public static partial class StringReverseLookupSamples
         return CollapseSeparators(builder.ToString().Trim());
     }
 
+    /// <summary>
+    /// オブジェクトストレージ用のキーを作成します。
+    /// </summary>
     public static string BuildObjectKey(params string[] segments)
     {
         ArgumentNullException.ThrowIfNull(segments);
@@ -581,6 +776,9 @@ public static partial class StringReverseLookupSamples
         return string.Join('/', segments.Select(segment => StringSamples.ToUnicodeSlug(segment)));
     }
 
+    /// <summary>
+    /// キャッシュキー用の文字列を作成します。
+    /// </summary>
     public static string BuildCacheKey(params string[] segments)
     {
         ArgumentNullException.ThrowIfNull(segments);
@@ -588,6 +786,9 @@ public static partial class StringReverseLookupSamples
         return string.Join(':', segments.Select(segment => StringSamples.NormalizeKey(segment).Replace(' ', ':').ToLowerInvariant()));
     }
 
+    /// <summary>
+    /// 文字列から安定した SHA-256 ハッシュキーを作成します。
+    /// </summary>
     public static string CreateStableHashKey(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -595,11 +796,17 @@ public static partial class StringReverseLookupSamples
         return Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(value))).ToLowerInvariant();
     }
 
+    /// <summary>
+    /// 文字列が null または空白かを判定します。
+    /// </summary>
     public static bool IsBlank(string? value)
     {
         return string.IsNullOrWhiteSpace(value);
     }
 
+    /// <summary>
+    /// メールアドレスらしい形式かを判定します。
+    /// </summary>
     public static bool IsEmailLike(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -607,6 +814,9 @@ public static partial class StringReverseLookupSamples
         return EmailRegex().IsMatch(value);
     }
 
+    /// <summary>
+    /// 絶対 URL として有効かを判定します。
+    /// </summary>
     public static bool IsAbsoluteUrl(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -614,11 +824,17 @@ public static partial class StringReverseLookupSamples
         return Uri.TryCreate(value, UriKind.Absolute, out _);
     }
 
+    /// <summary>
+    /// HTTPS の絶対 URL かを判定します。
+    /// </summary>
     public static bool IsHttpsUrl(string value)
     {
         return Uri.TryCreate(value, UriKind.Absolute, out var uri) && uri.Scheme == Uri.UriSchemeHttps;
     }
 
+    /// <summary>
+    /// GUID として解析できるかを判定します。
+    /// </summary>
     public static bool IsGuid(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -626,6 +842,9 @@ public static partial class StringReverseLookupSamples
         return Guid.TryParse(value, out _);
     }
 
+    /// <summary>
+    /// 数字だけで構成されているかを判定します。
+    /// </summary>
     public static bool IsDigitsOnly(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -633,6 +852,9 @@ public static partial class StringReverseLookupSamples
         return value.Length > 0 && value.All(char.IsDigit);
     }
 
+    /// <summary>
+    /// ASCII スラッグ形式かを判定します。
+    /// </summary>
     public static bool IsAsciiSlug(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -640,6 +862,9 @@ public static partial class StringReverseLookupSamples
         return AsciiSlugRegex().IsMatch(value);
     }
 
+    /// <summary>
+    /// 許可された拡張子かを判定します。
+    /// </summary>
     public static bool HasAllowedExtension(string fileName, ISet<string> allowedExtensions)
     {
         ArgumentNullException.ThrowIfNull(fileName);
@@ -648,6 +873,9 @@ public static partial class StringReverseLookupSamples
         return allowedExtensions.Contains(Path.GetExtension(fileName));
     }
 
+    /// <summary>
+    /// 禁止語を含むかを判定します。
+    /// </summary>
     public static bool ContainsBlockedWord(string value, ISet<string> blockedWords)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -656,6 +884,9 @@ public static partial class StringReverseLookupSamples
         return blockedWords.Any(word => ContainsWholeWord(value, word));
     }
 
+    /// <summary>
+    /// 文字列が最大長以内かを検証します。
+    /// </summary>
     public static void ValidateMaxLength(string value, int maxLength)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -671,6 +902,9 @@ public static partial class StringReverseLookupSamples
         }
     }
 
+    /// <summary>
+    /// snake_case を PascalCase に変換します。
+    /// </summary>
     public static string SnakeToPascalCase(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -678,6 +912,9 @@ public static partial class StringReverseLookupSamples
         return string.Concat(value.Split('_', StringSplitOptions.RemoveEmptyEntries).Select(CapitalizeInvariant));
     }
 
+    /// <summary>
+    /// PascalCase を camelCase に変換します。
+    /// </summary>
     public static string PascalToCamelCase(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -685,6 +922,9 @@ public static partial class StringReverseLookupSamples
         return value.Length == 0 ? value : char.ToLowerInvariant(value[0]) + value[1..];
     }
 
+    /// <summary>
+    /// PascalCase を kebab-case に変換します。
+    /// </summary>
     public static string PascalToKebabCase(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -692,6 +932,9 @@ public static partial class StringReverseLookupSamples
         return PascalBoundaryRegex().Replace(value, "$1-$2").ToLowerInvariant();
     }
 
+    /// <summary>
+    /// プレースホルダー付きテンプレートを値で置き換えます。
+    /// </summary>
     public static string RenderTemplate(string template, IReadOnlyDictionary<string, string> values)
     {
         ArgumentNullException.ThrowIfNull(template);
@@ -701,6 +944,9 @@ public static partial class StringReverseLookupSamples
             values.TryGetValue(match.Groups["name"].Value, out var value) ? value : match.Value);
     }
 
+    /// <summary>
+    /// テンプレート内のプレースホルダー名を抽出します。
+    /// </summary>
     public static IReadOnlyList<string> ExtractPlaceholders(string template)
     {
         ArgumentNullException.ThrowIfNull(template);
@@ -708,6 +954,9 @@ public static partial class StringReverseLookupSamples
         return PlaceholderRegex().Matches(template).Select(match => match.Groups["name"].Value).Distinct().ToList();
     }
 
+    /// <summary>
+    /// 件数に応じて単純な複数形へ変換します。
+    /// </summary>
     public static string PluralizeSimple(string singular, int count, string? plural = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(singular);
@@ -715,6 +964,9 @@ public static partial class StringReverseLookupSamples
         return count == 1 ? singular : plural ?? singular + "s";
     }
 
+    /// <summary>
+    /// バイト数を読みやすい単位付き文字列に整形します。
+    /// </summary>
     public static string FormatBytes(long bytes)
     {
         if (bytes < 0)
@@ -735,6 +987,9 @@ public static partial class StringReverseLookupSamples
         return $"{value:0.##} {units[unitIndex]}";
     }
 
+    /// <summary>
+    /// UTF-8 バイト数を超えないよう文字列を切り詰めます。
+    /// </summary>
     public static string TruncateUtf8Bytes(string value, int maxBytes, string suffix = "")
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -760,6 +1015,9 @@ public static partial class StringReverseLookupSamples
         return builder.ToString();
     }
 
+    /// <summary>
+    /// 環境変数名として使いやすい形式へ変換します。
+    /// </summary>
     public static string ToEnvironmentVariableName(string value)
     {
         ArgumentNullException.ThrowIfNull(value);

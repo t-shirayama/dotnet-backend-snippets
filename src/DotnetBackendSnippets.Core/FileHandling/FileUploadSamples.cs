@@ -2,8 +2,19 @@ using System.Globalization;
 
 namespace DotnetBackendSnippets.FileHandling;
 
+/// <summary>
+/// ファイルアップロード検証の実装例を提供します。
+/// </summary>
 public static class FileUploadSamples
 {
+    /// <summary>
+    /// アップロードされたファイルが指定ルールを満たすか検証します。
+    /// </summary>
+    /// <param name="file">アップロードされたファイルのメタデータ。</param>
+    /// <param name="rules">検証ルール。</param>
+    /// <returns>検証結果とエラー一覧。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="file"/> または <paramref name="rules"/> が <see langword="null"/> の場合。</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="rules"/> の最大バイト数が 0 以下の場合。</exception>
     public static FileUploadValidationResult ValidateUpload(
         UploadedFileMetadata file,
         FileUploadRules rules)
@@ -49,6 +60,11 @@ public static class FileUploadSamples
         return new FileUploadValidationResult(errors.Count == 0, errors);
     }
 
+    /// <summary>
+    /// 拡張子を小文字のドット付き形式に正規化します。
+    /// </summary>
+    /// <param name="extension">正規化する拡張子。</param>
+    /// <returns>正規化後の拡張子。空白の場合は空文字列。</returns>
     public static string NormalizeExtension(string? extension)
     {
         if (string.IsNullOrWhiteSpace(extension))
@@ -83,11 +99,28 @@ public static class FileUploadSamples
     }
 }
 
+/// <summary>
+/// アップロードされたファイルの基本情報を表します。
+/// </summary>
+/// <param name="FileName">ファイル名。</param>
+/// <param name="Length">ファイルサイズのバイト数。</param>
+/// <param name="ContentType">Content-Type ヘッダーの値。</param>
 public sealed record UploadedFileMetadata(string FileName, long Length, string? ContentType);
 
+/// <summary>
+/// ファイルアップロードの検証ルールを表します。
+/// </summary>
+/// <param name="MaxBytes">許可する最大ファイルサイズ。</param>
+/// <param name="AllowedExtensions">許可する拡張子一覧。</param>
+/// <param name="AllowedContentTypes">許可する Content-Type 一覧。</param>
 public sealed record FileUploadRules(
     long MaxBytes,
     IReadOnlyCollection<string> AllowedExtensions,
     IReadOnlyCollection<string> AllowedContentTypes);
 
+/// <summary>
+/// ファイルアップロード検証の結果を表します。
+/// </summary>
+/// <param name="IsValid">検証に成功したかどうか。</param>
+/// <param name="Errors">検証エラーの一覧。</param>
 public sealed record FileUploadValidationResult(bool IsValid, IReadOnlyList<string> Errors);

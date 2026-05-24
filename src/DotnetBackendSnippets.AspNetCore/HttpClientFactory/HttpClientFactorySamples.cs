@@ -7,13 +7,26 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DotnetBackendSnippets.HttpClientFactory;
 
+/// <summary>
+/// 外部 API 用のアクセストークンを取得します。
+/// </summary>
 public interface IAccessTokenProvider
 {
+    /// <summary>
+    /// アクセストークンを非同期に取得します。
+    /// </summary>
+    /// <param name="cancellationToken">キャンセル通知。</param>
+    /// <returns>アクセストークン。</returns>
     Task<string> GetAccessTokenAsync(CancellationToken cancellationToken = default);
 }
 
+/// <summary>
+/// HTTP リクエストに Bearer トークンを追加します。
+/// </summary>
+/// <param name="accessTokenProvider">アクセストークンの取得元。</param>
 public sealed class BearerTokenHandler(IAccessTokenProvider accessTokenProvider) : DelegatingHandler
 {
+    /// <inheritdoc />
     protected override async Task<HttpResponseMessage> SendAsync(
         HttpRequestMessage request,
         CancellationToken cancellationToken)
@@ -29,27 +42,68 @@ public sealed class BearerTokenHandler(IAccessTokenProvider accessTokenProvider)
     }
 }
 
+/// <summary>
+/// 外部商品 API の商品データを表します。
+/// </summary>
+/// <param name="Id">商品 ID。</param>
+/// <param name="Name">商品名。</param>
 public sealed record ProductDto(int Id, string Name);
 
+/// <summary>
+/// 外部 API のエラー情報を表します。
+/// </summary>
+/// <param name="StatusCode">HTTP ステータスコード。</param>
+/// <param name="Message">エラーメッセージ。</param>
 public sealed record ExternalApiError(HttpStatusCode StatusCode, string Message);
 
+/// <summary>
+/// 外部 API 呼び出しの成功または失敗を表します。
+/// </summary>
+/// <typeparam name="T">成功時の値の型。</typeparam>
+/// <param name="Value">成功時の値。</param>
+/// <param name="Error">失敗時のエラー情報。</param>
 public sealed record ExternalApiResult<T>(T? Value, ExternalApiError? Error)
 {
+    /// <summary>
+    /// 呼び出しが成功したかどうかを取得します。
+    /// </summary>
+    /// <value>エラーがない場合は <see langword="true"/>。</value>
     public bool IsSuccess => Error is null;
 
+    /// <summary>
+    /// 成功結果を作成します。
+    /// </summary>
+    /// <param name="value">成功時の値。</param>
+    /// <returns>成功を表す結果。</returns>
     public static ExternalApiResult<T> Success(T value)
     {
         return new ExternalApiResult<T>(value, null);
     }
 
+    /// <summary>
+    /// 失敗結果を作成します。
+    /// </summary>
+    /// <param name="statusCode">HTTP ステータスコード。</param>
+    /// <param name="message">エラーメッセージ。</param>
+    /// <returns>失敗を表す結果。</returns>
     public static ExternalApiResult<T> Failure(HttpStatusCode statusCode, string message)
     {
         return new ExternalApiResult<T>(default, new ExternalApiError(statusCode, message));
     }
 }
 
+/// <summary>
+/// 外部商品 API を呼び出すクライアントです。
+/// </summary>
+/// <param name="httpClient">API 呼び出しに使う HTTP クライアント。</param>
 public sealed class ProductApiClient(System.Net.Http.HttpClient httpClient)
 {
+    /// <summary>
+    /// 商品 ID を指定して商品を取得します。
+    /// </summary>
+    /// <param name="productId">商品 ID。</param>
+    /// <param name="cancellationToken">キャンセル通知。</param>
+    /// <returns>商品取得結果。</returns>
     public async Task<ExternalApiResult<ProductDto>> GetProductAsync(
         int productId,
         CancellationToken cancellationToken = default)
@@ -59,6 +113,14 @@ public sealed class ProductApiClient(System.Net.Http.HttpClient httpClient)
         return await ReadProductResponseAsync(response, cancellationToken);
     }
 
+    /// <summary>
+    /// キーワードとページ番号で商品を検索します。
+    /// </summary>
+    /// <param name="keyword">検索キーワード。</param>
+    /// <param name="pageNumber">ページ番号。</param>
+    /// <param name="cancellationToken">キャンセル通知。</param>
+    /// <returns>商品検索結果。</returns>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="pageNumber"/> が 1 未満の場合。</exception>
     public async Task<ExternalApiResult<ProductDto>> SearchProductAsync(
         string? keyword,
         int pageNumber,
@@ -90,8 +152,18 @@ public sealed class ProductApiClient(System.Net.Http.HttpClient httpClient)
     }
 }
 
+/// <summary>
+/// クエリ文字列の組み立てサンプルです。
+/// </summary>
 public static class QueryStringSamples
 {
+    /// <summary>
+    /// 商品検索 API のパスを作成します。
+    /// </summary>
+    /// <param name="keyword">検索キーワード。</param>
+    /// <param name="pageNumber">ページ番号。</param>
+    /// <returns>クエリ文字列付きの相対パス。</returns>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="pageNumber"/> が 1 未満の場合。</exception>
     public static string BuildProductSearchPath(string? keyword, int pageNumber)
     {
         if (pageNumber < 1)
@@ -113,8 +185,18 @@ public static class QueryStringSamples
     }
 }
 
+/// <summary>
+/// HttpClientFactory 登録のサンプルです。
+/// </summary>
 public static class HttpClientFactorySamples
 {
+    /// <summary>
+    /// 商品 API クライアントを DI コンテナーに登録します。
+    /// </summary>
+    /// <param name="services">サービスコレクション。</param>
+    /// <param name="baseAddress">外部 API のベースアドレス。</param>
+    /// <param name="timeout">HTTP リクエストのタイムアウト。</param>
+    /// <returns>登録後のサービスコレクション。</returns>
     public static IServiceCollection AddProductApiClient(
         this IServiceCollection services,
         Uri baseAddress,

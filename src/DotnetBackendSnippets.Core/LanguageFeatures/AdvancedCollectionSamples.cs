@@ -1,7 +1,17 @@
 namespace DotnetBackendSnippets.LanguageFeatures;
 
+/// <summary>
+/// 配列、キュー、スタックなどのコレクション機能のサンプルを提供します。
+/// </summary>
 public static class AdvancedCollectionSamples
 {
+    /// <summary>
+    /// 指定した長さと初期値で固定長の配列を作成します。
+    /// </summary>
+    /// <param name="length">作成する配列の長さ。</param>
+    /// <param name="initialValue">各要素に設定する初期値。</param>
+    /// <returns>初期化済みの整数配列。</returns>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="length"/> が 0 未満です。</exception>
     public static int[] CreateFixedLengthBuffer(int length, int initialValue)
     {
         if (length < 0)
@@ -20,6 +30,12 @@ public static class AdvancedCollectionSamples
         return buffer;
     }
 
+    /// <summary>
+    /// キューを使ってジョブを先入れ先出し順に処理します。
+    /// </summary>
+    /// <param name="jobs">処理対象のジョブ名。</param>
+    /// <returns>処理されたジョブ名の一覧。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="jobs"/> が null です。</exception>
     public static IReadOnlyList<string> ProcessQueue(IEnumerable<string> jobs)
     {
         ArgumentNullException.ThrowIfNull(jobs);
@@ -35,6 +51,12 @@ public static class AdvancedCollectionSamples
         return processed;
     }
 
+    /// <summary>
+    /// スタックを使って操作を後入れ先出し順に取り出します。
+    /// </summary>
+    /// <param name="actions">積み上げる操作名。</param>
+    /// <returns>取り出された操作名の一覧。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="actions"/> が null です。</exception>
     public static IReadOnlyList<string> PopUndoStack(IEnumerable<string> actions)
     {
         ArgumentNullException.ThrowIfNull(actions);
