@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DotnetBackendSnippets.EntityFrameworkCore;
@@ -29,6 +30,7 @@ public sealed class SampleBlogDbContext(DbContextOptions<SampleBlogDbContext> op
         modelBuilder.Entity<Blog>(entity =>
         {
             entity.Property(blog => blog.Name).HasMaxLength(200).IsRequired();
+            entity.HasIndex(blog => blog.Name).IsUnique();
 
             entity
                 .HasMany(blog => blog.Posts)
@@ -40,6 +42,7 @@ public sealed class SampleBlogDbContext(DbContextOptions<SampleBlogDbContext> op
         modelBuilder.Entity<BlogPost>(entity =>
         {
             entity.Property(post => post.Title).HasMaxLength(200).IsRequired();
+            entity.Property(post => post.ConcurrencyStamp).HasMaxLength(40).IsConcurrencyToken();
             entity.HasQueryFilter(post => !post.IsDeleted);
         });
     }
@@ -99,6 +102,30 @@ public sealed class BlogPost
     public string Title { get; set; } = string.Empty;
 
     /// <summary>
+    /// 楽観的同時実行制御に使う値を取得または設定します。
+    /// </summary>
+    /// <value>更新時に一致確認する concurrency token。</value>
+    public string ConcurrencyStamp { get; set; } = Guid.NewGuid().ToString("N");
+
+    /// <summary>
+    /// 作成日時を取得または設定します。
+    /// </summary>
+    /// <value>UTC の作成日時。</value>
+    public DateTimeOffset CreatedAt { get; set; }
+
+    /// <summary>
+    /// 更新日時を取得または設定します。
+    /// </summary>
+    /// <value>UTC の更新日時。</value>
+    public DateTimeOffset UpdatedAt { get; set; }
+
+    /// <summary>
+    /// 削除日時を取得または設定します。
+    /// </summary>
+    /// <value>論理削除された日時。未削除の場合は <see langword="null"/>。</value>
+    public DateTimeOffset? DeletedAt { get; set; }
+
+    /// <summary>
     /// 公開日時を取得または設定します。
     /// </summary>
     /// <value>記事が公開された日時。</value>
@@ -143,6 +170,34 @@ public sealed record BlogSummary(int Id, string Name, int PublishedPostCount);
 /// <param name="PageSize">ページサイズ。</param>
 /// <param name="TotalCount">全件数。</param>
 public sealed record PagedResult<T>(IReadOnlyList<T> Items, int PageNumber, int PageSize, int TotalCount);
+
+/// <summary>
+/// EF CLI コマンドを安全に組み立てるための値を表します。
+/// </summary>
+/// <param name="FileName">実行ファイル名。</param>
+/// <param name="Arguments">個別に渡す引数。</param>
+public sealed record EfCliCommand(string FileName, IReadOnlyList<string> Arguments);
+
+/// <summary>
+/// 記事タイトル更新の結果を表します。
+/// </summary>
+public enum PostTitleUpdateResult
+{
+    /// <summary>
+    /// 更新に成功しました。
+    /// </summary>
+    Updated,
+
+    /// <summary>
+    /// 対象記事が見つかりません。
+    /// </summary>
+    NotFound,
+
+    /// <summary>
+    /// 楽観的同時実行制御の競合が発生しました。
+    /// </summary>
+    ConcurrencyConflict,
+}
 
 /// <summary>
 /// EF Core の代表的な操作サンプルです。
@@ -312,9 +367,176 @@ public static class EfCoreSamples
         }
 
         post.IsDeleted = true;
+        post.DeletedAt = DateTimeOffset.UtcNow;
         await dbContext.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
 
         return true;
+    }
+
+    /// <summary>
+    /// 記事タイトルを楽観的同時実行制御つきで更新します。
+    /// </summary>
+    /// <param name="dbContext">ブログ DbContext。</param>
+    /// <param name="postId">記事 ID。</param>
+    /// <param name="title">新しいタイトル。</param>
+    /// <param name="expectedConcurrencyStamp">クライアントが読み取った concurrency token。</param>
+    /// <param name="newConcurrencyStamp">保存時に設定する新しい concurrency token。</param>
+    /// <param name="cancellationToken">キャンセル通知。</param>
+    /// <returns>更新結果。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="dbContext"/> が <see langword="null"/> の場合。</exception>
+    /// <exception cref="ArgumentException"><paramref name="title"/>、<paramref name="expectedConcurrencyStamp"/>、<paramref name="newConcurrencyStamp"/> が空白の場合。</exception>
+    public static async Task<PostTitleUpdateResult> UpdatePostTitleWithConcurrencyAsync(
+        SampleBlogDbContext dbContext,
+        int postId,
+        string title,
+        string expectedConcurrencyStamp,
+        string newConcurrencyStamp,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(dbContext);
+        ArgumentException.ThrowIfNullOrWhiteSpace(title);
+        ArgumentException.ThrowIfNullOrWhiteSpace(expectedConcurrencyStamp);
+        ArgumentException.ThrowIfNullOrWhiteSpace(newConcurrencyStamp);
+
+        BlogPost? post = await dbContext.Posts.SingleOrDefaultAsync(
+            candidate => candidate.Id == postId,
+            cancellationToken);
+
+        if (post is null)
+        {
+            return PostTitleUpdateResult.NotFound;
+        }
+
+        dbContext.Entry(post).Property(candidate => candidate.ConcurrencyStamp).OriginalValue = expectedConcurrencyStamp;
+        post.Title = title.Trim();
+        post.ConcurrencyStamp = newConcurrencyStamp;
+
+        try
+        {
+            await dbContext.SaveChangesAsync(cancellationToken);
+            return PostTitleUpdateResult.Updated;
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            return PostTitleUpdateResult.ConcurrencyConflict;
+        }
+    }
+
+    /// <summary>
+    /// 変更追跡中のエンティティへ監査日時を設定します。
+    /// </summary>
+    /// <param name="changeTracker">DbContext の change tracker。</param>
+    /// <param name="utcNow">設定する UTC 日時。</param>
+    /// <exception cref="ArgumentNullException"><paramref name="changeTracker"/> が <see langword="null"/> の場合。</exception>
+    public static void ApplyAuditValues(ChangeTracker changeTracker, DateTimeOffset utcNow)
+    {
+        ArgumentNullException.ThrowIfNull(changeTracker);
+
+        foreach (EntityEntry<BlogPost> entry in changeTracker.Entries<BlogPost>())
+        {
+            if (entry.State == EntityState.Added)
+            {
+                entry.Entity.CreatedAt = utcNow;
+                entry.Entity.UpdatedAt = utcNow;
+            }
+            else if (entry.State == EntityState.Modified)
+            {
+                entry.Entity.UpdatedAt = utcNow;
+            }
+        }
+    }
+
+    /// <summary>
+    /// 保存例外が代表的な unique constraint violation かどうかを判定します。
+    /// </summary>
+    /// <param name="exception">EF Core の保存例外。</param>
+    /// <returns>一意制約違反と判断できる場合は <see langword="true"/>。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="exception"/> が <see langword="null"/> の場合。</exception>
+    public static bool IsUniqueConstraintViolation(DbUpdateException exception)
+    {
+        ArgumentNullException.ThrowIfNull(exception);
+
+        string message = exception.InnerException?.Message ?? exception.Message;
+
+        return message.Contains("UNIQUE constraint failed", StringComparison.OrdinalIgnoreCase)
+            || message.Contains("duplicate key", StringComparison.OrdinalIgnoreCase)
+            || message.Contains("23505", StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// migration を追加する dotnet-ef コマンドを組み立てます。
+    /// </summary>
+    /// <param name="migrationName">migration 名。</param>
+    /// <param name="projectPath">DbContext を含むプロジェクトパス。</param>
+    /// <param name="startupProjectPath">起動プロジェクトパス。</param>
+    /// <param name="contextName">DbContext 名。</param>
+    /// <returns>実行ファイル名と引数を分けたコマンド。</returns>
+    /// <exception cref="ArgumentException">いずれかの引数が空白の場合。</exception>
+    public static EfCliCommand CreateAddMigrationCommand(
+        string migrationName,
+        string projectPath,
+        string startupProjectPath,
+        string contextName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(migrationName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(projectPath);
+        ArgumentException.ThrowIfNullOrWhiteSpace(startupProjectPath);
+        ArgumentException.ThrowIfNullOrWhiteSpace(contextName);
+
+        return new EfCliCommand(
+            "dotnet",
+            [
+                "ef",
+                "migrations",
+                "add",
+                migrationName,
+                "--project",
+                projectPath,
+                "--startup-project",
+                startupProjectPath,
+                "--context",
+                contextName,
+            ]);
+    }
+
+    /// <summary>
+    /// migration bundle を作成する dotnet-ef コマンドを組み立てます。
+    /// </summary>
+    /// <param name="projectPath">DbContext を含むプロジェクトパス。</param>
+    /// <param name="startupProjectPath">起動プロジェクトパス。</param>
+    /// <param name="outputPath">bundle の出力パス。</param>
+    /// <param name="selfContained">自己完結形式で出力する場合は <see langword="true"/>。</param>
+    /// <returns>実行ファイル名と引数を分けたコマンド。</returns>
+    /// <exception cref="ArgumentException">いずれかの path が空白の場合。</exception>
+    public static EfCliCommand CreateMigrationBundleCommand(
+        string projectPath,
+        string startupProjectPath,
+        string outputPath,
+        bool selfContained = false)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(projectPath);
+        ArgumentException.ThrowIfNullOrWhiteSpace(startupProjectPath);
+        ArgumentException.ThrowIfNullOrWhiteSpace(outputPath);
+
+        List<string> arguments =
+        [
+            "ef",
+            "migrations",
+            "bundle",
+            "--project",
+            projectPath,
+            "--startup-project",
+            startupProjectPath,
+            "--output",
+            outputPath,
+        ];
+
+        if (selfContained)
+        {
+            arguments.Add("--self-contained");
+        }
+
+        return new EfCliCommand("dotnet", arguments);
     }
 }

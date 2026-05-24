@@ -144,6 +144,143 @@ public sealed class EfCoreSamplesTests
         Assert.True(deletedPost.IsDeleted);
     }
 
+    [Fact]
+    public async Task UpdatePostTitleWithConcurrencyAsync_ReturnsUpdated_WhenStampMatches()
+    {
+        await using var connection = new SqliteConnection("Data Source=:memory:");
+        await connection.OpenAsync();
+        DbContextOptions<SampleBlogDbContext> options = CreateSqliteOptions(connection);
+        await using var dbContext = await CreateSqliteDbContextAsync(options);
+        await SeedAsync(dbContext);
+        string stamp = await dbContext.Posts
+            .Where(post => post.Id == 1)
+            .Select(post => post.ConcurrencyStamp)
+            .SingleAsync();
+
+        PostTitleUpdateResult result = await EfCoreSamples.UpdatePostTitleWithConcurrencyAsync(
+            dbContext,
+            postId: 1,
+            title: " Updated title ",
+            expectedConcurrencyStamp: stamp,
+            newConcurrencyStamp: "new-stamp");
+
+        BlogPost post = await dbContext.Posts.SingleAsync(candidate => candidate.Id == 1);
+
+        Assert.Equal(PostTitleUpdateResult.Updated, result);
+        Assert.Equal("Updated title", post.Title);
+        Assert.Equal("new-stamp", post.ConcurrencyStamp);
+    }
+
+    [Fact]
+    public async Task UpdatePostTitleWithConcurrencyAsync_ReturnsConflict_WhenStampIsStale()
+    {
+        await using var connection = new SqliteConnection("Data Source=:memory:");
+        await connection.OpenAsync();
+        DbContextOptions<SampleBlogDbContext> options = CreateSqliteOptions(connection);
+        await using var seedContext = await CreateSqliteDbContextAsync(options);
+        await SeedAsync(seedContext);
+        string originalStamp = await seedContext.Posts
+            .Where(post => post.Id == 1)
+            .Select(post => post.ConcurrencyStamp)
+            .SingleAsync();
+
+        await using (var concurrentContext = new SampleBlogDbContext(options))
+        {
+            BlogPost post = await concurrentContext.Posts.SingleAsync(candidate => candidate.Id == 1);
+            post.Title = "Changed elsewhere";
+            post.ConcurrencyStamp = "other-stamp";
+            await concurrentContext.SaveChangesAsync();
+        }
+
+        await using var updateContext = new SampleBlogDbContext(options);
+        PostTitleUpdateResult result = await EfCoreSamples.UpdatePostTitleWithConcurrencyAsync(
+            updateContext,
+            postId: 1,
+            title: "My change",
+            expectedConcurrencyStamp: originalStamp,
+            newConcurrencyStamp: "my-stamp");
+
+        Assert.Equal(PostTitleUpdateResult.ConcurrencyConflict, result);
+    }
+
+    [Fact]
+    public async Task IsUniqueConstraintViolation_DetectsSqliteUniqueIndexFailure()
+    {
+        await using var connection = new SqliteConnection("Data Source=:memory:");
+        await connection.OpenAsync();
+        DbContextOptions<SampleBlogDbContext> options = CreateSqliteOptions(connection);
+        await using var dbContext = await CreateSqliteDbContextAsync(options);
+
+        dbContext.Blogs.Add(new Blog { Name = "Backend Notes" });
+        dbContext.Blogs.Add(new Blog { Name = "Backend Notes" });
+
+        DbUpdateException exception = await Assert.ThrowsAsync<DbUpdateException>(() => dbContext.SaveChangesAsync());
+
+        Assert.True(EfCoreSamples.IsUniqueConstraintViolation(exception));
+    }
+
+    [Fact]
+    public async Task ApplyAuditValues_SetsCreatedAndUpdatedTimestamps()
+    {
+        await using var dbContext = CreateDbContext();
+        var now = new DateTimeOffset(2026, 5, 24, 10, 0, 0, TimeSpan.Zero);
+        var blog = new Blog { Id = 10, Name = "Audit" };
+        blog.Posts.Add(new BlogPost
+        {
+            Id = 10,
+            Title = "Audit fields",
+            PublishedAt = now,
+        });
+        dbContext.Blogs.Add(blog);
+
+        EfCoreSamples.ApplyAuditValues(dbContext.ChangeTracker, now);
+        await dbContext.SaveChangesAsync();
+
+        BlogPost post = await dbContext.Posts.SingleAsync(candidate => candidate.Id == 10);
+        Assert.Equal(now, post.CreatedAt);
+        Assert.Equal(now, post.UpdatedAt);
+    }
+
+    [Fact]
+    public void CreateAddMigrationCommand_ReturnsDotnetEfArguments()
+    {
+        EfCliCommand command = EfCoreSamples.CreateAddMigrationCommand(
+            "AddAuditColumns",
+            "src/Data/Data.csproj",
+            "src/Web/Web.csproj",
+            "AppDbContext");
+
+        Assert.Equal("dotnet", command.FileName);
+        Assert.Equal(
+            [
+                "ef",
+                "migrations",
+                "add",
+                "AddAuditColumns",
+                "--project",
+                "src/Data/Data.csproj",
+                "--startup-project",
+                "src/Web/Web.csproj",
+                "--context",
+                "AppDbContext",
+            ],
+            command.Arguments);
+    }
+
+    [Fact]
+    public void CreateMigrationBundleCommand_ReturnsSelfContainedBundleArguments()
+    {
+        EfCliCommand command = EfCoreSamples.CreateMigrationBundleCommand(
+            "src/Data/Data.csproj",
+            "src/Web/Web.csproj",
+            "artifacts/efbundle",
+            selfContained: true);
+
+        Assert.Equal("dotnet", command.FileName);
+        Assert.Contains("--self-contained", command.Arguments);
+        Assert.Contains("artifacts/efbundle", command.Arguments);
+    }
+
     private static SampleBlogDbContext CreateDbContext()
     {
         var options = new DbContextOptionsBuilder<SampleBlogDbContext>()
@@ -152,6 +289,20 @@ public sealed class EfCoreSamplesTests
             .Options;
 
         return new SampleBlogDbContext(options);
+    }
+
+    private static DbContextOptions<SampleBlogDbContext> CreateSqliteOptions(SqliteConnection connection)
+    {
+        return new DbContextOptionsBuilder<SampleBlogDbContext>()
+            .UseSqlite(connection)
+            .Options;
+    }
+
+    private static async Task<SampleBlogDbContext> CreateSqliteDbContextAsync(DbContextOptions<SampleBlogDbContext> options)
+    {
+        var dbContext = new SampleBlogDbContext(options);
+        await dbContext.Database.EnsureCreatedAsync();
+        return dbContext;
     }
 
     private static async Task SeedAsync(SampleBlogDbContext dbContext)

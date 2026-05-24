@@ -89,6 +89,7 @@ docs/snippets/logging/basic-logging.md
 ## 追加済みカテゴリ
 
 - API
+- Authentication / Authorization
 - Async / Await
 - Background Services
 - Collections
@@ -107,6 +108,7 @@ docs/snippets/logging/basic-logging.md
 - Observability
 - Options
 - Security
+- Serialization
 - Strings
 - Type System
 - Unsafe Samples
@@ -161,8 +163,8 @@ dotnet test tests/DotnetBackendSnippets.Tests/DotnetBackendSnippets.Tests.csproj
 
 | 優先度 | カテゴリ | 追加したい内容の例 |
 | --- | --- | --- |
-| 高 | Authentication / Authorization | JWT、Cookie 認証、Policy-based Authorization、権限チェックのテスト |
-| 高 | Serialization | `System.Text.Json`、enum、日付、null、camelCase、互換性の注意点 |
+| 高 | Authentication / Authorization の拡充 | JWT 発行、認可 handler、scope / permission、認可失敗レスポンスの統合 |
+| 高 | Serialization の拡充 | polymorphism、versioning、互換性テスト、source generation |
 | 中 | Caching | `IMemoryCache`、分散キャッシュ、キー設計、有効期限、スタンピード対策 |
 | 中 | Regular Expressions | 入力抽出、検証、置換、タイムアウト、コンパイル済み Regex |
 | 中 | DTO Mapping | API DTO とドメイン / EF Core エンティティの境界、過剰公開の防止 |

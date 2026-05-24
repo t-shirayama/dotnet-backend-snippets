@@ -36,8 +36,8 @@
 - secret を設定ファイルに直書きしていないか見たい → `FindPotentialSecrets`
 - HTML 表示用に入力をエンコードしたい → `HtmlEncodeForDisplay`
 - SQL 識別子をホワイトリスト検証したい → `QuoteSqlIdentifier`
-- JWT bearer authentication を設定したい → 追加候補
-- policy based authorization を設定したい → 追加候補
-- role と claim を使い分けたい → 追加候補
-- current user id を取得したい → 追加候補
+- JWT bearer authentication を設定したい → [Authentication / Authorization の基本](../authentication/authentication-authorization-samples.md)
+- policy based authorization を設定したい → [Authentication / Authorization の基本](../authentication/authentication-authorization-samples.md)
+- role と claim を使い分けたい → [Authentication / Authorization の基本](../authentication/authentication-authorization-samples.md)
+- current user id を取得したい → [Authentication / Authorization の基本](../authentication/authentication-authorization-samples.md)
 - rate limiting を設定したい → 追加候補

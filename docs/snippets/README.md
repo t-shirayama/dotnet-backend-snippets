@@ -42,7 +42,9 @@
 ### Web API 開発セット
 
 - [ASP.NET Core API の基本](api/api-samples.md)
+- [Authentication / Authorization の基本](authentication/authentication-authorization-samples.md)
 - [Validation の基本](validation/basic-validation.md)
+- [Serialization の基本](serialization/serialization-samples.md)
 - [Options パターン](options/options-samples.md)
 - [HttpClientFactory の基本](http-client-factory/http-client-factory-samples.md)
 - [Observability の基本](observability/observability-samples.md)
@@ -56,6 +58,7 @@
 
 ### セキュリティ注意セット
 
+- [Authentication / Authorization の基本](authentication/authentication-authorization-samples.md)
 - [セキュリティ補助](security/security-samples.md)
 - [ファイルアップロード検証](file-handling/file-upload-samples.md)
 - [ASP.NET Core API の基本](api/api-samples.md)
@@ -70,6 +73,7 @@
 ## バックエンド開発
 
 - [ASP.NET Core API の基本](api/api-samples.md)
+- [Authentication / Authorization の基本](authentication/authentication-authorization-samples.md)
 - [BackgroundService の worker loop](background-services/background-worker-loop.md)
 - [Configuration の必須値読み取り](configuration/basic-configuration.md)
 - [Dependency Injection のサービス登録](dependency-injection/basic-dependency-injection.md)
@@ -77,6 +81,7 @@
 - [Logging の基本](logging/basic-logging.md)
 - [Observability の基本](observability/observability-samples.md)
 - [Options パターン](options/options-samples.md)
+- [Serialization の基本](serialization/serialization-samples.md)
 - [Validation の基本](validation/basic-validation.md)
 - [HttpClient のテスト可能な呼び出し](http-client/basic-http-client.md)
 - [HttpClientFactory の基本](http-client-factory/http-client-factory-samples.md)
@@ -122,6 +127,8 @@
 - EF Core の読み取りクエリを書きたい → [Entity Framework Core の基本](entity-framework-core/ef-core-samples.md)
 - ファイルアップロードを検証したい → [ファイルアップロード検証](file-handling/file-upload-samples.md)
 - API や処理のエラーを値として扱いたい → [Error Handling の基本](error-handling/basic-error-handling.md)
+- JWT Bearer や Cookie 認証を設定したい → [Authentication / Authorization の基本](authentication/authentication-authorization-samples.md)
+- JSON の enum、null、命名規則を揃えたい → [Serialization の基本](serialization/serialization-samples.md)
 - C# 言語機能の基本サンプルを見たい → [C# 言語機能サンプル](language-features/language-feature-samples.md)
 - C# 言語機能の実装状況を確認したい → [C# 言語機能の実装状況](language-features/csharp-language-feature-coverage.md)
 
