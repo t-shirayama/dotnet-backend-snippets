@@ -34,11 +34,7 @@ public static class PatternMatchingSamples
     {
         ArgumentNullException.ThrowIfNull(numbers);
 
-        return numbers switch
-        {
-            [] => "empty",
-            [var first, ..] => $"integer array starting with {first}",
-        };
+        return numbers switch { [] => "empty", [var first, ..] => $"integer array starting with {first}" };
     }
 
     /// <summary>
