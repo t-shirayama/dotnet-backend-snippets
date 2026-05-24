@@ -1,0 +1,17 @@
+#!/usr/bin/env sh
+set -eu
+
+echo "Running dotnet-backend-snippets pre-push checks..."
+
+if ! dotnet --list-runtimes | grep -q "Microsoft.NETCore.App 8\."; then
+  if [ -z "${DOTNET_ROLL_FORWARD:-}" ]; then
+    echo "No .NET 8 runtime was found. Using DOTNET_ROLL_FORWARD=Major for this local hook run."
+    export DOTNET_ROLL_FORWARD=Major
+  fi
+fi
+
+dotnet restore -p:NuGetAudit=false
+dotnet build --no-restore --configuration Release -p:NuGetAudit=false
+dotnet test --no-build --configuration Release
+dotnet format --verify-no-changes --no-restore
+python scripts/check_markdown_links.py
