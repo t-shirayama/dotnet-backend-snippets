@@ -27,6 +27,8 @@ public sealed partial class StringReverseLookupSamplesTests
         Assert.NotEmpty(StringReverseLookupSamples.ToShortGuid(Guid.Parse("00112233-4455-6677-8899-aabbccddeeff")));
         Assert.Equal("a-b.txt", StringReverseLookupSamples.ToSafeFileName("a:b.txt"));
         Assert.Equal("tenant/customer-file", StringReverseLookupSamples.BuildObjectKey("Tenant", "Customer File"));
+        Assert.Throws<ArgumentException>(() => StringReverseLookupSamples.BuildObjectKey("Tenant", "!!!"));
+        Assert.Throws<ArgumentException>(() => StringReverseLookupSamples.BuildObjectKey("Tenant", " "));
         Assert.Equal("tenant:customer:id", StringReverseLookupSamples.BuildCacheKey("Tenant", "Customer Id"));
         Assert.Equal(64, StringReverseLookupSamples.CreateStableHashKey("value").Length);
         Assert.True(StringReverseLookupSamples.IsBlank(" "));
@@ -52,4 +54,3 @@ public sealed partial class StringReverseLookupSamplesTests
         Assert.Equal("CUSTOMER_ID", StringReverseLookupSamples.ToEnvironmentVariableName("CustomerId"));
     }
 }
-

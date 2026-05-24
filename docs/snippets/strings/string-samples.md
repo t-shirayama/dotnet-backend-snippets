@@ -104,9 +104,9 @@
 - 後方一致を大小文字無視で判定したい: 実装済み `EndsWithIgnoreCase`
 - 文化依存しない安全な比較をしたい: 実装済み `EqualsOrdinalIgnoreCase`
 - 日本語検索向けにひらがな・カタカナ差を吸収したい: 実装済み `NormalizeKanaForSearch`
-- 複数キーワードをすべて含むか判定したい: 実装済み `ContainsAllKeywords`
+- 複数キーワードをすべて含むか判定したい: 実装済み `ContainsAllKeywords`。空のキーワード一覧は LINQ の `All` と同じく `true` です。
 - 複数キーワードのどれかを含むか判定したい: 実装済み `ContainsAnyKeyword`
-- 単語境界を考慮して検索したい: 実装済み `ContainsWholeWord`
+- 単語境界を考慮して検索したい: 実装済み `ContainsWholeWord`。英数字ベースの単語境界向けです。
 - ユーザー入力の検索語を正規表現として安全に扱いたい: 実装済み `EscapeRegexPattern`
 
 ### エンコード・エスケープ
@@ -144,7 +144,7 @@
 - URL 安全なランダムトークンを作りたい: 実装済み `CreateUrlSafeToken`
 - GUID を短い文字列表現にしたい: 実装済み `ToShortGuid`
 - ファイル保存用の安全な名前を作りたい: 実装済み `ToSafeFileName`
-- S3 や Blob Storage 用の object key を作りたい: 実装済み `BuildObjectKey`
+- S3 や Blob Storage 用の object key を作りたい: 実装済み `BuildObjectKey`。空や記号だけの segment は例外にします。
 - Redis key を一貫した形式で作りたい: 実装済み `BuildCacheKey`
 - メッセージ重複排除用の安定ハッシュキーを作りたい: 実装済み `CreateStableHashKey`
 

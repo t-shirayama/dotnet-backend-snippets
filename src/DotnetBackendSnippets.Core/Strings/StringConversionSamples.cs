@@ -1,10 +1,5 @@
-using System.Globalization;
-using System.Net;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Text.RegularExpressions;
 
 namespace DotnetBackendSnippets.Strings;
 
@@ -154,7 +149,22 @@ public static partial class StringReverseLookupSamples
     {
         ArgumentNullException.ThrowIfNull(segments);
 
-        return string.Join('/', segments.Select(segment => StringSamples.ToUnicodeSlug(segment)));
+        var normalizedSegments = new List<string>(segments.Length);
+
+        for (var index = 0; index < segments.Length; index++)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(segments[index], $"segments[{index}]");
+
+            var normalizedSegment = StringSamples.ToUnicodeSlug(segments[index]);
+            if (string.IsNullOrEmpty(normalizedSegment))
+            {
+                throw new ArgumentException("Object key segments must contain at least one letter or digit.", nameof(segments));
+            }
+
+            normalizedSegments.Add(normalizedSegment);
+        }
+
+        return string.Join('/', normalizedSegments);
     }
 
     /// <summary>

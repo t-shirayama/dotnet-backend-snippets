@@ -23,9 +23,9 @@ public sealed partial class StringReverseLookupSamplesTests
         Assert.True(StringReverseLookupSamples.EqualsOrdinalIgnoreCase("A", "a"));
         Assert.Equal("かな", StringReverseLookupSamples.NormalizeKanaForSearch("カナ"));
         Assert.True(StringReverseLookupSamples.ContainsAllKeywords("C# backend snippets", ["backend", "SNIPPETS"]));
+        Assert.True(StringReverseLookupSamples.ContainsAllKeywords("C# backend snippets", []));
         Assert.True(StringReverseLookupSamples.ContainsAnyKeyword("C# backend snippets", ["frontend", "backend"]));
         Assert.True(StringReverseLookupSamples.ContainsWholeWord("hello backend", "backend"));
         Assert.Equal(@"\.\*", StringReverseLookupSamples.EscapeRegexPattern(".*"));
     }
 }
-

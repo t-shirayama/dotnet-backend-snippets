@@ -1,9 +1,3 @@
-using System.Globalization;
-using System.Net;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.Encodings.Web;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace DotnetBackendSnippets.Strings;
@@ -55,7 +49,7 @@ public static partial class StringReverseLookupSamples
     }
 
     /// <summary>
-    /// すべてのキーワードを含むかを判定します。
+    /// すべてのキーワードを含むかを判定します。キーワードが空の場合は <see langword="true"/> を返します。
     /// </summary>
     public static bool ContainsAllKeywords(string value, IEnumerable<string> keywords)
     {
@@ -77,7 +71,7 @@ public static partial class StringReverseLookupSamples
     }
 
     /// <summary>
-    /// 単語単位で含まれているかを判定します。
+    /// 英数字ベースの単語境界で含まれているかを判定します。日本語など空白で区切られない言語の検索には向きません。
     /// </summary>
     public static bool ContainsWholeWord(string value, string word)
     {
