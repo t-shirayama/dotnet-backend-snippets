@@ -9,6 +9,7 @@
 - `src/DotnetBackendSnippets.Core/Numbers/NumberSamples.cs`
 - `src/DotnetBackendSnippets.Core/Numbers/NumberParsingValidationSamples.cs`
 - `src/DotnetBackendSnippets.Core/Numbers/NumberRoundingRatioTaxSamples.cs`
+- `src/DotnetBackendSnippets.Core/Numbers/NumberPrecisionSamples.cs`
 - `src/DotnetBackendSnippets.Core/Numbers/NumberPagingSamples.cs`
 - `src/DotnetBackendSnippets.Core/Numbers/NumberAggregationSamples.cs`
 - `src/DotnetBackendSnippets.Core/Numbers/NumberOverflowSamples.cs`
@@ -35,6 +36,8 @@
 
 - 金額には `decimal` を使っています。`double` よりも10進数の丸め誤差を避けやすいためです。
 - 丸めは `MidpointRounding.AwayFromZero` を使い、0.005 のような値を直感的に切り上げます。
+- 測定値や統計値など `double` を使う計算では、完全一致ではなく許容誤差で比較します。
+- `double` の合計で誤差が問題になる場合は、Neumaier の補償和のような方法を検討します。
 - 逆引き用の `NumberReverseLookupSamples` は partial class として分類別ファイルに分割しています。
 
 ## 実務逆引き
@@ -50,7 +53,7 @@
 - 金額計算に `decimal` を使うべきか判断したい → このページのメモ
 - 件数やページ番号に `int` を使うべきか決めたい → 実装済み: `RequirePositiveInt`
 - DB の `decimal(18,2)` と C# の `decimal` を合わせたい → 実装済み
-- `double` と `decimal` の丸め誤差の違いを説明したい → 実装済み
+- `double` と `decimal` の丸め誤差の違いを説明したい → 実装済み: `CompareDoubleAndDecimalAddition`
 - 文字列から `int` を安全に変換したい → 実装済み: `ParseIntOrDefault`
 - 文字列から `decimal` をカルチャ非依存で変換したい → 実装済み: `TryParseDecimalInvariant`
 - nullable な数値を既定値付きで扱いたい → 実装済み: `DefaultIfNull`
@@ -70,6 +73,16 @@
 - 100円単位で丸めたい → 実装済み: `RoundToUnit`
 - 税込後に丸めるか明細ごとに丸めるか整理したい → 実装済み
 - 丸め桁数を引数で受けたい → 実装済み: `Percentage`
+- 有効桁数で丸めたい → 実装済み: `RoundToSignificantDigits`
+
+### 浮動小数点誤差
+
+- `double` を `==` で比較せず許容誤差で比較したい → 実装済み: `AreNearlyEqual`
+- 値が 0 に近いかを判定したい → 実装済み: `IsNearlyZero`
+- 分母が 0 近傍の場合に既定値を返したい → 実装済み: `DivideOrDefault`
+- `0.1 + 0.2` が `0.3` と完全一致しない理由を説明したい → 実装済み: `CompareDoubleAndDecimalAddition`
+- `double` の合計で累積誤差を抑えたい → 実装済み: `SumWithCompensation`
+- 金額では `double` ではなく `decimal` を使う判断を示したい → このページのメモ、`RoundCurrency`, `CalculateTaxFromNet`
 
 ### 割合 / 比率
 
