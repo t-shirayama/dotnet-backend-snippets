@@ -654,8 +654,6 @@ public static class EfCoreSamples
 /// <summary>
 /// SaveChanges 時に監査カラムを設定する interceptor です。
 /// </summary>
-/// <param name="timeProvider">現在時刻の取得元。</param>
-/// <exception cref="ArgumentNullException"><paramref name="timeProvider"/> が <see langword="null"/> の場合。</exception>
 public sealed class AuditSaveChangesInterceptor : SaveChangesInterceptor
 {
     private readonly TimeProvider timeProvider;

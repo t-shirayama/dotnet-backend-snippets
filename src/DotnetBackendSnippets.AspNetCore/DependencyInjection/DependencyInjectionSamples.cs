@@ -20,8 +20,6 @@ public interface IGreetingService
 /// <summary>
 /// 固定の接頭辞であいさつ文を作成します。
 /// </summary>
-/// <param name="prefix">あいさつ文の接頭辞。</param>
-/// <exception cref="ArgumentException"><paramref name="prefix"/> が空白の場合。</exception>
 public sealed class GreetingService : IGreetingService
 {
     private readonly string prefix;

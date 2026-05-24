@@ -31,8 +31,6 @@ public sealed class NotificationOptions
 /// <summary>
 /// 現在の通知設定を読み取ります。
 /// </summary>
-/// <param name="optionsMonitor">設定変更を監視するオプションモニター。</param>
-/// <exception cref="ArgumentNullException"><paramref name="optionsMonitor"/> が <see langword="null"/> の場合。</exception>
 public sealed class NotificationOptionsReader
 {
     private readonly IOptionsMonitor<NotificationOptions> optionsMonitor;
