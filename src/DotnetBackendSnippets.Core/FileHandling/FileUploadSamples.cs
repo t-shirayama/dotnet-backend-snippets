@@ -11,8 +11,13 @@ public static class FileUploadSamples
     private static readonly byte[] PdfSignature = [0x25, 0x50, 0x44, 0x46, 0x2D];
 
     /// <summary>
-    /// アップロードされたファイルのメタデータが指定ルールを満たすか検証します。
+    /// アップロードされたファイルのメタデータだけが指定ルールを満たすか検証します。
     /// </summary>
+    /// <remarks>
+    /// 既存互換用の入口です。ファイル内容の検証は行わないため、内容確認が必要な場合は
+    /// <see cref="ValidateUploadWithSignature(UploadedFileMetadata, FileUploadRules, ReadOnlySpan{byte}, KnownFileType)"/>
+    /// のようなシグネチャ検証と組み合わせます。
+    /// </remarks>
     /// <param name="file">アップロードされたファイルのメタデータ。</param>
     /// <param name="rules">検証ルール。</param>
     /// <returns>検証結果とエラー一覧。</returns>

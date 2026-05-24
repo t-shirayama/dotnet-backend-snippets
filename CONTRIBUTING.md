@@ -42,7 +42,9 @@ dotnet restore
 dotnet build --no-restore --configuration Release
 dotnet test --no-build --configuration Release
 dotnet format --verify-no-changes --no-restore
+python scripts/test_check_markdown_links.py
 python scripts/check_markdown_links.py
+python scripts/check_snippet_inventory.py
 ```
 
 ローカルに .NET 8 runtime がない環境では、通常の `dotnet test --no-build --configuration Release` が実行できない場合があります。その場合も CI は `.github/workflows/dotnet-ci.yml` で .NET SDK 8.0.x をセットアップして確認します。
@@ -51,6 +53,7 @@ python scripts/check_markdown_links.py
 
 - 現在の基準は `net8.0` です。
 - EF Core 9 は `net8.0` と併用する方針として採用済みです。理由は [net8.0 と EF Core 9 の併用](docs/decisions/net8-ef-core-9.md) に残しています。
+- テスト系パッケージの一部は major version が新しいものを採用しています。理由は [テスト系パッケージの major version 採用](docs/decisions/test-tooling-major-versions.md) に残しています。
 - patch / minor の NuGet 更新は、Dependabot PR と CI 結果を確認して取り込みます。
 - xUnit v3、EF Core 10、.NET 9 / 10 などのメジャー更新は、移行 PR として扱います。
 - メジャー更新では、テスト実行方法、CI の SDK、サンプルの対象読者、docs の Target Framework 記載を同時に確認します。
@@ -59,7 +62,7 @@ python scripts/check_markdown_links.py
 
 - PR は `dotnet-ci`、`format`、`docs`、`codeql` が通っている状態でマージします。
 - GitHub の branch protection では、上記チェックを必須にする運用を推奨します。
-- Markdown リンクチェックは docs と実装ファイルの乖離を早めに見つけるための最低限の防波堤です。ファイル移動時は説明ドキュメントも同じ PR で更新してください。
+- Markdown リンクチェックと `scripts/check_snippet_inventory.py` は docs と実装・テストの乖離を早めに見つけるための最低限の防波堤です。ファイル移動時は説明ドキュメントも同じ PR で更新してください。
 
 ## テストプロジェクト分割方針
 
