@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 
 namespace DotnetBackendSnippets.Tests.Logging;
 
-public sealed record LogEntry(LogLevel Level, string Message);
+public sealed record LogEntry(LogLevel Level, EventId EventId, string Message, Exception? Exception);
 
 public sealed class ListLogger : ILogger
 {
@@ -25,7 +25,7 @@ public sealed class ListLogger : ILogger
         Exception? exception,
         Func<TState, Exception?, string> formatter)
     {
-        entries.Add(new LogEntry(logLevel, formatter(state, exception)));
+        entries.Add(new LogEntry(logLevel, eventId, formatter(state, exception), exception));
     }
 
     private sealed class NullScope : IDisposable

@@ -108,6 +108,38 @@ public sealed class CachingSamplesTests
         Assert.Equal(value, actual);
     }
 
+    // テスト意図: Stale Cache Entry / Returns Fresh Stale And Expired States を確認する。
+    [Fact]
+    public void StaleCacheEntry_ReturnsFreshStaleAndExpiredStates()
+    {
+        var now = new DateTimeOffset(2026, 5, 24, 12, 0, 0, TimeSpan.Zero);
+        var entry = CachingSamples.CreateStaleCacheEntry("cached", now.AddMinutes(5), now.AddMinutes(30));
+
+        Assert.Equal(StaleCacheState.Fresh, CachingSamples.GetStaleCacheState(entry, now));
+        Assert.Equal(StaleCacheState.Stale, CachingSamples.GetStaleCacheState(entry, now.AddMinutes(10)));
+        Assert.Equal(StaleCacheState.Expired, CachingSamples.GetStaleCacheState(entry, now.AddMinutes(31)));
+    }
+
+    // テスト意図: Build External API Cache Key / Normalizes API Resource Segments を確認する。
+    [Fact]
+    public void BuildExternalApiCacheKey_NormalizesApiResourceSegments()
+    {
+        string key = CachingSamples.BuildExternalApiCacheKey("Billing API", "Customer Profile", "User 1");
+
+        Assert.Equal("external-api:billing-api:customer-profile:user-1", key);
+    }
+
+    // テスト意図: Create Cache Metrics Snapshot / Calculates Hit Rate を確認する。
+    [Fact]
+    public void CreateCacheMetricsSnapshot_CalculatesHitRate()
+    {
+        CacheMetricsSnapshot metrics = CachingSamples.CreateCacheMetricsSnapshot(hits: 8, misses: 2);
+
+        Assert.Equal(8, metrics.Hits);
+        Assert.Equal(2, metrics.Misses);
+        Assert.Equal(0.8d, metrics.HitRate);
+    }
+
     private sealed record CachedUser(string Id, string Name);
 
     private sealed class InMemoryDistributedCache : IDistributedCache

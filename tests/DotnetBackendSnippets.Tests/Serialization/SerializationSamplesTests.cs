@@ -76,4 +76,51 @@ public sealed class SerializationSamplesTests
         Assert.Contains("\"customer_name\":\"Alice\"", json, StringComparison.Ordinal);
         Assert.Contains("\"internal_note\":\"note\"", json, StringComparison.Ordinal);
     }
+
+    // テスト意図: Payment Method Polymorphism / Round Trips Derived Type を確認する。
+    [Fact]
+    public void PaymentMethodPolymorphism_RoundTripsDerivedType()
+    {
+        string json = SerializationSamples.SerializePaymentMethod(new CardPaymentMethodDto("1234"));
+
+        PaymentMethodDto result = SerializationSamples.DeserializePaymentMethod(json);
+
+        Assert.Contains("\"type\":\"card\"", json, StringComparison.Ordinal);
+        var card = Assert.IsType<CardPaymentMethodDto>(result);
+        Assert.Equal("1234", card.Last4);
+    }
+
+    // テスト意図: Serialize Versioned Envelope / Includes API Version を確認する。
+    [Fact]
+    public void SerializeVersionedEnvelope_IncludesApiVersion()
+    {
+        var order = new OrderDto(
+            Guid.Parse("11111111-1111-1111-1111-111111111111"),
+            "Alice",
+            OrderStatus.Draft,
+            new DateTimeOffset(2026, 5, 24, 12, 0, 0, TimeSpan.Zero),
+            null);
+
+        string json = SerializationSamples.SerializeVersionedEnvelope(order, apiVersion: 2);
+
+        Assert.Contains("\"apiVersion\":2", json, StringComparison.Ordinal);
+        Assert.Contains("\"customerName\":\"Alice\"", json, StringComparison.Ordinal);
+    }
+
+    // テスト意図: Serialize Order With Source Generation / Uses Generated Context を確認する。
+    [Fact]
+    public void SerializeOrderWithSourceGeneration_UsesGeneratedContext()
+    {
+        var order = new OrderDto(
+            Guid.Parse("11111111-1111-1111-1111-111111111111"),
+            "Alice",
+            OrderStatus.Cancelled,
+            new DateTimeOffset(2026, 5, 24, 12, 0, 0, TimeSpan.Zero),
+            null);
+
+        string json = SerializationSamples.SerializeOrderWithSourceGeneration(order);
+
+        Assert.Contains("\"status\":\"Cancelled\"", json, StringComparison.Ordinal);
+        Assert.DoesNotContain("internalNote", json, StringComparison.Ordinal);
+    }
 }

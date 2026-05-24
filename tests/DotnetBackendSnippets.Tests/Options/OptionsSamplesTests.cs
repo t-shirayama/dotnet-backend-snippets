@@ -56,6 +56,51 @@ public sealed class OptionsSamplesTests
         Assert.Equal(1, current.RetryCount);
     }
 
+    // テスト意図: Notification Options Snapshot Reader / Returns Scoped Snapshot を確認する。
+    [Fact]
+    public void NotificationOptionsSnapshotReader_ReturnsScopedSnapshot()
+    {
+        var configuration = CreateConfiguration("scoped@example.test", "2");
+        var services = new ServiceCollection();
+
+        services.AddNotificationOptions(configuration);
+
+        using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+        var reader = scope.ServiceProvider.GetRequiredService<NotificationOptionsSnapshotReader>();
+
+        var current = reader.GetCurrent();
+
+        Assert.Equal("scoped@example.test", current.SenderEmail);
+        Assert.Equal(2, current.RetryCount);
+    }
+
+    // テスト意図: Add Named Notification Options / Registers Named Options を確認する。
+    [Fact]
+    public void AddNamedNotificationOptions_RegistersNamedOptions()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Notifications:Email:SenderEmail"] = "email@example.test",
+                ["Notifications:Email:RetryCount"] = "4",
+                ["Notifications:Sms:SenderEmail"] = "sms@example.test",
+                ["Notifications:Sms:RetryCount"] = "1",
+            })
+            .Build();
+        var services = new ServiceCollection();
+
+        services
+            .AddNamedNotificationOptions(configuration, "email", "Notifications:Email")
+            .AddNamedNotificationOptions(configuration, "sms", "Notifications:Sms");
+
+        using var provider = services.BuildServiceProvider();
+        var reader = provider.GetRequiredService<NotificationOptionsReader>();
+
+        Assert.Equal("email@example.test", reader.GetNamed("email").SenderEmail);
+        Assert.Equal(1, reader.GetNamed("sms").RetryCount);
+    }
+
     // テスト意図: Add Notification Options / Throws Argument Null Exception / When Services Is Null を確認する。
     [Fact]
     public void AddNotificationOptions_ThrowsArgumentNullException_WhenServicesIsNull()

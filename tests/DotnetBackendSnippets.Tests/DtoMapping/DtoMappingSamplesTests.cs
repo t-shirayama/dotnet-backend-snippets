@@ -84,4 +84,43 @@ public sealed class DtoMappingSamplesTests
         Assert.Null(profile.PhoneNumber);
         Assert.False(profile.IsAdmin);
     }
+
+    // テスト意図: Apply Optional Profile Patch / Distinguishes Unspecified And Null を確認する。
+    [Fact]
+    public void ApplyOptionalProfilePatch_DistinguishesUnspecifiedAndNull()
+    {
+        var profile = new CustomerProfileEntity
+        {
+            DisplayName = "Alice",
+            PhoneNumber = "090-0000-0000",
+        };
+        var request = new OptionalCustomerProfilePatchDto(
+            OptionalPatchValue<string>.Unspecified(),
+            OptionalPatchValue<string?>.Specified(null));
+
+        DtoMappingSamples.ApplyOptionalProfilePatch(profile, request);
+
+        Assert.Equal("Alice", profile.DisplayName);
+        Assert.Null(profile.PhoneNumber);
+    }
+
+    // テスト意図: To V2 Response / Adds Versioned Shape And Links を確認する。
+    [Fact]
+    public void ToV2Response_AddsVersionedShapeAndLinks()
+    {
+        var order = new OrderEntity
+        {
+            Id = 100,
+            CustomerId = "customer-1",
+            Status = "submitted",
+        };
+        order.Lines.Add(new OrderLineEntity { Sku = "SKU-1", Quantity = 2 });
+        order.Lines.Add(new OrderLineEntity { Sku = "SKU-2", Quantity = 1 });
+
+        OrderResponseV2Dto response = DtoMappingSamples.ToV2Response(order, "/api/orders/");
+
+        Assert.Equal(2, response.LineCount);
+        Assert.Equal("/api/orders/100", response.Links["self"]);
+        Assert.Equal("/customers/customer-1", response.Links["customer"]);
+    }
 }

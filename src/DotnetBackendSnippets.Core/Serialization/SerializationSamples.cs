@@ -40,6 +40,34 @@ public sealed record OrderDto(
     string? InternalNote);
 
 /// <summary>
+/// API envelope のバージョンとデータを表します。
+/// </summary>
+/// <typeparam name="T">包むデータの型。</typeparam>
+/// <param name="ApiVersion">API 契約バージョン。</param>
+/// <param name="Data">レスポンスデータ。</param>
+public sealed record VersionedEnvelope<T>(int ApiVersion, T Data);
+
+/// <summary>
+/// 支払い方法 DTO の基底型です。
+/// </summary>
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
+[JsonDerivedType(typeof(CardPaymentMethodDto), "card")]
+[JsonDerivedType(typeof(BankTransferPaymentMethodDto), "bankTransfer")]
+public abstract record PaymentMethodDto;
+
+/// <summary>
+/// カード支払い DTO を表します。
+/// </summary>
+/// <param name="Last4">カード番号の下 4 桁。</param>
+public sealed record CardPaymentMethodDto(string Last4) : PaymentMethodDto;
+
+/// <summary>
+/// 銀行振込 DTO を表します。
+/// </summary>
+/// <param name="BankCode">銀行コード。</param>
+public sealed record BankTransferPaymentMethodDto(string BankCode) : PaymentMethodDto;
+
+/// <summary>
 /// 未知の JSON フィールドを保持できるリクエストを表します。
 /// </summary>
 public sealed class FlexibleOrderRequest
@@ -132,4 +160,73 @@ public static class SerializationSamples
         options.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
         return options;
     }
+
+    /// <summary>
+    /// polymorphism を使って支払い方法 DTO を JSON に変換します。
+    /// </summary>
+    /// <param name="paymentMethod">変換する支払い方法 DTO。</param>
+    /// <returns>type discriminator を含む JSON。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="paymentMethod"/> が <see langword="null"/> の場合。</exception>
+    public static string SerializePaymentMethod(PaymentMethodDto paymentMethod)
+    {
+        ArgumentNullException.ThrowIfNull(paymentMethod);
+
+        return JsonSerializer.Serialize(paymentMethod, CreateWebApiJsonOptions());
+    }
+
+    /// <summary>
+    /// polymorphism を使って支払い方法 DTO を JSON から読み取ります。
+    /// </summary>
+    /// <param name="json">読み取る JSON。</param>
+    /// <returns>復元した支払い方法 DTO。</returns>
+    /// <exception cref="ArgumentException"><paramref name="json"/> が空白の場合。</exception>
+    /// <exception cref="JsonException">JSON が支払い方法 DTO として不正な場合。</exception>
+    public static PaymentMethodDto DeserializePaymentMethod(string json)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(json);
+
+        return JsonSerializer.Deserialize<PaymentMethodDto>(json, CreateWebApiJsonOptions())
+            ?? throw new JsonException("JSON did not contain a payment method.");
+    }
+
+    /// <summary>
+    /// バージョン付き envelope として値を JSON に変換します。
+    /// </summary>
+    /// <typeparam name="T">包むデータの型。</typeparam>
+    /// <param name="data">レスポンスデータ。</param>
+    /// <param name="apiVersion">API 契約バージョン。</param>
+    /// <returns>バージョン付き envelope JSON。</returns>
+    public static string SerializeVersionedEnvelope<T>(T data, int apiVersion = 1)
+    {
+        if (apiVersion < 1)
+        {
+            throw new ArgumentOutOfRangeException(nameof(apiVersion), "API version must be one or greater.");
+        }
+
+        return JsonSerializer.Serialize(new VersionedEnvelope<T>(apiVersion, data), CreateWebApiJsonOptions());
+    }
+
+    /// <summary>
+    /// source generation context を使って注文 DTO を JSON に変換します。
+    /// </summary>
+    /// <param name="order">変換する注文 DTO。</param>
+    /// <returns>source generation context で生成した JSON。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="order"/> が <see langword="null"/> の場合。</exception>
+    public static string SerializeOrderWithSourceGeneration(OrderDto order)
+    {
+        ArgumentNullException.ThrowIfNull(order);
+
+        return JsonSerializer.Serialize(order, SnippetJsonSerializerContext.Default.OrderDto);
+    }
 }
+
+/// <summary>
+/// System.Text.Json source generation 用の context です。
+/// </summary>
+[JsonSerializable(typeof(OrderDto))]
+[JsonSerializable(typeof(VersionedEnvelope<OrderDto>))]
+[JsonSourceGenerationOptions(
+    PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
+    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+    UseStringEnumConverter = true)]
+public sealed partial class SnippetJsonSerializerContext : JsonSerializerContext;

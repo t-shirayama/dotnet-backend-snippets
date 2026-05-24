@@ -147,6 +147,87 @@ public static class CachingSamples
         return bytes is null ? default : JsonSerializer.Deserialize<T>(bytes, jsonOptions);
     }
 
+    /// <summary>
+    /// stale cache として使う値を作成します。
+    /// </summary>
+    /// <typeparam name="T">キャッシュする値の型。</typeparam>
+    /// <param name="value">キャッシュ値。</param>
+    /// <param name="freshUntil">通常利用できる期限。</param>
+    /// <param name="staleUntil">再取得失敗時に stale として利用できる期限。</param>
+    /// <returns>stale cache 用エントリ。</returns>
+    /// <exception cref="ArgumentException"><paramref name="staleUntil"/> が <paramref name="freshUntil"/> より前の場合。</exception>
+    public static StaleCacheEntry<T> CreateStaleCacheEntry<T>(
+        T value,
+        DateTimeOffset freshUntil,
+        DateTimeOffset staleUntil)
+    {
+        if (staleUntil < freshUntil)
+        {
+            throw new ArgumentException("Stale expiration must be greater than or equal to fresh expiration.", nameof(staleUntil));
+        }
+
+        return new StaleCacheEntry<T>(value, freshUntil, staleUntil);
+    }
+
+    /// <summary>
+    /// stale cache entry の状態を判定します。
+    /// </summary>
+    /// <typeparam name="T">キャッシュする値の型。</typeparam>
+    /// <param name="entry">判定する stale cache entry。</param>
+    /// <param name="now">現在時刻。</param>
+    /// <returns>fresh、stale、expired のいずれか。</returns>
+    public static StaleCacheState GetStaleCacheState<T>(StaleCacheEntry<T> entry, DateTimeOffset now)
+    {
+        if (now <= entry.FreshUntil)
+        {
+            return StaleCacheState.Fresh;
+        }
+
+        return now <= entry.StaleUntil ? StaleCacheState.Stale : StaleCacheState.Expired;
+    }
+
+    /// <summary>
+    /// 外部 API レスポンス向けの cache key を作成します。
+    /// </summary>
+    /// <param name="apiName">外部 API 名。</param>
+    /// <param name="resourceName">取得する resource 名。</param>
+    /// <param name="resourceId">resource ID。</param>
+    /// <returns>外部 API レスポンス向け cache key。</returns>
+    /// <exception cref="ArgumentException">引数が空白の場合。</exception>
+    public static string BuildExternalApiCacheKey(string apiName, string resourceName, string resourceId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(apiName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(resourceName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(resourceId);
+
+        return BuildCacheKey("external-api", apiName, resourceName, resourceId);
+    }
+
+    /// <summary>
+    /// cache hit / miss の比率を計算します。
+    /// </summary>
+    /// <param name="hits">cache hit 回数。</param>
+    /// <param name="misses">cache miss 回数。</param>
+    /// <returns>cache metrics の snapshot。</returns>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="hits"/> または <paramref name="misses"/> が負数の場合。</exception>
+    public static CacheMetricsSnapshot CreateCacheMetricsSnapshot(long hits, long misses)
+    {
+        if (hits < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(hits), "Hits must be zero or greater.");
+        }
+
+        if (misses < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(misses), "Misses must be zero or greater.");
+        }
+
+        long total = checked(hits + misses);
+        double hitRate = total == 0 ? 0d : (double)hits / total;
+
+        return new CacheMetricsSnapshot(hits, misses, hitRate);
+    }
+
     private static string NormalizeSegment(string value)
     {
         string normalized = value.Trim().ToLowerInvariant();
@@ -177,6 +258,44 @@ public static class CachingSamples
             : result;
     }
 }
+
+/// <summary>
+/// stale cache の状態を表します。
+/// </summary>
+public enum StaleCacheState
+{
+    /// <summary>
+    /// 通常のキャッシュ値として利用できます。
+    /// </summary>
+    Fresh,
+
+    /// <summary>
+    /// 再取得失敗時などに限定して利用する古い値です。
+    /// </summary>
+    Stale,
+
+    /// <summary>
+    /// 期限切れで利用しません。
+    /// </summary>
+    Expired,
+}
+
+/// <summary>
+/// stale cache 用の値と期限を表します。
+/// </summary>
+/// <typeparam name="T">キャッシュする値の型。</typeparam>
+/// <param name="Value">キャッシュ値。</param>
+/// <param name="FreshUntil">通常利用できる期限。</param>
+/// <param name="StaleUntil">stale として利用できる期限。</param>
+public sealed record StaleCacheEntry<T>(T Value, DateTimeOffset FreshUntil, DateTimeOffset StaleUntil);
+
+/// <summary>
+/// cache metrics の snapshot を表します。
+/// </summary>
+/// <param name="Hits">cache hit 回数。</param>
+/// <param name="Misses">cache miss 回数。</param>
+/// <param name="HitRate">cache hit 率。</param>
+public sealed record CacheMetricsSnapshot(long Hits, long Misses, double HitRate);
 
 /// <summary>
 /// cache stampede を避けるため、同じキーの factory 実行を同時に 1 つへ絞ります。

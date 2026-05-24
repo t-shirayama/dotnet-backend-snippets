@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using DotnetBackendSnippets.Authentication;
@@ -35,6 +36,28 @@ public sealed class AuthenticationAuthorizationSamplesTests
         Assert.Equal("backend-api", jwtOptions.TokenValidationParameters.ValidAudience);
         Assert.Same(key, jwtOptions.TokenValidationParameters.IssuerSigningKey);
         Assert.Equal(TimeSpan.FromMinutes(2), jwtOptions.TokenValidationParameters.ClockSkew);
+    }
+
+    // テスト意図: Create JWT Token / Writes Signed Token With Claims を確認する。
+    [Fact]
+    public void CreateJwtToken_WritesSignedTokenWithClaims()
+    {
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("0123456789abcdef0123456789abcdef"));
+        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        string token = AuthenticationAuthorizationSamples.CreateJwtToken(
+            "user-1",
+            "https://issuer.example",
+            "backend-api",
+            credentials,
+            DateTimeOffset.UtcNow.AddMinutes(30),
+            [new Claim("permission", "orders.read")]);
+
+        var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
+
+        Assert.Equal("https://issuer.example", jwt.Issuer);
+        Assert.Contains(jwt.Audiences, audience => audience == "backend-api");
+        Assert.Contains(jwt.Claims, claim => claim.Type == "permission" && claim.Value == "orders.read");
     }
 
     // テスト意図: Add Cookie Authentication / Configures Cookie Paths を確認する。
@@ -104,6 +127,33 @@ public sealed class AuthenticationAuthorizationSamplesTests
 
         Assert.True(AuthenticationAuthorizationSamples.CanAccessTenant(principal, "tenant-1"));
         Assert.False(AuthenticationAuthorizationSamples.CanAccessTenant(principal, "tenant-2"));
+    }
+
+    // テスト意図: Scope And Permission Helpers / Match Claims を確認する。
+    [Fact]
+    public void ScopeAndPermissionHelpers_MatchClaims()
+    {
+        ClaimsPrincipal principal = CreatePrincipal(
+            new Claim("scope", "orders.read orders.write"),
+            new Claim("permission", "orders.approve"));
+
+        Assert.True(AuthenticationAuthorizationSamples.HasScope(principal, "orders.write"));
+        Assert.True(AuthenticationAuthorizationSamples.HasPermission(principal, "orders.approve"));
+        Assert.False(AuthenticationAuthorizationSamples.HasPermission(principal, "orders.delete"));
+    }
+
+    // テスト意図: Permission Authorization Handler / Succeeds / When Permission Claim Matches を確認する。
+    [Fact]
+    public async Task PermissionAuthorizationHandler_Succeeds_WhenPermissionClaimMatches()
+    {
+        var handler = new PermissionAuthorizationHandler();
+        var requirement = new PermissionRequirement("orders.approve");
+        var principal = CreatePrincipal(new Claim("permission", "orders.approve"));
+        var context = new AuthorizationHandlerContext([requirement], principal, resource: null);
+
+        await handler.HandleAsync(context);
+
+        Assert.True(context.HasSucceeded);
     }
 
     // テスト意図: Create Forbidden Problem / Returns Problem Details With Code を確認する。

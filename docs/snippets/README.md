@@ -77,6 +77,7 @@
 ### EF Core 実務セット
 
 - [Entity Framework Core の基本](entity-framework-core/ef-core-samples.md)
+- [Repository Pattern の基本](repository-pattern/repository-pattern-samples.md)
 - [LINQ 操作](linq/linq-samples.md)
 - [数値計算](numbers/number-samples.md)
 - [日付操作](date-and-time/date-and-time-samples.md)
@@ -91,6 +92,7 @@
 - [Deployment / Docker の基本](deployment/deployment-samples.md)
 - [Dependency Injection のサービス登録](dependency-injection/basic-dependency-injection.md)
 - [Entity Framework Core の基本](entity-framework-core/ef-core-samples.md)
+- [Repository Pattern の基本](repository-pattern/repository-pattern-samples.md)
 - [Logging の基本](logging/basic-logging.md)
 - [Observability の基本](observability/observability-samples.md)
 - [OpenAPI / API 仕様の基本](openapi/openapi-samples.md)
@@ -144,6 +146,7 @@
 - correlation id をログに入れたい → [Observability の基本](observability/observability-samples.md)
 - 日付だけを扱いたい → [日付操作](date-and-time/date-and-time-samples.md)
 - EF Core の読み取りクエリを書きたい → [Entity Framework Core の基本](entity-framework-core/ef-core-samples.md)
+- EF Core と Repository Pattern を組み合わせたい → [Repository Pattern の基本](repository-pattern/repository-pattern-samples.md)
 - ファイルアップロードを検証したい → [ファイルアップロード検証](file-handling/file-upload-samples.md)
 - API や処理のエラーを値として扱いたい → [Error Handling の基本](error-handling/basic-error-handling.md)
 - JWT Bearer や Cookie 認証を設定したい → [Authentication / Authorization の基本](authentication/authentication-authorization-samples.md)

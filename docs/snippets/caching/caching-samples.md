@@ -2,7 +2,7 @@
 
 ## 目的
 
-`IMemoryCache`、分散キャッシュ、キャッシュキー設計、有効期限、null cache、stampede 対策を小さく確認するためのスニペットです。
+`IMemoryCache`、分散キャッシュ、キャッシュキー設計、有効期限、null cache、stampede 対策、stale cache、外部 API キャッシュ、メトリクスを小さく確認するためのスニペットです。
 
 ## 実装
 
@@ -19,6 +19,9 @@
 - `GetOrCreateNullableAsync` は `null` の結果もキャッシュし、存在しないデータへの繰り返し問い合わせを減らします。
 - `MemoryCacheStampedeGuard.GetOrCreateOnceAsync` は同じキーの同時 factory 実行を 1 回に絞ります。
 - `SetJsonAsync` / `GetJsonAsync` は `IDistributedCache` に JSON として値を保存・取得します。
+- `CreateStaleCacheEntry` / `GetStaleCacheState` は stale cache の期限管理を扱います。
+- `BuildExternalApiCacheKey` は外部 API レスポンス向けのキーを作ります。
+- `CreateCacheMetricsSnapshot` は cache hit / miss から hit rate を計算します。
 
 ## メモ
 
@@ -34,3 +37,6 @@
 - null をキャッシュしたい → `GetOrCreateNullableAsync`
 - stampede を抑えたい → `MemoryCacheStampedeGuard`
 - distributed cache に JSON を保存したい → `SetJsonAsync` / `GetJsonAsync`
+- stale cache を扱いたい → `CreateStaleCacheEntry`, `GetStaleCacheState`
+- 外部 API のレスポンスをキャッシュしたい → `BuildExternalApiCacheKey`
+- cache hit rate を計算したい → `CreateCacheMetricsSnapshot`
