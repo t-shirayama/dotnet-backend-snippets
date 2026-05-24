@@ -5,8 +5,10 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace DotnetBackendSnippets.Tests.Caching;
 
+// テスト対象: Caching Samples のスニペット動作を確認する。
 public sealed class CachingSamplesTests
 {
+    // テスト意図: Build Cache Key / Normalizes Segments を確認する。
     [Fact]
     public void BuildCacheKey_NormalizesSegments()
     {
@@ -15,6 +17,22 @@ public sealed class CachingSamplesTests
         Assert.Equal("product-search:tenant-a:page-1", key);
     }
 
+    // テスト意図: Memory Cache Stampede Guard / Rejects Blank Key Before Lock Lookup を確認する。
+    [Fact]
+    public async Task MemoryCacheStampedeGuard_RejectsBlankKeyBeforeLockLookup()
+    {
+        using var cache = new MemoryCache(new MemoryCacheOptions());
+        var guard = new MemoryCacheStampedeGuard();
+
+        await Assert.ThrowsAsync<ArgumentException>(
+            () => guard.GetOrCreateOnceAsync(
+                cache,
+                " ",
+                _ => Task.FromResult<string?>("created"),
+                new MemoryCacheEntryOptions()));
+    }
+
+    // テスト意図: Get Or Create Nullable Async / Caches Null Value を確認する。
     [Fact]
     public async Task GetOrCreateNullableAsync_CachesNullValue()
     {
@@ -45,6 +63,7 @@ public sealed class CachingSamplesTests
         Assert.Equal(1, calls);
     }
 
+    // テスト意図: Memory Cache Stampede Guard / Runs Factory Once / For Concurrent Misses を確認する。
     [Fact]
     public async Task MemoryCacheStampedeGuard_RunsFactoryOnce_ForConcurrentMisses()
     {
@@ -71,6 +90,7 @@ public sealed class CachingSamplesTests
         Assert.Equal(1, calls);
     }
 
+    // テスト意図: Distributed Cache JSON Helpers / Round Trip JSON を確認する。
     [Fact]
     public async Task DistributedCacheJsonHelpers_RoundTripJson()
     {

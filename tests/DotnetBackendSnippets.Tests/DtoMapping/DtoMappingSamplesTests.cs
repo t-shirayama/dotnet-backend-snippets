@@ -2,8 +2,10 @@ using DotnetBackendSnippets.DtoMapping;
 
 namespace DotnetBackendSnippets.Tests.DtoMapping;
 
+// テスト対象: DTO Mapping Samples のスニペット動作を確認する。
 public sealed class DtoMappingSamplesTests
 {
+    // テスト意図: To Command / Maps Request DTO And Ignores Over Posted Values を確認する。
     [Fact]
     public void ToCommand_MapsRequestDtoAndIgnoresOverPostedValues()
     {
@@ -19,6 +21,18 @@ public sealed class DtoMappingSamplesTests
         Assert.Equal(new CreateOrderLineCommand("SKU-1", 2), Assert.Single(command.Lines));
     }
 
+    // テスト意図: To Command / Throws / When Nested Line DTO Is Null を確認する。
+    [Fact]
+    public void ToCommand_Throws_WhenNestedLineDtoIsNull()
+    {
+        var request = new CreateOrderRequestDto("customer-1", [null!], IsAdmin: false);
+
+        var exception = Assert.Throws<ArgumentNullException>(() => DtoMappingSamples.ToCommand(request, "user-1"));
+
+        Assert.Equal("line", exception.ParamName);
+    }
+
+    // テスト意図: To Response / Maps Nested Entity To Response DTO を確認する。
     [Fact]
     public void ToResponse_MapsNestedEntityToResponseDto()
     {
@@ -37,6 +51,19 @@ public sealed class DtoMappingSamplesTests
         Assert.Equal(new OrderLineResponseDto("SKU-1", 2), Assert.Single(response.Lines));
     }
 
+    // テスト意図: To Response / Throws / When Nested Line Entity Is Null を確認する。
+    [Fact]
+    public void ToResponse_Throws_WhenNestedLineEntityIsNull()
+    {
+        var order = new OrderEntity();
+        order.Lines.Add(null!);
+
+        var exception = Assert.Throws<ArgumentNullException>(() => DtoMappingSamples.ToResponse(order));
+
+        Assert.Equal("line", exception.ParamName);
+    }
+
+    // テスト意図: Apply Profile Patch / Updates Only Allowed Non Null Fields を確認する。
     [Fact]
     public void ApplyProfilePatch_UpdatesOnlyAllowedNonNullFields()
     {

@@ -3,8 +3,10 @@ using DotnetBackendSnippets.Strings;
 
 namespace DotnetBackendSnippets.Tests.Strings;
 
+// テスト対象: String Reverse Lookup Samples のスニペット動作を確認する。
 public sealed partial class StringReverseLookupSamplesTests
 {
+    // テスト意図: Slug And URL Helpers / Create Safe Values を確認する。
     [Fact]
     public void SlugAndUrlHelpers_CreateSafeValues()
     {
@@ -18,6 +20,7 @@ public sealed partial class StringReverseLookupSamplesTests
         Assert.Equal("monthly-report-2", StringReverseLookupSamples.AppendSlugSuffix("monthly-report", 2));
     }
 
+    // テスト意図: Random Token Helpers / Create Stable Length Values を確認する。
     [Fact]
     public void RandomTokenHelpers_CreateStableLengthValues()
     {
@@ -27,6 +30,7 @@ public sealed partial class StringReverseLookupSamplesTests
         Assert.NotEmpty(StringReverseLookupSamples.ToShortGuid(Guid.Parse("00112233-4455-6677-8899-aabbccddeeff")));
     }
 
+    // テスト意図: Object Key Helpers / Reject Invalid Segments を確認する。
     [Fact]
     public void ObjectKeyHelpers_RejectInvalidSegments()
     {
@@ -38,6 +42,7 @@ public sealed partial class StringReverseLookupSamplesTests
         Assert.Throws<ArgumentException>(() => StringReverseLookupSamples.BuildCacheKey("Tenant", " "));
     }
 
+    // テスト意図: Validation Helpers / Check Common String Shapes を確認する。
     [Fact]
     public void ValidationHelpers_CheckCommonStringShapes()
     {
@@ -56,6 +61,7 @@ public sealed partial class StringReverseLookupSamplesTests
         StringReverseLookupSamples.ValidateMaxLength("abc", 3);
     }
 
+    // テスト意図: Case Conversion Helpers / Convert Names を確認する。
     [Fact]
     public void CaseConversionHelpers_ConvertNames()
     {
@@ -65,6 +71,7 @@ public sealed partial class StringReverseLookupSamplesTests
         Assert.Equal("CUSTOMER_ID", StringReverseLookupSamples.ToEnvironmentVariableName("CustomerId"));
     }
 
+    // テスト意図: Template Helpers / Render And Extract Placeholders を確認する。
     [Fact]
     public void TemplateHelpers_RenderAndExtractPlaceholders()
     {
@@ -73,6 +80,7 @@ public sealed partial class StringReverseLookupSamplesTests
         Assert.Equal("items", StringReverseLookupSamples.PluralizeSimple("item", 2));
     }
 
+    // テスト意図: Byte Helpers / Format And Truncate を確認する。
     [Fact]
     public void ByteHelpers_FormatAndTruncate()
     {

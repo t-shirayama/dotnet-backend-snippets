@@ -178,9 +178,15 @@ public sealed class QueuedBackgroundJobHostedService(QueuedBackgroundJobProcesso
     /// <inheritdoc />
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        while (!stoppingToken.IsCancellationRequested)
+        try
         {
-            await processor.ProcessNextAsync(stoppingToken);
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                await processor.ProcessNextAsync(stoppingToken);
+            }
+        }
+        catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+        {
         }
     }
 }

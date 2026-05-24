@@ -2,8 +2,10 @@ using DotnetBackendSnippets.Linq;
 
 namespace DotnetBackendSnippets.Tests.Linq;
 
+// テスト補助: LINQ Reverse Lookup Samples の共有データを定義する。
 public sealed partial class LinqReverseLookupSamplesTests
 {
+    // テスト意図: Count By Key / Groups Using Comparer を確認する。
     [Fact]
     public void CountByKey_GroupsUsingComparer()
     {
@@ -16,6 +18,7 @@ public sealed partial class LinqReverseLookupSamplesTests
         Assert.Equal(2, result["Tools"]);
     }
 
+    // テスト意図: Latest Per Key / Returns Newest Item Per Group を確認する。
     [Fact]
     public void LatestPerKey_ReturnsNewestItemPerGroup()
     {
@@ -34,6 +37,7 @@ public sealed partial class LinqReverseLookupSamplesTests
         Assert.Equal([2, 3], result.Select(ticket => ticket.Id));
     }
 
+    // テスト意図: Find Duplicate Keys / Returns Keys Appearing More Than Once を確認する。
     [Fact]
     public void FindDuplicateKeys_ReturnsKeysAppearingMoreThanOnce()
     {

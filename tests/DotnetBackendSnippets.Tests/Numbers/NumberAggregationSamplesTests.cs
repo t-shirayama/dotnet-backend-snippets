@@ -2,8 +2,10 @@ using DotnetBackendSnippets.Numbers;
 
 namespace DotnetBackendSnippets.Tests.Numbers;
 
+// テスト補助: Number Reverse Lookup Samples の共有型を定義する。
 public sealed partial class NumberReverseLookupSamplesTests
 {
+    // テスト意図: Sum Amounts / Uses Checked Decimal Addition を確認する。
     [Fact]
     public void SumAmounts_UsesCheckedDecimalAddition()
     {
@@ -12,6 +14,7 @@ public sealed partial class NumberReverseLookupSamplesTests
         Assert.Equal(300m, result);
     }
 
+    // テスト意図: Average Or Default / Returns Default / When Collection Is Empty を確認する。
     [Fact]
     public void AverageOrDefault_ReturnsDefault_WhenCollectionIsEmpty()
     {
@@ -20,6 +23,7 @@ public sealed partial class NumberReverseLookupSamplesTests
         Assert.Equal(-1m, result);
     }
 
+    // テスト意図: Min Max Or Null / Returns Minimum And Maximum を確認する。
     [Fact]
     public void MinMaxOrNull_ReturnsMinimumAndMaximum()
     {
@@ -28,6 +32,7 @@ public sealed partial class NumberReverseLookupSamplesTests
         Assert.Equal(new NumberReverseLookupSamples.DecimalRange(1m, 3m), result);
     }
 
+    // テスト意図: Sum By Category / Groups Amounts Case Insensitively を確認する。
     [Fact]
     public void SumByCategory_GroupsAmountsCaseInsensitively()
     {
@@ -44,6 +49,7 @@ public sealed partial class NumberReverseLookupSamplesTests
         Assert.Equal(50m, result["Food"]);
     }
 
+    // テスト意図: Weighted Average / Returns Weighted Value を確認する。
     [Fact]
     public void WeightedAverage_ReturnsWeightedValue()
     {
@@ -54,6 +60,7 @@ public sealed partial class NumberReverseLookupSamplesTests
         Assert.Equal(95m, result);
     }
 
+    // テスト意図: Median / Returns Middle Value を確認する。
     [Fact]
     public void Median_ReturnsMiddleValue()
     {
@@ -62,6 +69,7 @@ public sealed partial class NumberReverseLookupSamplesTests
         Assert.Equal(20m, result);
     }
 
+    // テスト意図: Percentile / Interpolates Between Sorted Values を確認する。
     [Fact]
     public void Percentile_InterpolatesBetweenSortedValues()
     {
@@ -70,6 +78,7 @@ public sealed partial class NumberReverseLookupSamplesTests
         Assert.Equal(32.5m, result);
     }
 
+    // テスト意図: Average Without Outliers / Excludes Values Outside Range を確認する。
     [Fact]
     public void AverageWithoutOutliers_ExcludesValuesOutsideRange()
     {

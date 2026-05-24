@@ -31,12 +31,33 @@ public interface IDependencyProbe
 /// <summary>
 /// 関数で依存先を確認する health check probe です。
 /// </summary>
-/// <param name="Name">依存先名。</param>
-/// <param name="CheckAsync">確認処理。</param>
-public sealed record DelegateDependencyProbe(
-    string Name,
-    Func<CancellationToken, Task<bool>> CheckAsync) : IDependencyProbe
+public sealed record DelegateDependencyProbe : IDependencyProbe
 {
+    /// <summary>
+    /// <see cref="DelegateDependencyProbe"/> レコードの新しいインスタンスを初期化します。
+    /// </summary>
+    /// <param name="Name">依存先名。</param>
+    /// <param name="CheckAsync">確認処理。</param>
+    /// <exception cref="ArgumentException"><paramref name="Name"/> が空白の場合。</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="CheckAsync"/> が <see langword="null"/> の場合。</exception>
+    public DelegateDependencyProbe(string Name, Func<CancellationToken, Task<bool>> CheckAsync)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(Name);
+        ArgumentNullException.ThrowIfNull(CheckAsync);
+
+        this.Name = Name;
+        this.CheckAsync = CheckAsync;
+    }
+
+    /// <inheritdoc />
+    public string Name { get; }
+
+    /// <summary>
+    /// 依存先を確認する処理を取得します。
+    /// </summary>
+    /// <value>キャンセル通知を受け取り利用可否を返す関数。</value>
+    public Func<CancellationToken, Task<bool>> CheckAsync { get; }
+
     /// <inheritdoc />
     public Task<bool> IsAvailableAsync(CancellationToken cancellationToken)
     {
@@ -59,7 +80,11 @@ public static class HealthCheckSamples
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(basePath);
 
-        string normalized = "/" + basePath.Trim().Trim('/');
+        string trimmedPath = basePath.Trim().Trim('/');
+        string normalized = string.IsNullOrEmpty(trimmedPath)
+            ? string.Empty
+            : $"/{trimmedPath}";
+
         return new HealthEndpointPaths($"{normalized}/live", $"{normalized}/ready");
     }
 

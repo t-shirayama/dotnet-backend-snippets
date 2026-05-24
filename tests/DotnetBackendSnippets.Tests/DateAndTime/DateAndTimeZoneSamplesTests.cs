@@ -2,8 +2,10 @@ using DotnetBackendSnippets.DateAndTime;
 
 namespace DotnetBackendSnippets.Tests.DateAndTime;
 
+// テスト補助: Date And Time Reverse Lookup Samples の共有 fixture を定義する。
 public sealed partial class DateAndTimeReverseLookupSamplesTests
 {
+    // テスト意図: Local Date Range To UTC Range / Converts Inclusive Local Dates To UTC Half Open Range を確認する。
     [Fact]
     public void LocalDateRangeToUtcRange_ConvertsInclusiveLocalDatesToUtcHalfOpenRange()
     {
@@ -18,6 +20,7 @@ public sealed partial class DateAndTimeReverseLookupSamplesTests
         Assert.Equal(new DateTimeOffset(2026, 5, 24, 15, 0, 0, TimeSpan.Zero), result.EndExclusive);
     }
 
+    // テスト意図: Normalize To UTC / Preserves Instant を確認する。
     [Fact]
     public void NormalizeToUtc_PreservesInstant()
     {
@@ -26,6 +29,7 @@ public sealed partial class DateAndTimeReverseLookupSamplesTests
         Assert.Equal(new DateTimeOffset(2026, 5, 24, 0, 0, 0, TimeSpan.Zero), result);
     }
 
+    // テスト意図: UTC To Local Date / Returns Date In Requested Time Zone を確認する。
     [Fact]
     public void UtcToLocalDate_ReturnsDateInRequestedTimeZone()
     {
@@ -38,6 +42,7 @@ public sealed partial class DateAndTimeReverseLookupSamplesTests
         Assert.Equal(new DateOnly(2026, 5, 25), result);
     }
 
+    // テスト意図: Try Find Time Zone / Returns False For Unknown ID を確認する。
     [Fact]
     public void TryFindTimeZone_ReturnsFalseForUnknownId()
     {

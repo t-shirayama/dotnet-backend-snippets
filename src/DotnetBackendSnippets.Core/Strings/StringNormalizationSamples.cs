@@ -143,12 +143,11 @@ public static partial class StringReverseLookupSamples
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(value);
 
-        var invalid = new HashSet<char>(['<', '>', ':', '"', '/', '\\', '|', '?', '*']);
         var builder = new StringBuilder(value.Length);
 
         foreach (var character in value)
         {
-            builder.Append(invalid.Contains(character) ? '-' : character);
+            builder.Append(PortableFileNameInvalidCharacters.Contains(character) ? '-' : character);
         }
 
         return CollapseSeparators(builder.ToString().Trim());

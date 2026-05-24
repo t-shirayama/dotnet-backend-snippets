@@ -2,8 +2,10 @@ using DotnetBackendSnippets.Validation;
 
 namespace DotnetBackendSnippets.Tests.Validation;
 
+// テスト対象: Validation Samples のスニペット動作を確認する。
 public sealed class ValidationSamplesTests
 {
+    // テスト意図: Validate User Registration / Returns Valid / When Input Is Valid を確認する。
     [Fact]
     public void ValidateUserRegistration_ReturnsValid_WhenInputIsValid()
     {
@@ -15,6 +17,7 @@ public sealed class ValidationSamplesTests
         Assert.Empty(result.Errors);
     }
 
+    // テスト意図: Validate User Registration / Returns Errors / When Input Is Invalid を確認する。
     [Fact]
     public void ValidateUserRegistration_ReturnsErrors_WhenInputIsInvalid()
     {
@@ -26,6 +29,7 @@ public sealed class ValidationSamplesTests
         Assert.Equal(3, result.Errors.Count);
     }
 
+    // テスト意図: Validate Create Order / Returns Valid / When Nested Objects And Lines Are Valid を確認する。
     [Fact]
     public void ValidateCreateOrder_ReturnsValid_WhenNestedObjectsAndLinesAreValid()
     {
@@ -40,6 +44,7 @@ public sealed class ValidationSamplesTests
         Assert.Empty(result.Errors);
     }
 
+    // テスト意図: Validate Create Order / Returns Field Codes / For Nested Collection And Cross Field Errors を確認する。
     [Fact]
     public void ValidateCreateOrder_ReturnsFieldCodes_ForNestedCollectionAndCrossFieldErrors()
     {
@@ -58,5 +63,20 @@ public sealed class ValidationSamplesTests
         Assert.Contains(result.Errors, error => error is { Field: "shippingAddress.postalCode", Code: "postal_code.jp" });
         Assert.Contains(result.Errors, error => error is { Field: "lines[0].quantity", Code: "range" });
         Assert.Contains(result.Errors, error => error is { Field: "lines[1].sku", Code: "duplicate" });
+    }
+
+    // テスト意図: Validate Create Order / Returns Required Error / When Line Item Is Null を確認する。
+    [Fact]
+    public void ValidateCreateOrder_ReturnsRequiredError_WhenLineItemIsNull()
+    {
+        var input = new CreateOrderInput(
+            "customer-1",
+            new AddressInput("1000001", "JP"),
+            [null!]);
+
+        ValidationReport result = ValidationSamples.ValidateCreateOrder(input);
+
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors, error => error is { Field: "lines[0]", Code: "required" });
     }
 }

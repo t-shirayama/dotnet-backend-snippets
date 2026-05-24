@@ -24,11 +24,8 @@ public static partial class LinqReverseLookupSamples
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(keySelector);
 
-        var groups = comparer is null
-            ? source.GroupBy(keySelector)
-            : source.GroupBy(keySelector, comparer);
-
-        return groups.ToDictionary(group => group.Key, group => group.Count(), comparer);
+        return GroupByKey(source, keySelector, comparer)
+            .ToDictionary(group => group.Key, group => group.Count(), comparer);
     }
 
     /// <summary>
@@ -53,11 +50,9 @@ public static partial class LinqReverseLookupSamples
         ArgumentNullException.ThrowIfNull(keySelector);
         ArgumentNullException.ThrowIfNull(timestampSelector);
 
-        var groups = comparer is null
-            ? source.GroupBy(keySelector)
-            : source.GroupBy(keySelector, comparer);
-
-        return groups.Select(group => group.MaxBy(timestampSelector)!).ToList();
+        return GroupByKey(source, keySelector, comparer)
+            .Select(group => group.MaxBy(timestampSelector)!)
+            .ToList();
     }
 
     /// <summary>
@@ -79,14 +74,9 @@ public static partial class LinqReverseLookupSamples
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(keySelector);
 
-        var groups = comparer is null
-            ? source.GroupBy(keySelector)
-            : source.GroupBy(keySelector, comparer);
-
-        return groups
+        return GroupByKey(source, keySelector, comparer)
             .Where(group => group.Count() > 1)
             .Select(group => group.Key)
             .ToList();
     }
 }
-

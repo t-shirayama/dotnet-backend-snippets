@@ -3,8 +3,10 @@ using DotnetBackendSnippets.Async;
 
 namespace DotnetBackendSnippets.Tests.Async;
 
+// テスト対象: Async Samples のスニペット動作を確認する。
 public sealed class AsyncSamplesTests
 {
+    // テスト意図: Page Async / Returns Requested Page を確認する。
     [Fact]
     public async Task PageAsync_ReturnsRequestedPage()
     {
@@ -13,6 +15,7 @@ public sealed class AsyncSamplesTests
         Assert.Equal([3, 4], result);
     }
 
+    // テスト意図: Page Async / Returns Empty List / When Page Is Out Of Range を確認する。
     [Fact]
     public async Task PageAsync_ReturnsEmptyList_WhenPageIsOutOfRange()
     {
@@ -21,6 +24,7 @@ public sealed class AsyncSamplesTests
         Assert.Empty(result);
     }
 
+    // テスト意図: Page Async / Does Not Overflow / When Skip Count Is Very Large を確認する。
     [Fact]
     public async Task PageAsync_DoesNotOverflow_WhenSkipCountIsVeryLarge()
     {
@@ -29,6 +33,7 @@ public sealed class AsyncSamplesTests
         Assert.Empty(result);
     }
 
+    // テスト意図: Page Async / Throws / When Cancellation Is Requested を確認する。
     [Fact]
     public async Task PageAsync_Throws_WhenCancellationIsRequested()
     {
@@ -39,6 +44,7 @@ public sealed class AsyncSamplesTests
             () => AsyncSamples.PageAsync(ToAsync([1, 2, 3]), pageNumber: 1, pageSize: 2, cancellationTokenSource.Token));
     }
 
+    // テスト意図: When All Settled Async / Collects Successes And Failures を確認する。
     [Fact]
     public async Task WhenAllSettledAsync_CollectsSuccessesAndFailures()
     {
@@ -58,6 +64,7 @@ public sealed class AsyncSamplesTests
         Assert.IsType<InvalidOperationException>(failure.Exception);
     }
 
+    // テスト意図: When All Settled Async / Returns Successful Result / When All Operations Succeed を確認する。
     [Fact]
     public async Task WhenAllSettledAsync_ReturnsSuccessfulResult_WhenAllOperationsSucceed()
     {
@@ -72,6 +79,7 @@ public sealed class AsyncSamplesTests
         Assert.Equal(["first", "second"], result.Successes.Select(success => success.Value));
     }
 
+    // テスト意図: Delay Async / Throws / When Cancellation Is Requested を確認する。
     [Fact]
     public async Task DelayAsync_Throws_WhenCancellationIsRequested()
     {
@@ -82,6 +90,7 @@ public sealed class AsyncSamplesTests
             () => AsyncSamples.DelayAsync(TimeSpan.FromMinutes(1), cancellationTokenSource.Token));
     }
 
+    // テスト意図: Process Sequentially Async / Returns Processed Results を確認する。
     [Fact]
     public async Task ProcessSequentiallyAsync_ReturnsProcessedResults()
     {
@@ -96,6 +105,7 @@ public sealed class AsyncSamplesTests
         Assert.Equal(["item-1", "item-2", "item-3"], result);
     }
 
+    // テスト意図: Process Sequentially Async / Throws / When Cancellation Is Requested を確認する。
     [Fact]
     public async Task ProcessSequentiallyAsync_Throws_WhenCancellationIsRequested()
     {

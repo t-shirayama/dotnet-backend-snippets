@@ -2,8 +2,10 @@ using DotnetBackendSnippets.LanguageFeatures;
 
 namespace DotnetBackendSnippets.Tests.LanguageFeatures;
 
+// テスト対象: Pattern Matching Samples のスニペット動作を確認する。
 public sealed class PatternMatchingSamplesTests
 {
+    // テスト意図: Describe Value / Uses Type And Property Patterns を確認する。
     [Theory]
     [InlineData(null, "null")]
     [InlineData("", "empty string")]
@@ -17,6 +19,7 @@ public sealed class PatternMatchingSamplesTests
         Assert.Equal(expected, result);
     }
 
+    // テスト意図: Describe Value / Uses List Pattern を確認する。
     [Fact]
     public void DescribeValue_UsesListPattern()
     {
@@ -25,6 +28,7 @@ public sealed class PatternMatchingSamplesTests
         Assert.Equal("integer array starting with 3", result);
     }
 
+    // テスト意図: Classify Shipment / Uses Property Patterns を確認する。
     [Theory]
     [InlineData("", null, "preparing")]
     [InlineData("TRACK", null, "in transit")]
@@ -43,6 +47,7 @@ public sealed class PatternMatchingSamplesTests
         Assert.Equal(expected, result);
     }
 
+    // テスト意図: Classify Point / Uses Deconstruct Pattern を確認する。
     [Theory]
     [InlineData(0, 0, "origin")]
     [InlineData(0, 5, "y-axis")]

@@ -2,8 +2,10 @@ using DotnetBackendSnippets.DateAndTime;
 
 namespace DotnetBackendSnippets.Tests.DateAndTime;
 
+// テスト補助: Date And Time Reverse Lookup Samples の共有 fixture を定義する。
 public sealed partial class DateAndTimeReverseLookupSamplesTests
 {
+    // テスト意図: To Date Only / Returns Date Part を確認する。
     [Fact]
     public void ToDateOnly_ReturnsDatePart()
     {
@@ -12,6 +14,7 @@ public sealed partial class DateAndTimeReverseLookupSamplesTests
         Assert.Equal(new DateOnly(2026, 5, 24), result);
     }
 
+    // テスト意図: Combine Date And Time / Applies Requested Kind を確認する。
     [Fact]
     public void CombineDateAndTime_AppliesRequestedKind()
     {
@@ -23,6 +26,7 @@ public sealed partial class DateAndTimeReverseLookupSamplesTests
         Assert.Equal(new DateTime(2026, 5, 24, 9, 30, 0, DateTimeKind.Utc), result);
     }
 
+    // テスト意図: Current Date / Uses Time Provider And Time Zone を確認する。
     [Fact]
     public void CurrentDate_UsesTimeProviderAndTimeZone()
     {

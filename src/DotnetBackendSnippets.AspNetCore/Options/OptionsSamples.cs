@@ -31,8 +31,23 @@ public sealed class NotificationOptions
 /// 現在の通知設定を読み取ります。
 /// </summary>
 /// <param name="optionsMonitor">設定変更を監視するオプションモニター。</param>
-public sealed class NotificationOptionsReader(IOptionsMonitor<NotificationOptions> optionsMonitor)
+/// <exception cref="ArgumentNullException"><paramref name="optionsMonitor"/> が <see langword="null"/> の場合。</exception>
+public sealed class NotificationOptionsReader
 {
+    private readonly IOptionsMonitor<NotificationOptions> optionsMonitor;
+
+    /// <summary>
+    /// <see cref="NotificationOptionsReader"/> クラスの新しいインスタンスを作成します。
+    /// </summary>
+    /// <param name="optionsMonitor">設定変更を監視するオプションモニター。</param>
+    /// <exception cref="ArgumentNullException"><paramref name="optionsMonitor"/> が <see langword="null"/> の場合。</exception>
+    public NotificationOptionsReader(IOptionsMonitor<NotificationOptions> optionsMonitor)
+    {
+        ArgumentNullException.ThrowIfNull(optionsMonitor);
+
+        this.optionsMonitor = optionsMonitor;
+    }
+
     /// <summary>
     /// 現在の通知設定を取得します。
     /// </summary>
@@ -54,10 +69,14 @@ public static class OptionsSamples
     /// <param name="services">サービスコレクション。</param>
     /// <param name="configuration">設定ソース。</param>
     /// <returns>登録後のサービスコレクション。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="services"/> または <paramref name="configuration"/> が <see langword="null"/> の場合。</exception>
     public static IServiceCollection AddNotificationOptions(
         this IServiceCollection services,
         IConfiguration configuration)
     {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(configuration);
+
         services
             .AddOptions<NotificationOptions>()
             .Bind(configuration.GetSection(NotificationOptions.SectionName))

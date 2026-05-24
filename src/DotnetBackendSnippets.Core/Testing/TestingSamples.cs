@@ -26,10 +26,23 @@ public interface INotificationSender
 /// <summary>
 /// テストしやすい通知サービスです。
 /// </summary>
-/// <param name="sender">通知送信先。</param>
-/// <param name="timeProvider">時刻 provider。</param>
-public sealed class ReminderService(INotificationSender sender, TimeProvider timeProvider)
+public sealed class ReminderService
 {
+    private readonly INotificationSender sender;
+    private readonly TimeProvider timeProvider;
+
+    /// <summary>
+    /// <see cref="ReminderService"/> クラスの新しいインスタンスを初期化します。
+    /// </summary>
+    /// <param name="sender">通知送信先。</param>
+    /// <param name="timeProvider">時刻 provider。</param>
+    /// <exception cref="ArgumentNullException"><paramref name="sender"/> または <paramref name="timeProvider"/> が <see langword="null"/> の場合。</exception>
+    public ReminderService(INotificationSender sender, TimeProvider timeProvider)
+    {
+        this.sender = sender ?? throw new ArgumentNullException(nameof(sender));
+        this.timeProvider = timeProvider ?? throw new ArgumentNullException(nameof(timeProvider));
+    }
+
     /// <summary>
     /// 業務時間内だけ通知を送信します。
     /// </summary>
@@ -90,19 +103,19 @@ public sealed class FixedTimeProvider : TimeProvider
     /// <summary>
     /// <see cref="FixedTimeProvider"/> クラスの新しいインスタンスを初期化します。
     /// </summary>
-    /// <param name="utcNow">固定する UTC 日時。</param>
+    /// <param name="utcNow">固定する日時。UTC 以外の offset は UTC に正規化します。</param>
     public FixedTimeProvider(DateTimeOffset utcNow)
     {
-        this.utcNow = utcNow;
+        this.utcNow = utcNow.ToUniversalTime();
     }
 
     /// <summary>
     /// 固定時刻を変更します。
     /// </summary>
-    /// <param name="value">新しい UTC 日時。</param>
+    /// <param name="value">新しい日時。UTC 以外の offset は UTC に正規化します。</param>
     public void SetUtcNow(DateTimeOffset value)
     {
-        utcNow = value;
+        utcNow = value.ToUniversalTime();
     }
 
     /// <inheritdoc />

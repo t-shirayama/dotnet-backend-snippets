@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Http;
 
 namespace DotnetBackendSnippets.Tests.OpenApi;
 
+// テスト対象: OpenAPI Samples のスニペット動作を確認する。
 public sealed class OpenApiSamplesTests
 {
+    // テスト意図: Describe Get Order Endpoint / Returns Metadata For Authenticated Endpoint を確認する。
     [Fact]
     public void DescribeGetOrderEndpoint_ReturnsMetadataForAuthenticatedEndpoint()
     {
@@ -19,6 +21,7 @@ public sealed class OpenApiSamplesTests
         Assert.NotEmpty(metadata.Examples);
     }
 
+    // テスト意図: Create Versioned Route / Includes API Version を確認する。
     [Theory]
     [InlineData(1, 0, "/api/v1/orders")]
     [InlineData(2, 1, "/api/v2.1/orders")]
@@ -27,5 +30,12 @@ public sealed class OpenApiSamplesTests
         string route = OpenApiSamples.CreateVersionedRoute("/orders/", new ApiVersion(major, minor));
 
         Assert.Equal(expected, route);
+    }
+
+    // テスト意図: Create Versioned Route / Rejects Empty Resource After Trimming Slashes を確認する。
+    [Fact]
+    public void CreateVersionedRoute_RejectsEmptyResourceAfterTrimmingSlashes()
+    {
+        Assert.Throws<ArgumentException>(() => OpenApiSamples.CreateVersionedRoute("/", new ApiVersion(1, 0)));
     }
 }

@@ -3,8 +3,10 @@ using DotnetBackendSnippets.LanguageFeatures;
 
 namespace DotnetBackendSnippets.Tests.LanguageFeatures;
 
+// テスト対象: Delegate Event Attribute Samples のスニペット動作を確認する。
 public sealed class DelegateEventAttributeSamplesTests
 {
+    // テスト意図: Apply Discount / Uses Delegate を確認する。
     [Fact]
     public void ApplyDiscount_UsesDelegate()
     {
@@ -15,6 +17,7 @@ public sealed class DelegateEventAttributeSamplesTests
         Assert.Equal(90m, result);
     }
 
+    // テスト意図: For Each Matching / Combines Func And Action を確認する。
     [Fact]
     public void ForEachMatching_CombinesFuncAndAction()
     {
@@ -25,6 +28,7 @@ public sealed class DelegateEventAttributeSamplesTests
         Assert.Equal([2, 4], captured);
     }
 
+    // テスト意図: Progress Reporter / Raises Event を確認する。
     [Fact]
     public void ProgressReporter_RaisesEvent()
     {
@@ -37,6 +41,7 @@ public sealed class DelegateEventAttributeSamplesTests
         Assert.Equal(25, reportedPercent);
     }
 
+    // テスト意図: Get Snippet Tags / Reads Custom Attributes を確認する。
     [Fact]
     public void GetSnippetTags_ReadsCustomAttributes()
     {

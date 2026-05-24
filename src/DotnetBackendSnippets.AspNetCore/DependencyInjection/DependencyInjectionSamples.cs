@@ -20,8 +20,23 @@ public interface IGreetingService
 /// 固定の接頭辞であいさつ文を作成します。
 /// </summary>
 /// <param name="prefix">あいさつ文の接頭辞。</param>
-public sealed class GreetingService(string prefix) : IGreetingService
+/// <exception cref="ArgumentException"><paramref name="prefix"/> が空白の場合。</exception>
+public sealed class GreetingService : IGreetingService
 {
+    private readonly string prefix;
+
+    /// <summary>
+    /// <see cref="GreetingService"/> クラスの新しいインスタンスを作成します。
+    /// </summary>
+    /// <param name="prefix">あいさつ文の接頭辞。</param>
+    /// <exception cref="ArgumentException"><paramref name="prefix"/> が空白の場合。</exception>
+    public GreetingService(string prefix)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(prefix);
+
+        this.prefix = prefix.Trim();
+    }
+
     /// <inheritdoc />
     public string CreateGreeting(string name)
     {
@@ -46,9 +61,11 @@ public static class DependencyInjectionSamples
     /// <param name="prefix">あいさつ文の接頭辞。</param>
     /// <returns>登録後のサービスコレクション。</returns>
     /// <exception cref="ArgumentNullException"><paramref name="services"/> が <see langword="null"/> の場合。</exception>
+    /// <exception cref="ArgumentException"><paramref name="prefix"/> が空白の場合。</exception>
     public static IServiceCollection AddGreetingService(this IServiceCollection services, string prefix = "Hello")
     {
         ArgumentNullException.ThrowIfNull(services);
+        ArgumentException.ThrowIfNullOrWhiteSpace(prefix);
 
         services.AddSingleton<IGreetingService>(_ => new GreetingService(prefix));
         return services;

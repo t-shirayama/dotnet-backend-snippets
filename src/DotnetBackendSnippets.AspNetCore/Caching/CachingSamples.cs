@@ -195,6 +195,8 @@ public sealed class MemoryCacheStampedeGuard
     /// <param name="options">キャッシュ登録設定。</param>
     /// <param name="cancellationToken">キャンセル通知。</param>
     /// <returns>キャッシュ済みまたは作成した値。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="cache"/>、<paramref name="factory"/>、<paramref name="options"/> が <see langword="null"/> の場合。</exception>
+    /// <exception cref="ArgumentException"><paramref name="key"/> が空白の場合。</exception>
     public async Task<T?> GetOrCreateOnceAsync<T>(
         IMemoryCache cache,
         string key,
@@ -202,6 +204,11 @@ public sealed class MemoryCacheStampedeGuard
         MemoryCacheEntryOptions options,
         CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(cache);
+        ArgumentException.ThrowIfNullOrWhiteSpace(key);
+        ArgumentNullException.ThrowIfNull(factory);
+        ArgumentNullException.ThrowIfNull(options);
+
         SemaphoreSlim semaphore = locks.GetOrAdd(key, static _ => new SemaphoreSlim(1, 1));
         await semaphore.WaitAsync(cancellationToken);
 

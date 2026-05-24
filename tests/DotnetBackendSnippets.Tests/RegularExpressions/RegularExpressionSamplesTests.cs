@@ -2,8 +2,10 @@ using DotnetBackendSnippets.RegularExpressions;
 
 namespace DotnetBackendSnippets.Tests.RegularExpressions;
 
+// テスト対象: Regular Expression Samples のスニペット動作を確認する。
 public sealed class RegularExpressionSamplesTests
 {
+    // テスト意図: Is Product Code / Validates Expected Shape を確認する。
     [Theory]
     [InlineData("ABC-1234", true)]
     [InlineData("abc-1234", false)]
@@ -13,6 +15,7 @@ public sealed class RegularExpressionSamplesTests
         Assert.Equal(expected, RegularExpressionSamples.IsProductCode(value));
     }
 
+    // テスト意図: Extract Hashtags / Returns Tags Without Hash を確認する。
     [Fact]
     public void ExtractHashtags_ReturnsTagsWithoutHash()
     {
@@ -21,6 +24,7 @@ public sealed class RegularExpressionSamplesTests
         Assert.Equal(["DotNet", "backend_2026"], tags);
     }
 
+    // テスト意図: Normalize Whitespace / Collapses Whitespace を確認する。
     [Fact]
     public void NormalizeWhitespace_CollapsesWhitespace()
     {
@@ -29,6 +33,7 @@ public sealed class RegularExpressionSamplesTests
         Assert.Equal("A B C", result);
     }
 
+    // テスト意図: Create Literal Search Regex / Escapes User Input を確認する。
     [Fact]
     public void CreateLiteralSearchRegex_EscapesUserInput()
     {
@@ -38,6 +43,7 @@ public sealed class RegularExpressionSamplesTests
         Assert.DoesNotMatch(regex, "aaab");
     }
 
+    // テスト意図: Is Match With Timeout / Returns False / When Regex Times Out を確認する。
     [Fact]
     public void IsMatchWithTimeout_ReturnsFalse_WhenRegexTimesOut()
     {

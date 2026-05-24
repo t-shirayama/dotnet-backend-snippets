@@ -2,8 +2,10 @@ using DotnetBackendSnippets.Linq;
 
 namespace DotnetBackendSnippets.Tests.Linq;
 
+// テスト補助: LINQ Reverse Lookup Samples の共有データを定義する。
 public sealed partial class LinqReverseLookupSamplesTests
 {
+    // テスト意図: To Dictionary Last Wins / Does Not Throw On Duplicate Keys を確認する。
     [Fact]
     public void ToDictionaryLastWins_DoesNotThrowOnDuplicateKeys()
     {
@@ -15,6 +17,7 @@ public sealed partial class LinqReverseLookupSamplesTests
         Assert.Equal(5, result[2].Id);
     }
 
+    // テスト意図: To Lookup Dictionary / Keeps Multiple Items Per Key を確認する。
     [Fact]
     public void ToLookupDictionary_KeepsMultipleItemsPerKey()
     {

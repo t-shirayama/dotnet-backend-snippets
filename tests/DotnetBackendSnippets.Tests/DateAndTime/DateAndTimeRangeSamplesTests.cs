@@ -2,8 +2,10 @@ using DotnetBackendSnippets.DateAndTime;
 
 namespace DotnetBackendSnippets.Tests.DateAndTime;
 
+// テスト補助: Date And Time Reverse Lookup Samples の共有 fixture を定義する。
 public sealed partial class DateAndTimeReverseLookupSamplesTests
 {
+    // テスト意図: Single Day Range / Returns Half Open Range を確認する。
     [Fact]
     public void SingleDayRange_ReturnsHalfOpenRange()
     {
@@ -13,6 +15,7 @@ public sealed partial class DateAndTimeReverseLookupSamplesTests
         Assert.Equal(new DateOnly(2026, 5, 25), result.EndExclusive);
     }
 
+    // テスト意図: Month Range / Returns Month Start And Next Month Start を確認する。
     [Fact]
     public void MonthRange_ReturnsMonthStartAndNextMonthStart()
     {
@@ -22,6 +25,7 @@ public sealed partial class DateAndTimeReverseLookupSamplesTests
         Assert.Equal(new DateOnly(2024, 3, 1), result.EndExclusive);
     }
 
+    // テスト意図: Quarter Range / Returns Quarter Start And Next Quarter Start を確認する。
     [Fact]
     public void QuarterRange_ReturnsQuarterStartAndNextQuarterStart()
     {
@@ -31,6 +35,7 @@ public sealed partial class DateAndTimeReverseLookupSamplesTests
         Assert.Equal(new DateOnly(2026, 7, 1), result.EndExclusive);
     }
 
+    // テスト意図: Start Of Fiscal Year / Uses Configured Start Month を確認する。
     [Theory]
     [InlineData(2026, 3, 31, 4, 2025, 4, 1)]
     [InlineData(2026, 4, 1, 4, 2026, 4, 1)]
@@ -48,6 +53,7 @@ public sealed partial class DateAndTimeReverseLookupSamplesTests
         Assert.Equal(new DateOnly(expectedYear, expectedMonth, expectedDay), result);
     }
 
+    // テスト意図: Start Of Week / Uses Requested First Day を確認する。
     [Fact]
     public void StartOfWeek_UsesRequestedFirstDay()
     {
@@ -56,6 +62,7 @@ public sealed partial class DateAndTimeReverseLookupSamplesTests
         Assert.Equal(new DateOnly(2026, 5, 18), result);
     }
 
+    // テスト意図: Search Range For Inclusive Dates / Uses Custom Local Day Start を確認する。
     [Fact]
     public void SearchRangeForInclusiveDates_UsesCustomLocalDayStart()
     {

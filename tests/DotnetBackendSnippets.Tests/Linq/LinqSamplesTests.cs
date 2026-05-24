@@ -2,6 +2,7 @@ using DotnetBackendSnippets.Linq;
 
 namespace DotnetBackendSnippets.Tests.Linq;
 
+// テスト対象: LINQ Samples のスニペット動作を確認する。
 public sealed class LinqSamplesTests
 {
     private static readonly Order[] Orders =
@@ -12,6 +13,7 @@ public sealed class LinqSamplesTests
         new(4, 3, "Tools", 200m),
     ];
 
+    // テスト意図: Get Expensive Order Categories / Filters Projects And Deduplicates Categories を確認する。
     [Fact]
     public void GetExpensiveOrderCategories_FiltersProjectsAndDeduplicatesCategories()
     {
@@ -20,6 +22,7 @@ public sealed class LinqSamplesTests
         Assert.Equal(["Books", "Tools"], result);
     }
 
+    // テスト意図: Sum Amount By Category / Groups Ignoring Case を確認する。
     [Fact]
     public void SumAmountByCategory_GroupsIgnoringCase()
     {
@@ -29,6 +32,7 @@ public sealed class LinqSamplesTests
         Assert.Equal(50m, result["Food"]);
     }
 
+    // テスト意図: Top Orders / Returns Highest Amounts Then Lowest Ids を確認する。
     [Fact]
     public void TopOrders_ReturnsHighestAmountsThenLowestIds()
     {
@@ -37,6 +41,7 @@ public sealed class LinqSamplesTests
         Assert.Equal([4, 1], result.Select(order => order.Id));
     }
 
+    // テスト意図: Page / Returns Empty List / When Page Is Out Of Range を確認する。
     [Fact]
     public void Page_ReturnsEmptyList_WhenPageIsOutOfRange()
     {
@@ -45,6 +50,7 @@ public sealed class LinqSamplesTests
         Assert.Empty(result);
     }
 
+    // テスト意図: Page / Does Not Overflow / When Skip Count Is Very Large を確認する。
     [Fact]
     public void Page_DoesNotOverflow_WhenSkipCountIsVeryLarge()
     {
@@ -53,6 +59,7 @@ public sealed class LinqSamplesTests
         Assert.Empty(result);
     }
 
+    // テスト意図: Distinct By Key / Keeps First Item For Each Key を確認する。
     [Fact]
     public void DistinctByKey_KeepsFirstItemForEachKey()
     {
@@ -61,6 +68,7 @@ public sealed class LinqSamplesTests
         Assert.Equal([1, 3, 4], result.Select(order => order.Id));
     }
 
+    // テスト意図: Distinct By Key With Group By / Keeps First Item For Each Key を確認する。
     [Fact]
     public void DistinctByKeyWithGroupBy_KeepsFirstItemForEachKey()
     {
@@ -69,6 +77,7 @@ public sealed class LinqSamplesTests
         Assert.Equal([1, 3, 4], result.Select(order => order.Id));
     }
 
+    // テスト意図: Left Join Customer Orders / Includes Customers Without Orders を確認する。
     [Fact]
     public void LeftJoinCustomerOrders_IncludesCustomersWithoutOrders()
     {
@@ -85,6 +94,7 @@ public sealed class LinqSamplesTests
         Assert.Contains(result, summary => summary.CustomerName == "No Orders" && summary.OrderCount == 0 && summary.TotalAmount == 0m);
     }
 
+    // テスト意図: Flatten / Returns Single Sequence を確認する。
     [Fact]
     public void Flatten_ReturnsSingleSequence()
     {
@@ -93,6 +103,7 @@ public sealed class LinqSamplesTests
         Assert.Equal([1, 2, 3], result);
     }
 
+    // テスト意図: Flatten / Throws / When Nested Collection Is Null を確認する。
     [Fact]
     public void Flatten_Throws_WhenNestedCollectionIsNull()
     {

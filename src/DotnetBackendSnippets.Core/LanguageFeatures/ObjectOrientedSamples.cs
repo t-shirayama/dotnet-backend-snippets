@@ -193,16 +193,17 @@ public sealed class HeaderBag
     /// </summary>
     /// <param name="key">ヘッダー名。</param>
     /// <returns>一致した値。見つからない場合は空文字列。</returns>
+    /// <exception cref="ArgumentException"><paramref name="key"/> が空白の場合。</exception>
     public string this[string key]
     {
         get
         {
-            var match = headers.FirstOrDefault(
+            ArgumentException.ThrowIfNullOrWhiteSpace(key);
+
+            var index = headers.FindIndex(
                 header => string.Equals(header.Key, key, StringComparison.OrdinalIgnoreCase));
 
-            return match.Equals(default(KeyValuePair<string, string>))
-                ? string.Empty
-                : match.Value;
+            return index < 0 ? string.Empty : headers[index].Value;
         }
     }
 
@@ -218,8 +219,13 @@ public sealed class HeaderBag
     /// </summary>
     /// <param name="key">ヘッダー名。</param>
     /// <param name="value">ヘッダー値。</param>
+    /// <exception cref="ArgumentException"><paramref name="key"/> が空白の場合。</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="value"/> が <see langword="null"/> の場合。</exception>
     public void Add(string key, string value)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(key);
+        ArgumentNullException.ThrowIfNull(value);
+
         headers.Add(KeyValuePair.Create(key, value));
     }
 }

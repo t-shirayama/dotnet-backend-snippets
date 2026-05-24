@@ -2,8 +2,10 @@ using DotnetBackendSnippets.Strings;
 
 namespace DotnetBackendSnippets.Tests.Strings;
 
+// テスト対象: String Reverse Lookup Samples のスニペット動作を確認する。
 public sealed partial class StringReverseLookupSamplesTests
 {
+    // テスト意図: Masking And Redaction Helpers / Hide Sensitive Values を確認する。
     [Fact]
     public void MaskingAndRedactionHelpers_HideSensitiveValues()
     {

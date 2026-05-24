@@ -3,8 +3,10 @@ using DotnetBackendSnippets.Serialization;
 
 namespace DotnetBackendSnippets.Tests.Serialization;
 
+// テスト対象: Serialization Samples のスニペット動作を確認する。
 public sealed class SerializationSamplesTests
 {
+    // テスト意図: Serialize Order / Uses Camel Case String Enum And Omits Null を確認する。
     [Fact]
     public void SerializeOrder_UsesCamelCaseStringEnumAndOmitsNull()
     {
@@ -22,6 +24,7 @@ public sealed class SerializationSamplesTests
         Assert.DoesNotContain("internalNote", json, StringComparison.Ordinal);
     }
 
+    // テスト意図: Deserialize Order / Reads Case Insensitive Properties And String Enum を確認する。
     [Fact]
     public void DeserializeOrder_ReadsCaseInsensitivePropertiesAndStringEnum()
     {
@@ -40,6 +43,7 @@ public sealed class SerializationSamplesTests
         Assert.Equal(OrderStatus.Submitted, order.Status);
     }
 
+    // テスト意図: Deserialize Flexible Order Request / Keeps Unknown Fields を確認する。
     [Fact]
     public void DeserializeFlexibleOrderRequest_KeepsUnknownFields()
     {
@@ -56,6 +60,7 @@ public sealed class SerializationSamplesTests
         Assert.Equal("L-001", request.ExtensionData["legacyCode"].GetString());
     }
 
+    // テスト意図: Create Snake Case JSON Options / Uses Snake Case Lower を確認する。
     [Fact]
     public void CreateSnakeCaseJsonOptions_UsesSnakeCaseLower()
     {

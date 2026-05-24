@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DotnetBackendSnippets.Tests.Api;
 
+// テスト対象: API Samples のスニペット動作を確認する。
 public sealed class ApiSamplesTests
 {
+    // テスト意図: Describe Create Todo Endpoint / Returns Minimal API Metadata を確認する。
     [Fact]
     public void DescribeCreateTodoEndpoint_ReturnsMinimalApiMetadata()
     {
@@ -19,6 +21,7 @@ public sealed class ApiSamplesTests
         Assert.Contains("Todos", endpoint.Tags);
     }
 
+    // テスト意図: Create Todo / Returns Created Response / When Request Is Valid を確認する。
     [Fact]
     public void CreateTodo_ReturnsCreatedResponse_WhenRequestIsValid()
     {
@@ -36,6 +39,7 @@ public sealed class ApiSamplesTests
         Assert.Null(result.Problem);
     }
 
+    // テスト意図: Create Todo / Returns Validation Problem / When Request Is Invalid を確認する。
     [Fact]
     public void CreateTodo_ReturnsValidationProblem_WhenRequestIsInvalid()
     {
@@ -51,6 +55,7 @@ public sealed class ApiSamplesTests
         Assert.Contains("nextId", problem.Errors.Keys);
     }
 
+    // テスト意図: ToActionResult / Preserves Status Code / When Endpoint Result Succeeded を確認する。
     [Fact]
     public void ToActionResult_PreservesStatusCode_WhenEndpointResultSucceeded()
     {
@@ -67,6 +72,7 @@ public sealed class ApiSamplesTests
         Assert.Same(response, objectResult.Value);
     }
 
+    // テスト意図: ToActionResult / Returns Created Result / When Location Is Available を確認する。
     [Fact]
     public void ToActionResult_ReturnsCreatedResult_WhenLocationIsAvailable()
     {
@@ -82,6 +88,7 @@ public sealed class ApiSamplesTests
         Assert.Same(response, createdResult.Value);
     }
 
+    // テスト意図: ToActionResult / Returns Object Result / When Endpoint Result Failed を確認する。
     [Fact]
     public void ToActionResult_ReturnsObjectResult_WhenEndpointResultFailed()
     {
@@ -99,6 +106,7 @@ public sealed class ApiSamplesTests
         Assert.Same(problem, objectResult.Value);
     }
 
+    // テスト意図: Create Problem / Returns RFC 7807 Shape を確認する。
     [Fact]
     public void CreateProblem_ReturnsRfc7807Shape()
     {
@@ -115,6 +123,7 @@ public sealed class ApiSamplesTests
         Assert.Equal("/todos/1", problem.Instance);
     }
 
+    // テスト意図: Create Validation Problem / Converts Validation Errors を確認する。
     [Fact]
     public void CreateValidationProblem_ConvertsValidationErrors()
     {
@@ -130,6 +139,7 @@ public sealed class ApiSamplesTests
         Assert.Equal(["Title is required."], problem.Errors["title"]);
     }
 
+    // テスト意図: Read Todo Route And Query / Returns Normalized Route And Query Values を確認する。
     [Fact]
     public void ReadTodoRouteAndQuery_ReturnsNormalizedRouteAndQueryValues()
     {
@@ -146,6 +156,7 @@ public sealed class ApiSamplesTests
         Assert.Equal(new PagingOptions(2, 25, 25, 25), result.Value.Paging);
     }
 
+    // テスト意図: Read Todo Route And Query / Returns Validation Problem / When Values Are Invalid を確認する。
     [Fact]
     public void ReadTodoRouteAndQuery_ReturnsValidationProblem_WhenValuesAreInvalid()
     {
@@ -163,6 +174,7 @@ public sealed class ApiSamplesTests
         Assert.Contains("pageSize", problem.Errors.Keys);
     }
 
+    // テスト意図: Create Paging Options / Returns Validation Problem / When Skip Would Overflow Int を確認する。
     [Fact]
     public void CreatePagingOptions_ReturnsValidationProblem_WhenSkipWouldOverflowInt()
     {
@@ -173,6 +185,7 @@ public sealed class ApiSamplesTests
         Assert.Contains("pageNumber", problem.Errors.Keys);
     }
 
+    // テスト意図: Map Domain Exception / Returns Problem With Domain Code を確認する。
     [Fact]
     public void MapDomainException_ReturnsProblemWithDomainCode()
     {
@@ -187,6 +200,7 @@ public sealed class ApiSamplesTests
         Assert.Equal("todo.already_done", problem.Extensions["code"]);
     }
 
+    // テスト意図: Require Header / Returns Problem / When Header Is Missing を確認する。
     [Fact]
     public void RequireHeader_ReturnsProblem_WhenHeaderIsMissing()
     {
@@ -201,6 +215,7 @@ public sealed class ApiSamplesTests
         Assert.Equal(StatusCodes.Status400BadRequest, problem.Status);
     }
 
+    // テスト意図: Require Header / Returns No Problem / When Dictionary Header Name Differs By Case を確認する。
     [Fact]
     public void RequireHeader_ReturnsNull_WhenDictionaryHeaderNameDiffersByCase()
     {
@@ -214,6 +229,7 @@ public sealed class ApiSamplesTests
         Assert.Null(problem);
     }
 
+    // テスト意図: Require Header / Returns No Problem / For ASP.NET Core Header Dictionary を確認する。
     [Fact]
     public void RequireHeader_ReturnsNull_ForAspNetCoreHeaderDictionary()
     {
@@ -227,6 +243,7 @@ public sealed class ApiSamplesTests
         Assert.Null(problem);
     }
 
+    // テスト意図: Should Short Circuit For Maintenance / Excludes Health Endpoint を確認する。
     [Fact]
     public void ShouldShortCircuitForMaintenance_ExcludesHealthEndpoint()
     {
@@ -235,6 +252,7 @@ public sealed class ApiSamplesTests
         Assert.False(ApiSamples.ShouldShortCircuitForMaintenance(maintenanceEnabled: false, "/todos"));
     }
 
+    // テスト意図: Is Known CORS Policy / Returns Whether Policy Name Is Supported を確認する。
     [Theory]
     [InlineData(CorsPolicyNames.PublicReadOnly, true)]
     [InlineData(CorsPolicyNames.InternalApi, true)]

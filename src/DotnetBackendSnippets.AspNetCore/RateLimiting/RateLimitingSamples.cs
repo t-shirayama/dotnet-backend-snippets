@@ -56,6 +56,7 @@ public sealed class FixedWindowRateLimiter
 {
     private readonly FixedWindowRateLimitRule rule;
     private readonly Func<DateTimeOffset> getUtcNow;
+    private readonly object syncLock = new();
     private readonly Dictionary<string, WindowCounter> counters = new(StringComparer.Ordinal);
 
     /// <summary>
@@ -93,19 +94,22 @@ public sealed class FixedWindowRateLimiter
         string key = RateLimitingSamples.ResolveRateLimitKey(context, rule.KeyMode);
         DateTimeOffset now = getUtcNow();
 
-        if (!counters.TryGetValue(key, out WindowCounter? counter) || now >= counter.ResetAt)
+        lock (syncLock)
         {
-            counter = new WindowCounter(0, now.Add(rule.Window));
-            counters[key] = counter;
-        }
+            if (!counters.TryGetValue(key, out WindowCounter? counter) || now >= counter.ResetAt)
+            {
+                counter = new WindowCounter(0, now.Add(rule.Window));
+                counters[key] = counter;
+            }
 
-        if (counter.Count >= rule.PermitLimit)
-        {
-            return new RateLimitDecision(false, key, 0, counter.ResetAt - now);
-        }
+            if (counter.Count >= rule.PermitLimit)
+            {
+                return new RateLimitDecision(false, key, 0, counter.ResetAt - now);
+            }
 
-        counter.Count++;
-        return new RateLimitDecision(true, key, rule.PermitLimit - counter.Count, TimeSpan.Zero);
+            counter.Count++;
+            return new RateLimitDecision(true, key, rule.PermitLimit - counter.Count, TimeSpan.Zero);
+        }
     }
 
     private sealed class WindowCounter(int count, DateTimeOffset resetAt)
@@ -134,11 +138,11 @@ public static class RateLimitingSamples
 
         return keyMode switch
         {
-            RateLimitKeyMode.IpAddress => $"ip:{context.IpAddress ?? "unknown"}",
+            RateLimitKeyMode.IpAddress => $"ip:{NormalizeOptionalKeyPart(context.IpAddress, "unknown")}",
             RateLimitKeyMode.User => string.IsNullOrWhiteSpace(context.UserId)
-                ? $"anonymous:{context.IpAddress ?? "unknown"}"
-                : $"user:{context.UserId}",
-            RateLimitKeyMode.Endpoint => $"endpoint:{context.EndpointName}",
+                ? $"anonymous:{NormalizeOptionalKeyPart(context.IpAddress, "unknown")}"
+                : $"user:{context.UserId.Trim()}",
+            RateLimitKeyMode.Endpoint => $"endpoint:{NormalizeRequiredKeyPart(context.EndpointName, nameof(context.EndpointName))}",
             _ => throw new ArgumentOutOfRangeException(nameof(keyMode), keyMode, "Unknown key mode."),
         };
     }
@@ -164,5 +168,16 @@ public static class RateLimitingSamples
         problem.Extensions["rateLimitKey"] = decision.Key;
         problem.Extensions["retryAfterSeconds"] = Math.Ceiling(decision.RetryAfter.TotalSeconds);
         return problem;
+    }
+
+    private static string NormalizeOptionalKeyPart(string? value, string fallback)
+    {
+        return string.IsNullOrWhiteSpace(value) ? fallback : value.Trim();
+    }
+
+    private static string NormalizeRequiredKeyPart(string value, string parameterName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(value, parameterName);
+        return value.Trim();
     }
 }

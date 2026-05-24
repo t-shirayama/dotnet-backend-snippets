@@ -648,8 +648,23 @@ public static class EfCoreSamples
 /// SaveChanges 時に監査カラムを設定する interceptor です。
 /// </summary>
 /// <param name="timeProvider">現在時刻の取得元。</param>
-public sealed class AuditSaveChangesInterceptor(TimeProvider timeProvider) : SaveChangesInterceptor
+/// <exception cref="ArgumentNullException"><paramref name="timeProvider"/> が <see langword="null"/> の場合。</exception>
+public sealed class AuditSaveChangesInterceptor : SaveChangesInterceptor
 {
+    private readonly TimeProvider timeProvider;
+
+    /// <summary>
+    /// <see cref="AuditSaveChangesInterceptor"/> クラスの新しいインスタンスを作成します。
+    /// </summary>
+    /// <param name="timeProvider">現在時刻の取得元。</param>
+    /// <exception cref="ArgumentNullException"><paramref name="timeProvider"/> が <see langword="null"/> の場合。</exception>
+    public AuditSaveChangesInterceptor(TimeProvider timeProvider)
+    {
+        ArgumentNullException.ThrowIfNull(timeProvider);
+
+        this.timeProvider = timeProvider;
+    }
+
     /// <inheritdoc />
     public override InterceptionResult<int> SavingChanges(
         DbContextEventData eventData,

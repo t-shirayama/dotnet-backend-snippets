@@ -2,8 +2,10 @@ using DotnetBackendSnippets.Security;
 
 namespace DotnetBackendSnippets.Tests.Security;
 
+// テスト対象: Security Samples のスニペット動作を確認する。
 public sealed class SecuritySamplesTests
 {
+    // テスト意図: Hash Password / Creates Hash That Verifies Original Password を確認する。
     [Fact]
     public void HashPassword_CreatesHashThatVerifiesOriginalPassword()
     {
@@ -12,6 +14,7 @@ public sealed class SecuritySamplesTests
         Assert.True(SecuritySamples.VerifyPassword("correct horse battery staple", hash));
     }
 
+    // テスト意図: Verify Password / Returns False / When Password Is Different を確認する。
     [Fact]
     public void VerifyPassword_ReturnsFalse_WhenPasswordIsDifferent()
     {
@@ -22,6 +25,7 @@ public sealed class SecuritySamplesTests
         Assert.False(result);
     }
 
+    // テスト意図: Verify Password / Returns False / When Hash Format Is Invalid を確認する。
     [Theory]
     [InlineData("")]
     [InlineData("not-a-password-hash")]
@@ -33,6 +37,7 @@ public sealed class SecuritySamplesTests
         Assert.False(result);
     }
 
+    // テスト意図: Are API Keys Equal / Returns True / When Keys Match を確認する。
     [Fact]
     public void AreApiKeysEqual_ReturnsTrue_WhenKeysMatch()
     {
@@ -41,6 +46,7 @@ public sealed class SecuritySamplesTests
         Assert.True(result);
     }
 
+    // テスト意図: Are API Keys Equal / Returns False / When Keys Do Not Match を確認する。
     [Fact]
     public void AreApiKeysEqual_ReturnsFalse_WhenKeysDoNotMatch()
     {
@@ -49,6 +55,7 @@ public sealed class SecuritySamplesTests
         Assert.False(result);
     }
 
+    // テスト意図: Find Potential Secrets / Finds Sensitive Configuration Keys を確認する。
     [Fact]
     public void FindPotentialSecrets_FindsSensitiveConfigurationKeys()
     {
@@ -65,6 +72,7 @@ public sealed class SecuritySamplesTests
         Assert.Equal("ExternalApi:ApiKey", finding.Key);
     }
 
+    // テスト意図: Find Potential Secrets / Finds Long Token Like Values を確認する。
     [Fact]
     public void FindPotentialSecrets_FindsLongTokenLikeValues()
     {
@@ -79,6 +87,7 @@ public sealed class SecuritySamplesTests
         Assert.Equal("Service:Endpoint", finding.Key);
     }
 
+    // テスト意図: HTML Encode For Display / Escapes HTML Control Characters を確認する。
     [Fact]
     public void HtmlEncodeForDisplay_EscapesHtmlControlCharacters()
     {
@@ -87,6 +96,7 @@ public sealed class SecuritySamplesTests
         Assert.Equal("&lt;script&gt;alert(&#39;x&#39;)&lt;/script&gt;", result);
     }
 
+    // テスト意図: Quote SQL Identifier / Returns Bracket Quoted Identifier / When Name Is Whitelisted を確認する。
     [Fact]
     public void QuoteSqlIdentifier_ReturnsBracketQuotedIdentifier_WhenNameIsWhitelisted()
     {
@@ -95,6 +105,7 @@ public sealed class SecuritySamplesTests
         Assert.Equal("[CustomerId]", result);
     }
 
+    // テスト意図: Quote SQL Identifier / Throws / When Identifier Contains SQL Syntax を確認する。
     [Fact]
     public void QuoteSqlIdentifier_Throws_WhenIdentifierContainsSqlSyntax()
     {

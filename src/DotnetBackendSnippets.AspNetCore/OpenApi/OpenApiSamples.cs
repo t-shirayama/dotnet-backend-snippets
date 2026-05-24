@@ -119,7 +119,7 @@ public static class OpenApiSamples
     {
         ArgumentNullException.ThrowIfNull(scopes);
 
-        return new OpenApiAuthRequirement("Bearer", scopes);
+        return new OpenApiAuthRequirement("Bearer", scopes.ToArray());
     }
 
     /// <summary>
@@ -135,7 +135,14 @@ public static class OpenApiSamples
         ArgumentException.ThrowIfNullOrWhiteSpace(resource);
         ValidateApiVersion(version);
 
-        return $"/api/{version}/{resource.Trim().Trim('/')}";
+        string normalizedResource = resource.Trim().Trim('/');
+
+        if (string.IsNullOrWhiteSpace(normalizedResource))
+        {
+            throw new ArgumentException("Resource must contain at least one route segment.", nameof(resource));
+        }
+
+        return $"/api/{version}/{normalizedResource}";
     }
 
     /// <summary>
@@ -145,6 +152,8 @@ public static class OpenApiSamples
     /// <exception cref="ArgumentOutOfRangeException">major が 1 未満、または minor が 0 未満の場合。</exception>
     public static void ValidateApiVersion(ApiVersion version)
     {
+        ArgumentNullException.ThrowIfNull(version);
+
         if (version.Major < 1)
         {
             throw new ArgumentOutOfRangeException(nameof(version), "Major version must be one or greater.");

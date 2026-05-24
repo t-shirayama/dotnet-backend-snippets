@@ -79,7 +79,9 @@ public static partial class NumberReverseLookupSamples
     {
         RequireNonNegative(maximumAbsoluteValue, nameof(maximumAbsoluteValue));
 
-        return TryMultiplyDecimal(left, right, out var result) && Math.Abs(result) <= maximumAbsoluteValue;
+        return TryMultiplyDecimal(left, right, out var result)
+            && result <= maximumAbsoluteValue
+            && result >= -maximumAbsoluteValue;
     }
 
     /// <summary>

@@ -137,17 +137,18 @@ public static class DtoMappingSamples
     /// <param name="request">注文作成リクエスト DTO。</param>
     /// <param name="currentUserId">操作ユーザー ID。</param>
     /// <returns>domain 層へ渡す command。</returns>
-    /// <exception cref="ArgumentNullException"><paramref name="request"/> が <see langword="null"/> の場合。</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="request"/> または明細コレクション内の値が <see langword="null"/> の場合。</exception>
     /// <exception cref="ArgumentException"><paramref name="currentUserId"/> が空白の場合。</exception>
     public static CreateOrderCommand ToCommand(CreateOrderRequestDto request, string currentUserId)
     {
         ArgumentNullException.ThrowIfNull(request);
+        ArgumentNullException.ThrowIfNull(request.Lines);
         ArgumentException.ThrowIfNullOrWhiteSpace(currentUserId);
 
         return new CreateOrderCommand(
             request.CustomerId,
             currentUserId,
-            request.Lines.Select(line => new CreateOrderLineCommand(line.Sku, line.Quantity)).ToList());
+            request.Lines.Select(ToCommandLine).ToList());
     }
 
     /// <summary>
@@ -164,7 +165,7 @@ public static class DtoMappingSamples
             order.Id,
             order.CustomerId,
             order.Status,
-            order.Lines.Select(line => new OrderLineResponseDto(line.Sku, line.Quantity)).ToList());
+            order.Lines.Select(ToResponseLine).ToList());
     }
 
     /// <summary>
@@ -189,5 +190,19 @@ public static class DtoMappingSamples
                 ? null
                 : request.PhoneNumber.Trim();
         }
+    }
+
+    private static CreateOrderLineCommand ToCommandLine(CreateOrderLineRequestDto line)
+    {
+        ArgumentNullException.ThrowIfNull(line);
+
+        return new CreateOrderLineCommand(line.Sku, line.Quantity);
+    }
+
+    private static OrderLineResponseDto ToResponseLine(OrderLineEntity line)
+    {
+        ArgumentNullException.ThrowIfNull(line);
+
+        return new OrderLineResponseDto(line.Sku, line.Quantity);
     }
 }

@@ -79,12 +79,18 @@ public static class LinqAdvancedSamples
     {
         ArgumentNullException.ThrowIfNull(orders);
 
-        return orders.Aggregate(
-            new OrderAggregate(0, 0m, 0m),
-            (current, order) => new OrderAggregate(
-                current.Count + 1,
-                current.TotalAmount + order.Amount,
-                Math.Max(current.MaxAmount, order.Amount)));
+        var count = 0;
+        var totalAmount = 0m;
+        var maxAmount = 0m;
+
+        foreach (var order in orders)
+        {
+            maxAmount = count == 0 ? order.Amount : Math.Max(maxAmount, order.Amount);
+            totalAmount += order.Amount;
+            count++;
+        }
+
+        return new OrderAggregate(count, totalAmount, maxAmount);
     }
 }
 

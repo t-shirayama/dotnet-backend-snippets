@@ -2,8 +2,10 @@ using DotnetBackendSnippets.Numbers;
 
 namespace DotnetBackendSnippets.Tests.Numbers;
 
+// テスト補助: Number Reverse Lookup Samples の共有型を定義する。
 public sealed partial class NumberReverseLookupSamplesTests
 {
+    // テスト意図: Format Thousands / Uses Invariant Separators を確認する。
     [Fact]
     public void FormatThousands_UsesInvariantSeparators()
     {
@@ -12,6 +14,7 @@ public sealed partial class NumberReverseLookupSamplesTests
         Assert.Equal("1,234.56", result);
     }
 
+    // テスト意図: Format Fixed Decimal / Always Keeps Requested Decimal Places を確認する。
     [Fact]
     public void FormatFixedDecimal_AlwaysKeepsRequestedDecimalPlaces()
     {
@@ -20,6 +23,7 @@ public sealed partial class NumberReverseLookupSamplesTests
         Assert.Equal("12.00", result);
     }
 
+    // テスト意図: Format Currency Code / Includes Uppercase Currency Code を確認する。
     [Fact]
     public void FormatCurrencyCode_IncludesUppercaseCurrencyCode()
     {
@@ -28,6 +32,7 @@ public sealed partial class NumberReverseLookupSamplesTests
         Assert.Equal("JPY 1,234", result);
     }
 
+    // テスト意図: Trim Trailing Zeros / Removes Unnecessary Decimal Zeros を確認する。
     [Fact]
     public void TrimTrailingZeros_RemovesUnnecessaryDecimalZeros()
     {
@@ -36,6 +41,7 @@ public sealed partial class NumberReverseLookupSamplesTests
         Assert.Equal("12.34", result);
     }
 
+    // テスト意図: Format Percent / Converts Ratio To Percentage Text を確認する。
     [Fact]
     public void FormatPercent_ConvertsRatioToPercentageText()
     {
@@ -44,6 +50,7 @@ public sealed partial class NumberReverseLookupSamplesTests
         Assert.Equal("12.34%", result);
     }
 
+    // テスト意図: Format Accounting / Uses Parentheses For Negative Values を確認する。
     [Fact]
     public void FormatAccounting_UsesParenthesesForNegativeValues()
     {
@@ -52,6 +59,7 @@ public sealed partial class NumberReverseLookupSamplesTests
         Assert.Equal("(1,234.5)", result);
     }
 
+    // テスト意図: Format With Unit / Appends Unit Text を確認する。
     [Fact]
     public void FormatWithUnit_AppendsUnitText()
     {
@@ -60,6 +68,7 @@ public sealed partial class NumberReverseLookupSamplesTests
         Assert.Equal("10 kg", result);
     }
 
+    // テスト意図: Format File Size / Uses Binary Units を確認する。
     [Fact]
     public void FormatFileSize_UsesBinaryUnits()
     {
@@ -68,6 +77,7 @@ public sealed partial class NumberReverseLookupSamplesTests
         Assert.Equal("1.5 KB", result);
     }
 
+    // テスト意図: Format Duration / Uses Milliseconds For Short Durations を確認する。
     [Fact]
     public void FormatDuration_UsesMillisecondsForShortDurations()
     {

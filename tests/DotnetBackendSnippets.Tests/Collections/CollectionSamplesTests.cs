@@ -2,8 +2,10 @@ using DotnetBackendSnippets.Collections;
 
 namespace DotnetBackendSnippets.Tests.Collections;
 
+// テスト対象: Collection Samples のスニペット動作を確認する。
 public sealed class CollectionSamplesTests
 {
+    // テスト意図: Increment Count / Adds Or Increments Dictionary Value を確認する。
     [Fact]
     public void IncrementCount_AddsOrIncrementsDictionaryValue()
     {
@@ -15,6 +17,7 @@ public sealed class CollectionSamplesTests
         Assert.Equal(2, counts["apple"]);
     }
 
+    // テスト意図: Find Duplicates / Returns Values That Appear More Than Once を確認する。
     [Fact]
     public void FindDuplicates_ReturnsValuesThatAppearMoreThanOnce()
     {
@@ -23,6 +26,7 @@ public sealed class CollectionSamplesTests
         Assert.Equal(["a", "b"], result);
     }
 
+    // テスト意図: Find Duplicates One Pass / Returns Values That Appear More Than Once を確認する。
     [Fact]
     public void FindDuplicatesOnePass_ReturnsValuesThatAppearMoreThanOnce()
     {
@@ -31,6 +35,7 @@ public sealed class CollectionSamplesTests
         Assert.Equal(["a", "b"], result);
     }
 
+    // テスト意図: Merge Dictionaries / Uses Second Dictionary When Keys Overlap を確認する。
     [Fact]
     public void MergeDictionaries_UsesSecondDictionaryWhenKeysOverlap()
     {
@@ -44,6 +49,7 @@ public sealed class CollectionSamplesTests
         Assert.Equal(30, result["c"]);
     }
 
+    // テスト意図: Get Required / Throws / When Key Is Missing を確認する。
     [Fact]
     public void GetRequired_Throws_WhenKeyIsMissing()
     {
@@ -54,6 +60,7 @@ public sealed class CollectionSamplesTests
         Assert.Contains("missing", exception.Message, StringComparison.Ordinal);
     }
 
+    // テスト意図: Add If Missing / Preserves Order And Skips Existing Value を確認する。
     [Fact]
     public void AddIfMissing_PreservesOrderAndSkipsExistingValue()
     {
@@ -67,6 +74,7 @@ public sealed class CollectionSamplesTests
         Assert.Equal(["a", "b", "c"], values);
     }
 
+    // テスト意図: Add If Missing / Adds To Set Using Set Lookup を確認する。
     [Fact]
     public void AddIfMissing_AddsToSetUsingSetLookup()
     {
@@ -79,6 +87,7 @@ public sealed class CollectionSamplesTests
         Assert.False(secondAdded);
     }
 
+    // テスト意図: Chunk By Size / Returns Fixed Size Chunks With Remainder を確認する。
     [Fact]
     public void ChunkBySize_ReturnsFixedSizeChunksWithRemainder()
     {

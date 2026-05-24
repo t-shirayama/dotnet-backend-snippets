@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DotnetBackendSnippets.Tests.RateLimiting;
 
+// テスト対象: Rate Limiting Samples のスニペット動作を確認する。
 public sealed class RateLimitingSamplesTests
 {
+    // テスト意図: Fixed Window Rate Limiter / Rejects Requests After Limit Until Window Resets を確認する。
     [Fact]
     public void FixedWindowRateLimiter_RejectsRequestsAfterLimitUntilWindowResets()
     {
@@ -28,6 +30,7 @@ public sealed class RateLimitingSamplesTests
         Assert.True(limiter.Check(context).IsAllowed);
     }
 
+    // テスト意図: Resolve Rate Limit Key / Returns Expected Key を確認する。
     [Theory]
     [InlineData(RateLimitKeyMode.IpAddress, "ip:127.0.0.1")]
     [InlineData(RateLimitKeyMode.User, "user:user-1")]
@@ -41,6 +44,20 @@ public sealed class RateLimitingSamplesTests
         Assert.Equal(expected, key);
     }
 
+    // テスト意図: Resolve Rate Limit Key / Normalizes Blank Optional Parts And Rejects Blank Endpoint を確認する。
+    [Fact]
+    public void ResolveRateLimitKey_NormalizesBlankOptionalPartsAndRejectsBlankEndpoint()
+    {
+        var anonymousContext = new RateLimitContext(" ", " ", "GetOrders");
+        var blankEndpointContext = new RateLimitContext("127.0.0.1", "user-1", " ");
+
+        Assert.Equal("ip:unknown", RateLimitingSamples.ResolveRateLimitKey(anonymousContext, RateLimitKeyMode.IpAddress));
+        Assert.Equal("anonymous:unknown", RateLimitingSamples.ResolveRateLimitKey(anonymousContext, RateLimitKeyMode.User));
+        Assert.Throws<ArgumentException>(
+            () => RateLimitingSamples.ResolveRateLimitKey(blankEndpointContext, RateLimitKeyMode.Endpoint));
+    }
+
+    // テスト意図: Create Too Many Requests Problem / Returns 429 Problem Details を確認する。
     [Fact]
     public void CreateTooManyRequestsProblem_Returns429ProblemDetails()
     {

@@ -2,8 +2,10 @@ using DotnetBackendSnippets.LanguageFeatures;
 
 namespace DotnetBackendSnippets.Tests.LanguageFeatures;
 
+// テスト対象: Nullable Value Samples のスニペット動作を確認する。
 public sealed class NullableValueSamplesTests
 {
+    // テスト意図: Quantity Or Default / Uses Fallback / When Value Is Null を確認する。
     [Fact]
     public void QuantityOrDefault_UsesFallback_WhenValueIsNull()
     {
@@ -12,6 +14,7 @@ public sealed class NullableValueSamplesTests
         Assert.Equal(10, result);
     }
 
+    // テスト意図: Normalize Positive Quantity / Returns Null / For Missing Or Invalid Values を確認する。
     [Theory]
     [InlineData(null, null)]
     [InlineData(0, null)]
@@ -24,6 +27,7 @@ public sealed class NullableValueSamplesTests
         Assert.Equal(expected, result);
     }
 
+    // テスト意図: Try Get Positive Quantity / Returns Out Value / When Positive を確認する。
     [Fact]
     public void TryGetPositiveQuantity_ReturnsOutValue_WhenPositive()
     {

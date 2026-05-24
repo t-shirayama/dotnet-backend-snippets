@@ -19,7 +19,10 @@ public static class LoggingSamples
         ArgumentNullException.ThrowIfNull(items);
         ArgumentNullException.ThrowIfNull(logger);
 
-        var count = items.Count();
+        int count = items.TryGetNonEnumeratedCount(out int knownCount)
+            ? knownCount
+            : items.Count();
+
         logger.LogInformation("Processed {Count} items.", count);
 
         return count;

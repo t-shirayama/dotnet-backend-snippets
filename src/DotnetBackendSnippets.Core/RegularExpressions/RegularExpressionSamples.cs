@@ -12,8 +12,11 @@ public static partial class RegularExpressionSamples
     /// </summary>
     /// <param name="value">検証する文字列。</param>
     /// <returns><c>ABC-1234</c> 形式の場合は <see langword="true"/>。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="value"/> が <see langword="null"/> の場合。</exception>
     public static bool IsProductCode(string value)
     {
+        ArgumentNullException.ThrowIfNull(value);
+
         return ProductCodeRegex().IsMatch(value);
     }
 

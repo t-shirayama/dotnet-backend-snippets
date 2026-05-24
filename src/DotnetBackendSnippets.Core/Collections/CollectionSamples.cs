@@ -168,10 +168,25 @@ public static class CollectionSamples
             throw new ArgumentOutOfRangeException(nameof(size), "Chunk size must be one or greater.");
         }
 
-        return source
-            .Select((item, index) => new { item, index })
-            .GroupBy(pair => pair.index / size)
-            .Select(group => (IReadOnlyList<T>)group.Select(pair => pair.item).ToList())
-            .ToList();
+        var chunks = new List<IReadOnlyList<T>>();
+        var currentChunk = new List<T>(size);
+
+        foreach (var item in source)
+        {
+            currentChunk.Add(item);
+
+            if (currentChunk.Count == size)
+            {
+                chunks.Add(currentChunk);
+                currentChunk = new List<T>(size);
+            }
+        }
+
+        if (currentChunk.Count > 0)
+        {
+            chunks.Add(currentChunk);
+        }
+
+        return chunks;
     }
 }

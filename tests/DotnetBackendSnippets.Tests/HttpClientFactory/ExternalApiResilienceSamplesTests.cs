@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Http;
 
 namespace DotnetBackendSnippets.Tests.HttpClientFactory;
 
+// テスト対象: External API Resilience Samples のスニペット動作を確認する。
 public sealed class ExternalApiResilienceSamplesTests
 {
+    // テスト意図: Classify Failure / Returns Expected Kind を確認する。
     [Theory]
     [InlineData(HttpStatusCode.InternalServerError, ExternalApiFailureKind.Transient)]
     [InlineData(HttpStatusCode.TooManyRequests, ExternalApiFailureKind.Transient)]
@@ -16,6 +18,7 @@ public sealed class ExternalApiResilienceSamplesTests
         Assert.Equal(expected, ExternalApiResilienceSamples.ClassifyFailure(statusCode));
     }
 
+    // テスト意図: Calculate Exponential Backoff Delay / Caps At Max Delay を確認する。
     [Fact]
     public void CalculateExponentialBackoffDelay_CapsAtMaxDelay()
     {
@@ -26,6 +29,7 @@ public sealed class ExternalApiResilienceSamplesTests
         Assert.Equal(TimeSpan.FromSeconds(3), ExternalApiResilienceSamples.CalculateExponentialBackoffDelay(3, options));
     }
 
+    // テスト意図: Execute With Retry Async / Retries Transient Failure を確認する。
     [Fact]
     public async Task ExecuteWithRetryAsync_RetriesTransientFailure()
     {
@@ -47,6 +51,29 @@ public sealed class ExternalApiResilienceSamplesTests
         Assert.Equal(2, attempts);
     }
 
+    // テスト意図: Execute With Retry Async / Does Not Treat Caller Cancellation As Timeout を確認する。
+    [Fact]
+    public async Task ExecuteWithRetryAsync_DoesNotTreatCallerCancellationAsTimeout()
+    {
+        using var cancellationTokenSource = new CancellationTokenSource();
+        await cancellationTokenSource.CancelAsync();
+        var attempts = 0;
+
+        await Assert.ThrowsAsync<TaskCanceledException>(
+            () => ExternalApiResilienceSamples.ExecuteWithRetryAsync<ProductDto>(
+                cancellationToken =>
+                {
+                    attempts++;
+                    return Task.FromCanceled<ExternalApiResult<ProductDto>>(cancellationToken);
+                },
+                new RetryBackoffOptions(3, TimeSpan.Zero, TimeSpan.Zero),
+                static (_, _) => Task.CompletedTask,
+                cancellationTokenSource.Token));
+
+        Assert.Equal(1, attempts);
+    }
+
+    // テスト意図: Simple Circuit Breaker / Opens After Threshold を確認する。
     [Fact]
     public void SimpleCircuitBreaker_OpensAfterThreshold()
     {
@@ -62,6 +89,14 @@ public sealed class ExternalApiResilienceSamplesTests
         Assert.Equal(CircuitBreakerState.Closed, breaker.State);
     }
 
+    // テスト意図: Simple Circuit Breaker / Rejects Invalid Threshold At Construction を確認する。
+    [Fact]
+    public void SimpleCircuitBreaker_RejectsInvalidThresholdAtConstruction()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => new SimpleCircuitBreaker(0));
+    }
+
+    // テスト意図: Correlation ID Propagation Handler / Adds Header From HTTP Context を確認する。
     [Fact]
     public async Task CorrelationIdPropagationHandler_AddsHeaderFromHttpContext()
     {

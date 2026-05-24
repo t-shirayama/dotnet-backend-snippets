@@ -2,8 +2,10 @@ using DotnetBackendSnippets.LanguageFeatures;
 
 namespace DotnetBackendSnippets.Tests.LanguageFeatures;
 
+// テスト対象: Deconstruct Samples のスニペット動作を確認する。
 public sealed class DeconstructSamplesTests
 {
+    // テスト意図: Format Customer / Uses Custom Deconstruct Order を確認する。
     [Fact]
     public void FormatCustomer_UsesCustomDeconstructOrder()
     {
@@ -12,6 +14,7 @@ public sealed class DeconstructSamplesTests
         Assert.Equal("山田 太郎", result);
     }
 
+    // テスト意図: Format Record Product / Uses Record Deconstruction を確認する。
     [Fact]
     public void FormatRecordProduct_UsesRecordDeconstruction()
     {

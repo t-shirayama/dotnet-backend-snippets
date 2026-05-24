@@ -14,7 +14,7 @@
 
 ## 使い方
 
-`TryParsePositiveInt(value)` は、正の整数に変換できた場合は成功結果を返し、失敗した場合はエラーメッセージを持つ失敗結果を返します。`ThrowIfInvalidState(false)` は不正な状態を例外で知らせます。
+`TryParsePositiveInt(value)` は、正の整数に変換できた場合は成功結果を返し、失敗した場合はエラーメッセージを持つ失敗結果を返します。数値解析はカルチャ差を避けるため invariant culture で行います。`ThrowIfInvalidState(false)` は不正な状態を例外で知らせます。
 
 ## メモ
 

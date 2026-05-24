@@ -5,8 +5,10 @@ using Microsoft.Extensions.Logging;
 
 namespace DotnetBackendSnippets.Tests.Observability;
 
+// テスト対象: Observability Samples のスニペット動作を確認する。
 public sealed class ObservabilitySamplesTests
 {
+    // テスト意図: Log Operation Error / Writes Exception And Structured Message を確認する。
     [Fact]
     public void LogOperationError_WritesExceptionAndStructuredMessage()
     {
@@ -22,6 +24,7 @@ public sealed class ObservabilitySamplesTests
         Assert.Contains("corr-123", entry.Message, StringComparison.Ordinal);
     }
 
+    // テスト意図: Begin Operation Scope / Adds Correlation And Operation State を確認する。
     [Fact]
     public void BeginOperationScope_AddsCorrelationAndOperationState()
     {
@@ -40,6 +43,7 @@ public sealed class ObservabilitySamplesTests
         Assert.Equal("user-1", scope["UserId"]);
     }
 
+    // テスト意図: Get Or Create Correlation ID / Returns Trimmed Header Value を確認する。
     [Fact]
     public void GetOrCreateCorrelationId_ReturnsTrimmedHeaderValue()
     {
@@ -53,6 +57,7 @@ public sealed class ObservabilitySamplesTests
         Assert.Equal("corr-123", correlationId);
     }
 
+    // テスト意図: Get Or Create Correlation ID / Creates Value / When Header Is Missing を確認する。
     [Fact]
     public void GetOrCreateCorrelationId_CreatesValue_WhenHeaderIsMissing()
     {
@@ -64,6 +69,7 @@ public sealed class ObservabilitySamplesTests
         Assert.True(Guid.TryParseExact(correlationId, "N", out _));
     }
 
+    // テスト意図: Create Health Check Result / Returns Healthy Result With Data を確認する。
     [Fact]
     public void CreateHealthCheckResult_ReturnsHealthyResultWithData()
     {
@@ -79,6 +85,17 @@ public sealed class ObservabilitySamplesTests
         Assert.Equal(12d, result.Data["ElapsedMilliseconds"]);
     }
 
+    // テスト意図: Create Health Check Result / Throws Argument Out Of Range Exception / When Elapsed Is Negative を確認する。
+    [Fact]
+    public void CreateHealthCheckResult_ThrowsArgumentOutOfRangeException_WhenElapsedIsNegative()
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            ObservabilitySamples.CreateHealthCheckResult("database", isHealthy: true, TimeSpan.FromMilliseconds(-1)));
+
+        Assert.Equal("elapsed", exception.ParamName);
+    }
+
+    // テスト意図: Measure Async / Returns Value And Elapsed Time を確認する。
     [Fact]
     public async Task MeasureAsync_ReturnsValueAndElapsedTime()
     {
@@ -89,6 +106,7 @@ public sealed class ObservabilitySamplesTests
         Assert.True(result.Elapsed >= TimeSpan.Zero);
     }
 
+    // テスト意図: Measure And Log Async / Logs Warning / When Threshold Is Exceeded を確認する。
     [Fact]
     public async Task MeasureAndLogAsync_LogsWarning_WhenThresholdIsExceeded()
     {
@@ -104,6 +122,22 @@ public sealed class ObservabilitySamplesTests
         CapturedLogEntry entry = Assert.Single(logger.Entries);
         Assert.Equal(LogLevel.Warning, entry.Level);
         Assert.Contains("RefreshCache", entry.Message, StringComparison.Ordinal);
+    }
+
+    // テスト意図: Measure And Log Async / Throws Argument Out Of Range Exception / When Threshold Is Negative を確認する。
+    [Fact]
+    public async Task MeasureAndLogAsync_ThrowsArgumentOutOfRangeException_WhenThresholdIsNegative()
+    {
+        CapturingLogger logger = new();
+
+        var exception = await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() =>
+            ObservabilitySamples.MeasureAndLogAsync(
+                logger,
+                "RefreshCache",
+                static _ => Task.FromResult("ok"),
+                TimeSpan.FromMilliseconds(-1)));
+
+        Assert.Equal("slowThreshold", exception.ParamName);
     }
 
     private sealed record CapturedLogEntry(

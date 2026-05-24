@@ -4,8 +4,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DotnetBackendSnippets.Tests.HttpClientFactory;
 
+// テスト対象: HTTP Client Factory Samples のスニペット動作を確認する。
 public sealed class HttpClientFactorySamplesTests
 {
+    // テスト意図: Add Product API Client / Registers Typed Client / With Bearer Token Handler を確認する。
     [Fact]
     public async Task AddProductApiClient_RegistersTypedClient_WithBearerTokenHandler()
     {
@@ -29,6 +31,7 @@ public sealed class HttpClientFactorySamplesTests
         Assert.Equal("test-token", handler.LastRequest?.Headers.Authorization?.Parameter);
     }
 
+    // テスト意図: Build Product Search Path / Adds Encoded Query String を確認する。
     [Fact]
     public void BuildProductSearchPath_AddsEncodedQueryString()
     {
@@ -37,6 +40,19 @@ public sealed class HttpClientFactorySamplesTests
         Assert.Equal("products/search?page=2&keyword=green%20tea", path);
     }
 
+    // テスト意図: Add Product API Client / Rejects Invalid Configuration を確認する。
+    [Fact]
+    public void AddProductApiClient_RejectsInvalidConfiguration()
+    {
+        var services = new ServiceCollection();
+
+        Assert.Throws<ArgumentException>(
+            () => services.AddProductApiClient(new Uri("/relative", UriKind.Relative), TimeSpan.FromSeconds(10)));
+        Assert.Throws<ArgumentOutOfRangeException>(
+            () => services.AddProductApiClient(new Uri("https://api.example.test/"), TimeSpan.Zero));
+    }
+
+    // テスト意図: Search Product Async / Returns Failure Result / When Response Is Not Successful を確認する。
     [Fact]
     public async Task SearchProductAsync_ReturnsFailureResult_WhenResponseIsNotSuccessful()
     {

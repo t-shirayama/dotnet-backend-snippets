@@ -2,8 +2,10 @@ using DotnetBackendSnippets.Strings;
 
 namespace DotnetBackendSnippets.Tests.Strings;
 
+// テスト対象: String Reverse Lookup Samples のスニペット動作を確認する。
 public sealed partial class StringReverseLookupSamplesTests
 {
+    // テスト意図: Normalization Helpers / Handle Whitespace Unicode And Separators を確認する。
     [Fact]
     public void NormalizationHelpers_HandleWhitespaceUnicodeAndSeparators()
     {

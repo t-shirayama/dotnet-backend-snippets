@@ -2,8 +2,10 @@ using DotnetBackendSnippets.LanguageFeatures;
 
 namespace DotnetBackendSnippets.Tests.LanguageFeatures;
 
+// テスト対象: Type Inference Samples のスニペット動作を確認する。
 public sealed class TypeInferenceSamplesTests
 {
+    // テスト意図: Build Line Summaries / Uses Projection With Inferred Anonymous Shape Internally を確認する。
     [Fact]
     public void BuildLineSummaries_UsesProjectionWithInferredAnonymousShapeInternally()
     {
@@ -23,6 +25,7 @@ public sealed class TypeInferenceSamplesTests
             result);
     }
 
+    // テスト意図: Build Totals By Sku / Uses Explicit Dictionary Type At API Boundary を確認する。
     [Fact]
     public void BuildTotalsBySku_UsesExplicitDictionaryTypeAtApiBoundary()
     {

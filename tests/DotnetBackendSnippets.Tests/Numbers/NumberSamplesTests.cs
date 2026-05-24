@@ -2,8 +2,10 @@ using DotnetBackendSnippets.Numbers;
 
 namespace DotnetBackendSnippets.Tests.Numbers;
 
+// テスト対象: Number Samples のスニペット動作を確認する。
 public sealed class NumberSamplesTests
 {
+    // テスト意図: Clamp / Returns Value Within Range を確認する。
     [Theory]
     [InlineData(5, 1, 10, 5)]
     [InlineData(-1, 1, 10, 1)]
@@ -15,6 +17,7 @@ public sealed class NumberSamplesTests
         Assert.Equal(expected, result);
     }
 
+    // テスト意図: Divide Or Default / Returns Default / When Denominator Is Zero を確認する。
     [Fact]
     public void DivideOrDefault_ReturnsDefault_WhenDenominatorIsZero()
     {
@@ -23,6 +26,7 @@ public sealed class NumberSamplesTests
         Assert.Equal(-1m, result);
     }
 
+    // テスト意図: Percentage / Returns Rounded Percentage を確認する。
     [Fact]
     public void Percentage_ReturnsRoundedPercentage()
     {
@@ -31,6 +35,7 @@ public sealed class NumberSamplesTests
         Assert.Equal(33.3m, result);
     }
 
+    // テスト意図: Round Currency / Uses Away From Zero Rounding を確認する。
     [Fact]
     public void RoundCurrency_UsesAwayFromZeroRounding()
     {
@@ -39,6 +44,7 @@ public sealed class NumberSamplesTests
         Assert.Equal(1.01m, result);
     }
 
+    // テスト意図: Add Tax / Returns Rounded Tax Included Amount を確認する。
     [Fact]
     public void AddTax_ReturnsRoundedTaxIncludedAmount()
     {
@@ -47,6 +53,7 @@ public sealed class NumberSamplesTests
         Assert.Equal(110m, result);
     }
 
+    // テスト意図: Is Between / Handles Inclusive And Exclusive Ranges を確認する。
     [Theory]
     [InlineData(10, 10, 20, true, true)]
     [InlineData(10, 10, 20, false, false)]

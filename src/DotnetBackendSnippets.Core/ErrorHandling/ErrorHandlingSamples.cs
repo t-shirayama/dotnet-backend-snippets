@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace DotnetBackendSnippets.ErrorHandling;
 
 /// <summary>
@@ -36,7 +38,7 @@ public static class ErrorHandlingSamples
     /// <returns>解析結果。成功時は正の整数を含みます。</returns>
     public static OperationResult<int> TryParsePositiveInt(string value)
     {
-        if (!int.TryParse(value, out var number))
+        if (!int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var number))
         {
             return OperationResult<int>.Failure("Value must be an integer.");
         }

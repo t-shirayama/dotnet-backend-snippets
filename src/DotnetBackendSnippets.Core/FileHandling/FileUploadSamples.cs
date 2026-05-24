@@ -17,6 +17,7 @@ public static class FileUploadSamples
     /// <param name="rules">検証ルール。</param>
     /// <returns>検証結果とエラー一覧。</returns>
     /// <exception cref="ArgumentNullException"><paramref name="file"/> または <paramref name="rules"/> が <see langword="null"/> の場合。</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="rules"/> の許可拡張子一覧または許可 Content-Type 一覧が <see langword="null"/> の場合。</exception>
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="rules"/> の最大バイト数が 0 以下の場合。</exception>
     public static FileUploadValidationResult ValidateUpload(
         UploadedFileMetadata file,
@@ -24,6 +25,8 @@ public static class FileUploadSamples
     {
         ArgumentNullException.ThrowIfNull(file);
         ArgumentNullException.ThrowIfNull(rules);
+        ArgumentNullException.ThrowIfNull(rules.AllowedExtensions);
+        ArgumentNullException.ThrowIfNull(rules.AllowedContentTypes);
 
         if (rules.MaxBytes <= 0)
         {

@@ -102,20 +102,24 @@ public static class ExternalApiResilienceSamples
     /// <exception cref="ArgumentOutOfRangeException"><paramref name="attempt"/> または <paramref name="options"/> が不正な場合。</exception>
     public static TimeSpan CalculateExponentialBackoffDelay(int attempt, RetryBackoffOptions options)
     {
-        ArgumentNullException.ThrowIfNull(options);
+        ValidateRetryBackoffOptions(options);
 
         if (attempt < 1)
         {
             throw new ArgumentOutOfRangeException(nameof(attempt), "Attempt must be one or greater.");
         }
 
-        if (options.BaseDelay < TimeSpan.Zero || options.MaxDelay < TimeSpan.Zero)
+        if (options.BaseDelay == TimeSpan.Zero || options.MaxDelay == TimeSpan.Zero)
         {
-            throw new ArgumentOutOfRangeException(nameof(options), "Delays must be zero or greater.");
+            return TimeSpan.Zero;
         }
 
         double multiplier = Math.Pow(2, attempt - 1);
-        double milliseconds = Math.Min(options.BaseDelay.TotalMilliseconds * multiplier, options.MaxDelay.TotalMilliseconds);
+        double calculatedMilliseconds = options.BaseDelay.TotalMilliseconds * multiplier;
+        double milliseconds = double.IsInfinity(calculatedMilliseconds)
+            ? options.MaxDelay.TotalMilliseconds
+            : Math.Min(calculatedMilliseconds, options.MaxDelay.TotalMilliseconds);
+
         return TimeSpan.FromMilliseconds(milliseconds);
     }
 
@@ -136,12 +140,7 @@ public static class ExternalApiResilienceSamples
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(operation);
-        ArgumentNullException.ThrowIfNull(options);
-
-        if (options.MaxAttempts < 1)
-        {
-            throw new ArgumentOutOfRangeException(nameof(options), "Max attempts must be positive.");
-        }
+        ValidateRetryBackoffOptions(options);
 
         delayAsync ??= Task.Delay;
 
@@ -157,6 +156,10 @@ public static class ExternalApiResilienceSamples
                     return result;
                 }
             }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
+            }
             catch (Exception exception) when (ClassifyFailure(null, exception) is ExternalApiFailureKind.Timeout && attempt < options.MaxAttempts)
             {
             }
@@ -165,15 +168,45 @@ public static class ExternalApiResilienceSamples
             await delayAsync(delay, cancellationToken);
         }
     }
+
+    private static void ValidateRetryBackoffOptions(RetryBackoffOptions options)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+
+        if (options.MaxAttempts < 1)
+        {
+            throw new ArgumentOutOfRangeException(nameof(options), "Max attempts must be positive.");
+        }
+
+        if (options.BaseDelay < TimeSpan.Zero || options.MaxDelay < TimeSpan.Zero)
+        {
+            throw new ArgumentOutOfRangeException(nameof(options), "Delays must be zero or greater.");
+        }
+    }
 }
 
 /// <summary>
 /// 連続失敗回数で開く、テストしやすい circuit breaker です。
 /// </summary>
-/// <param name="failureThreshold">開くまでの連続失敗回数。</param>
-public sealed class SimpleCircuitBreaker(int failureThreshold)
+public sealed class SimpleCircuitBreaker
 {
+    private readonly int failureThreshold;
     private int consecutiveFailures;
+
+    /// <summary>
+    /// <see cref="SimpleCircuitBreaker"/> クラスの新しいインスタンスを初期化します。
+    /// </summary>
+    /// <param name="failureThreshold">開くまでの連続失敗回数。</param>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="failureThreshold"/> が 1 未満の場合。</exception>
+    public SimpleCircuitBreaker(int failureThreshold)
+    {
+        if (failureThreshold < 1)
+        {
+            throw new ArgumentOutOfRangeException(nameof(failureThreshold), "Failure threshold must be positive.");
+        }
+
+        this.failureThreshold = failureThreshold;
+    }
 
     /// <summary>
     /// 現在の circuit breaker 状態を取得します。
@@ -185,14 +218,8 @@ public sealed class SimpleCircuitBreaker(int failureThreshold)
     /// 呼び出し結果を記録します。
     /// </summary>
     /// <param name="isSuccess">成功した場合は <see langword="true"/>。</param>
-    /// <exception cref="ArgumentOutOfRangeException">しきい値が 1 未満の場合。</exception>
     public void RecordResult(bool isSuccess)
     {
-        if (failureThreshold < 1)
-        {
-            throw new ArgumentOutOfRangeException(nameof(failureThreshold), "Failure threshold must be positive.");
-        }
-
         if (isSuccess)
         {
             consecutiveFailures = 0;

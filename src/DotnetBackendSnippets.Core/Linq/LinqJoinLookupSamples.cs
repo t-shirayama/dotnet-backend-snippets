@@ -55,14 +55,10 @@ public static partial class LinqReverseLookupSamples
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(keySelector);
 
-        var groups = comparer is null
-            ? source.GroupBy(keySelector)
-            : source.GroupBy(keySelector, comparer);
-
-        return groups.ToDictionary(
-            group => group.Key,
-            group => (IReadOnlyList<T>)group.ToList(),
-            comparer);
+        return GroupByKey(source, keySelector, comparer)
+            .ToDictionary(
+                group => group.Key,
+                group => (IReadOnlyList<T>)group.ToList(),
+                comparer);
     }
 }
-

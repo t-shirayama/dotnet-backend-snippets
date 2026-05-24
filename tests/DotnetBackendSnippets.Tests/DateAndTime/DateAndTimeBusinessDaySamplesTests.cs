@@ -2,8 +2,10 @@ using DotnetBackendSnippets.DateAndTime;
 
 namespace DotnetBackendSnippets.Tests.DateAndTime;
 
+// テスト補助: Date And Time Reverse Lookup Samples の共有 fixture を定義する。
 public sealed partial class DateAndTimeReverseLookupSamplesTests
 {
+    // テスト意図: Business Day Helpers / Skip Weekends And Holidays を確認する。
     [Fact]
     public void BusinessDayHelpers_SkipWeekendsAndHolidays()
     {
@@ -14,6 +16,7 @@ public sealed partial class DateAndTimeReverseLookupSamplesTests
         Assert.Equal(new DateOnly(2026, 5, 22), DateAndTimeReverseLookupSamples.PreviousBusinessDay(new DateOnly(2026, 5, 26), holidays));
     }
 
+    // テスト意図: Add Business Days / Supports Forward And Backward Calculation を確認する。
     [Fact]
     public void AddBusinessDays_SupportsForwardAndBackwardCalculation()
     {
@@ -23,6 +26,7 @@ public sealed partial class DateAndTimeReverseLookupSamplesTests
         Assert.Equal(new DateOnly(2026, 5, 22), DateAndTimeReverseLookupSamples.AddBusinessDays(new DateOnly(2026, 5, 27), -2, holidays));
     }
 
+    // テスト意図: Count Business Days / Counts Half Open Range を確認する。
     [Fact]
     public void CountBusinessDays_CountsHalfOpenRange()
     {

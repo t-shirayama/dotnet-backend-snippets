@@ -6,8 +6,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DotnetBackendSnippets.Tests.EntityFrameworkCore;
 
+// テスト対象: EF Core Samples のスニペット動作を確認する。
 public sealed class EfCoreSamplesTests
 {
+    // テスト意図: Add Sample Blog DB Context / Registers DB Context を確認する。
     [Fact]
     public void AddSampleBlogDbContext_RegistersDbContext()
     {
@@ -23,6 +25,7 @@ public sealed class EfCoreSamplesTests
         Assert.NotNull(dbContext);
     }
 
+    // テスト意図: Get Recent Posts Read Only Async / Uses No Tracking Projection And Excludes Soft Deleted Posts を確認する。
     [Fact]
     public async Task GetRecentPostsReadOnlyAsync_UsesNoTrackingProjectionAndExcludesSoftDeletedPosts()
     {
@@ -35,6 +38,7 @@ public sealed class EfCoreSamplesTests
         Assert.Empty(dbContext.ChangeTracker.Entries());
     }
 
+    // テスト意図: Page Posts Async / Returns Items And Total Count を確認する。
     [Fact]
     public async Task PagePostsAsync_ReturnsItemsAndTotalCount()
     {
@@ -49,6 +53,7 @@ public sealed class EfCoreSamplesTests
         Assert.Equal(["EF Core Basics"], result.Items.Select(post => post.Title));
     }
 
+    // テスト意図: Page Posts Async / Returns Empty Items / When Skip Count Is Extremely Large を確認する。
     [Fact]
     public async Task PagePostsAsync_ReturnsEmptyItems_WhenSkipCountIsExtremelyLarge()
     {
@@ -61,6 +66,7 @@ public sealed class EfCoreSamplesTests
         Assert.Equal(3, result.TotalCount);
     }
 
+    // テスト意図: Get Blog Summaries Async / Projects Only Required Shape を確認する。
     [Fact]
     public async Task GetBlogSummariesAsync_ProjectsOnlyRequiredShape()
     {
@@ -78,6 +84,7 @@ public sealed class EfCoreSamplesTests
             });
     }
 
+    // テスト意図: Get Blog With Posts Async / Loads Aggregate With Include を確認する。
     [Fact]
     public async Task GetBlogWithPostsAsync_LoadsAggregateWithInclude()
     {
@@ -91,6 +98,7 @@ public sealed class EfCoreSamplesTests
         Assert.Equal(3, blog.Posts.Count);
     }
 
+    // テスト意図: Soft Delete Post In Transaction Async / Marks Post Deleted And Query Filter Hides It を確認する。
     [Fact]
     public async Task SoftDeletePostInTransactionAsync_MarksPostDeletedAndQueryFilterHidesIt()
     {
@@ -108,6 +116,7 @@ public sealed class EfCoreSamplesTests
         Assert.True(deletedPost.IsDeleted);
     }
 
+    // テスト意図: Soft Delete Post In Transaction Async / Returns False / When Post Does Not Exist を確認する。
     [Fact]
     public async Task SoftDeletePostInTransactionAsync_ReturnsFalse_WhenPostDoesNotExist()
     {
@@ -119,6 +128,7 @@ public sealed class EfCoreSamplesTests
         Assert.False(deleted);
     }
 
+    // テスト意図: Soft Delete Post In Transaction Async / Commits Transaction / With SQLite in-memory Database を確認する。
     [Fact]
     public async Task SoftDeletePostInTransactionAsync_CommitsTransaction_WithSqliteInMemoryDatabase()
     {
@@ -144,6 +154,7 @@ public sealed class EfCoreSamplesTests
         Assert.True(deletedPost.IsDeleted);
     }
 
+    // テスト意図: Update Post Title With Concurrency Async / Returns Updated / When Stamp Matches を確認する。
     [Fact]
     public async Task UpdatePostTitleWithConcurrencyAsync_ReturnsUpdated_WhenStampMatches()
     {
@@ -171,6 +182,7 @@ public sealed class EfCoreSamplesTests
         Assert.Equal("new-stamp", post.ConcurrencyStamp);
     }
 
+    // テスト意図: Update Post Title With Concurrency Async / Returns Conflict / When Stamp Is Stale を確認する。
     [Fact]
     public async Task UpdatePostTitleWithConcurrencyAsync_ReturnsConflict_WhenStampIsStale()
     {
@@ -203,6 +215,7 @@ public sealed class EfCoreSamplesTests
         Assert.Equal(PostTitleUpdateResult.ConcurrencyConflict, result);
     }
 
+    // テスト意図: Is Unique Constraint Violation / Detects SQLite Unique Index Failure を確認する。
     [Fact]
     public async Task IsUniqueConstraintViolation_DetectsSqliteUniqueIndexFailure()
     {
@@ -219,6 +232,7 @@ public sealed class EfCoreSamplesTests
         Assert.True(EfCoreSamples.IsUniqueConstraintViolation(exception));
     }
 
+    // テスト意図: Apply Audit Values / Sets Created And Updated Timestamps を確認する。
     [Fact]
     public async Task ApplyAuditValues_SetsCreatedAndUpdatedTimestamps()
     {
@@ -241,6 +255,7 @@ public sealed class EfCoreSamplesTests
         Assert.Equal(now, post.UpdatedAt);
     }
 
+    // テスト意図: Create Add Migration Command / Returns dotnet ef Arguments を確認する。
     [Fact]
     public void CreateAddMigrationCommand_ReturnsDotnetEfArguments()
     {
@@ -267,6 +282,7 @@ public sealed class EfCoreSamplesTests
             command.Arguments);
     }
 
+    // テスト意図: Create Migration Bundle Command / Returns Self Contained Bundle Arguments を確認する。
     [Fact]
     public void CreateMigrationBundleCommand_ReturnsSelfContainedBundleArguments()
     {
@@ -281,6 +297,7 @@ public sealed class EfCoreSamplesTests
         Assert.Contains("artifacts/efbundle", command.Arguments);
     }
 
+    // テスト意図: Create Apply Migration Command / Returns Database Update Arguments を確認する。
     [Fact]
     public void CreateApplyMigrationCommand_ReturnsDatabaseUpdateArguments()
     {
@@ -308,6 +325,7 @@ public sealed class EfCoreSamplesTests
             command.Arguments);
     }
 
+    // テスト意図: Execute In Transaction With Retry Async / Retries Transient Failure を確認する。
     [Fact]
     public async Task ExecuteInTransactionWithRetryAsync_RetriesTransientFailure()
     {
@@ -335,6 +353,7 @@ public sealed class EfCoreSamplesTests
         Assert.Equal(2, attempts);
     }
 
+    // テスト意図: Audit Save Changes Interceptor / Sets Audit Values During Save Changes を確認する。
     [Fact]
     public async Task AuditSaveChangesInterceptor_SetsAuditValuesDuringSaveChanges()
     {
@@ -359,6 +378,15 @@ public sealed class EfCoreSamplesTests
         BlogPost post = await dbContext.Posts.SingleAsync(candidate => candidate.Id == 20);
         Assert.Equal(now, post.CreatedAt);
         Assert.Equal(now, post.UpdatedAt);
+    }
+
+    // テスト意図: Audit Save Changes Interceptor / Throws Argument Null Exception / When Time Provider Is Null を確認する。
+    [Fact]
+    public void AuditSaveChangesInterceptor_ThrowsArgumentNullException_WhenTimeProviderIsNull()
+    {
+        var exception = Assert.Throws<ArgumentNullException>(() => new AuditSaveChangesInterceptor(null!));
+
+        Assert.Equal("timeProvider", exception.ParamName);
     }
 
     private static SampleBlogDbContext CreateDbContext()

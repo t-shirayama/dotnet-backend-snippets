@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.DataProtection;
 
 namespace DotnetBackendSnippets.Tests.Security;
 
+// テスト対象: Data Protection Samples のスニペット動作を確認する。
 public sealed class DataProtectionSamplesTests
 {
+    // テスト意図: Protect String / Round Trips Protected Value を確認する。
     [Fact]
     public void ProtectString_RoundTripsProtectedValue()
     {
@@ -28,6 +30,7 @@ public sealed class DataProtectionSamplesTests
         }
     }
 
+    // テスト意図: Get Required Secret Async / Returns Secret From Provider を確認する。
     [Fact]
     public async Task GetRequiredSecretAsync_ReturnsSecretFromProvider()
     {

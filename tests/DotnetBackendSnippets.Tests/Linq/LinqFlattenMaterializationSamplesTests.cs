@@ -2,8 +2,10 @@ using DotnetBackendSnippets.Linq;
 
 namespace DotnetBackendSnippets.Tests.Linq;
 
+// テスト補助: LINQ Reverse Lookup Samples の共有データを定義する。
 public sealed partial class LinqReverseLookupSamplesTests
 {
+    // テスト意図: Select Many With Parent / Skips Null Children And Keeps Parent Values を確認する。
     [Fact]
     public void SelectManyWithParent_SkipsNullChildrenAndKeepsParentValues()
     {

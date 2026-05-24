@@ -2,8 +2,10 @@ using DotnetBackendSnippets.Numbers;
 
 namespace DotnetBackendSnippets.Tests.Numbers;
 
+// テスト補助: Number Reverse Lookup Samples の共有型を定義する。
 public sealed partial class NumberReverseLookupSamplesTests
 {
+    // テスト意図: Calculate Skip / Returns Offset From One Based Page を確認する。
     [Fact]
     public void CalculateSkip_ReturnsOffsetFromOneBasedPage()
     {
@@ -12,6 +14,7 @@ public sealed partial class NumberReverseLookupSamplesTests
         Assert.Equal(40, result);
     }
 
+    // テスト意図: Calculate Total Pages / Rounds Up Partial Page を確認する。
     [Fact]
     public void CalculateTotalPages_RoundsUpPartialPage()
     {
@@ -20,6 +23,7 @@ public sealed partial class NumberReverseLookupSamplesTests
         Assert.Equal(6, result);
     }
 
+    // テスト意図: Is Last Page / Checks Page Against Total Count を確認する。
     [Theory]
     [InlineData(5, 95, 20, true)]
     [InlineData(4, 95, 20, false)]
@@ -30,6 +34,7 @@ public sealed partial class NumberReverseLookupSamplesTests
         Assert.Equal(expected, result);
     }
 
+    // テスト意図: To Offset Limit / Returns Offset Limit Pair を確認する。
     [Fact]
     public void ToOffsetLimit_ReturnsOffsetLimitPair()
     {
@@ -38,6 +43,7 @@ public sealed partial class NumberReverseLookupSamplesTests
         Assert.Equal(new NumberReverseLookupSamples.OffsetLimit(50, 50), result);
     }
 
+    // テスト意図: Get Display Range / Returns One Based Range For Current Page を確認する。
     [Fact]
     public void GetDisplayRange_ReturnsOneBasedRangeForCurrentPage()
     {
@@ -46,6 +52,7 @@ public sealed partial class NumberReverseLookupSamplesTests
         Assert.Equal(new NumberReverseLookupSamples.DisplayRange(41, 55), result);
     }
 
+    // テスト意図: Clamp Page Size / Returns Default For Invalid Page Size を確認する。
     [Fact]
     public void ClampPageSize_ReturnsDefaultForInvalidPageSize()
     {

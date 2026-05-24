@@ -52,9 +52,11 @@ public static partial class NumberReverseLookupSamples
         ArgumentException.ThrowIfNullOrWhiteSpace(currencyCode);
         ValidateDecimalPlaces(decimalPlaces);
 
-        return string.Create(
-            CultureInfo.InvariantCulture,
-            $"{currencyCode.ToUpperInvariant()} {value.ToString($"N{decimalPlaces}", provider ?? CultureInfo.InvariantCulture)}");
+        var formatProvider = provider ?? CultureInfo.InvariantCulture;
+        var normalizedCurrencyCode = currencyCode.ToUpperInvariant();
+        var formattedAmount = value.ToString($"N{decimalPlaces}", formatProvider);
+
+        return $"{normalizedCurrencyCode} {formattedAmount}";
     }
 
     /// <summary>
@@ -111,7 +113,9 @@ public static partial class NumberReverseLookupSamples
         ArgumentException.ThrowIfNullOrWhiteSpace(unit);
         ValidateDecimalPlaces(decimalPlaces);
 
-        return $"{value.ToString($"N{decimalPlaces}", provider ?? CultureInfo.InvariantCulture)} {unit}";
+        var formatProvider = provider ?? CultureInfo.InvariantCulture;
+
+        return $"{value.ToString($"N{decimalPlaces}", formatProvider)} {unit}";
     }
 
     /// <summary>
@@ -153,11 +157,13 @@ public static partial class NumberReverseLookupSamples
     {
         ValidateDecimalPlaces(decimalPlaces);
 
+        var formatProvider = provider ?? CultureInfo.InvariantCulture;
+
         if (duration.TotalSeconds < 1d)
         {
-            return $"{duration.TotalMilliseconds.ToString($"F{decimalPlaces}", provider ?? CultureInfo.InvariantCulture)} ms";
+            return $"{duration.TotalMilliseconds.ToString($"F{decimalPlaces}", formatProvider)} ms";
         }
 
-        return $"{duration.TotalSeconds.ToString($"F{decimalPlaces}", provider ?? CultureInfo.InvariantCulture)} sec";
+        return $"{duration.TotalSeconds.ToString($"F{decimalPlaces}", formatProvider)} sec";
     }
 }

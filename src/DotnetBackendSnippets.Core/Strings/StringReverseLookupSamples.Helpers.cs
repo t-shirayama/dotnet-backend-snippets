@@ -11,6 +11,7 @@ namespace DotnetBackendSnippets.Strings;
 public static partial class StringReverseLookupSamples
 {
     private const string TokenAlphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    private const string PortableFileNameInvalidCharacters = "<>:\"/\\|?*";
 
     private static (string Before, string After) SplitAround(string value, string separator)
     {
@@ -40,6 +41,11 @@ public static partial class StringReverseLookupSamples
         }
 
         return builder.ToString();
+    }
+
+    private static string ToBase64UrlString(byte[] bytes)
+    {
+        return Convert.ToBase64String(bytes).TrimEnd('=').Replace('+', '-').Replace('/', '_');
     }
 
     private static string CapitalizeInvariant(string value)

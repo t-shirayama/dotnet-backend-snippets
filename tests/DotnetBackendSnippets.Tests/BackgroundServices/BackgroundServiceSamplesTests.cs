@@ -5,8 +5,10 @@ using Microsoft.Extensions.Logging;
 
 namespace DotnetBackendSnippets.Tests.BackgroundServices;
 
+// テスト対象: Background Service Samples のスニペット動作を確認する。
 public sealed class BackgroundServiceSamplesTests
 {
+    // テスト意図: Run Until Cancelled Async / Executes Worker Loop / Until Cancellation を確認する。
     [Fact]
     public async Task RunUntilCancelledAsync_ExecutesWorkerLoop_UntilCancellation()
     {
@@ -25,6 +27,7 @@ public sealed class BackgroundServiceSamplesTests
         Assert.Empty(logger.Entries);
     }
 
+    // テスト意図: Run Once Async / Logs Exception / And Continues When Configured を確認する。
     [Fact]
     public async Task RunOnceAsync_LogsException_AndContinuesWhenConfigured()
     {
@@ -42,6 +45,7 @@ public sealed class BackgroundServiceSamplesTests
         Assert.Contains("Background worker iteration failed.", entry.Message, StringComparison.Ordinal);
     }
 
+    // テスト意図: Run Once Async / Rethrows Exception / When Continue On Error Is False を確認する。
     [Fact]
     public async Task RunOnceAsync_RethrowsException_WhenContinueOnErrorIsFalse()
     {
@@ -56,6 +60,7 @@ public sealed class BackgroundServiceSamplesTests
         Assert.Same(exception, actual);
     }
 
+    // テスト意図: Add Background Worker / Registers Worker Loop Hosted Service を確認する。
     [Fact]
     public void AddBackgroundWorker_RegistersWorkerLoopHostedService()
     {
@@ -73,6 +78,7 @@ public sealed class BackgroundServiceSamplesTests
         Assert.IsType<WorkerLoopHostedService>(provider.GetRequiredService<IHostedService>());
     }
 
+    // テスト意図: Channel Background Job Queue / Dequeues Queued Job を確認する。
     [Fact]
     public async Task ChannelBackgroundJobQueue_DequeuesQueuedJob()
     {
@@ -86,6 +92,7 @@ public sealed class BackgroundServiceSamplesTests
         Assert.Same(job, actual);
     }
 
+    // テスト意図: Queued Background Job Processor / Retries Failed Job / And Uses Scoped Service を確認する。
     [Fact]
     public async Task QueuedBackgroundJobProcessor_RetriesFailedJob_AndUsesScopedService()
     {
@@ -125,6 +132,7 @@ public sealed class BackgroundServiceSamplesTests
         Assert.Contains(logger.Entries, entry => entry.Level == LogLevel.Warning);
     }
 
+    // テスト意図: Queued Background Job Processor / Sends Poison Message / When Retries Are Exhausted を確認する。
     [Fact]
     public async Task QueuedBackgroundJobProcessor_SendsPoisonMessage_WhenRetriesAreExhausted()
     {

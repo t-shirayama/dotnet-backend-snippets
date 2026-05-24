@@ -12,8 +12,10 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace DotnetBackendSnippets.Tests.Authentication;
 
+// テスト対象: Authentication Authorization Samples のスニペット動作を確認する。
 public sealed class AuthenticationAuthorizationSamplesTests
 {
+    // テスト意図: Add JWT Bearer Authentication / Configures Default Scheme And Validation Parameters を確認する。
     [Fact]
     public void AddJwtBearerAuthentication_ConfiguresDefaultSchemeAndValidationParameters()
     {
@@ -35,6 +37,7 @@ public sealed class AuthenticationAuthorizationSamplesTests
         Assert.Equal(TimeSpan.FromMinutes(2), jwtOptions.TokenValidationParameters.ClockSkew);
     }
 
+    // テスト意図: Add Cookie Authentication / Configures Cookie Paths を確認する。
     [Fact]
     public void AddCookieAuthentication_ConfiguresCookiePaths()
     {
@@ -54,6 +57,7 @@ public sealed class AuthenticationAuthorizationSamplesTests
         Assert.True(cookieOptions.Cookie.HttpOnly);
     }
 
+    // テスト意図: Add Sample Authorization Policies / Registers Role And Claim Policies を確認する。
     [Fact]
     public async Task AddSampleAuthorizationPolicies_RegistersRoleAndClaimPolicies()
     {
@@ -81,6 +85,7 @@ public sealed class AuthenticationAuthorizationSamplesTests
         Assert.True(tenantResult.Succeeded);
     }
 
+    // テスト意図: Get Required User ID / Reads Name Identifier Or Subject Claim を確認する。
     [Fact]
     public void GetRequiredUserId_ReadsNameIdentifierOrSubjectClaim()
     {
@@ -91,6 +96,7 @@ public sealed class AuthenticationAuthorizationSamplesTests
         Assert.Equal("user-2", AuthenticationAuthorizationSamples.GetRequiredUserId(subjectPrincipal));
     }
 
+    // テスト意図: Can Access Tenant / Returns Whether Tenant Claim Matches を確認する。
     [Fact]
     public void CanAccessTenant_ReturnsWhetherTenantClaimMatches()
     {
@@ -100,6 +106,7 @@ public sealed class AuthenticationAuthorizationSamplesTests
         Assert.False(AuthenticationAuthorizationSamples.CanAccessTenant(principal, "tenant-2"));
     }
 
+    // テスト意図: Create Forbidden Problem / Returns Problem Details With Code を確認する。
     [Fact]
     public void CreateForbiddenProblem_ReturnsProblemDetailsWithCode()
     {

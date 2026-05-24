@@ -2,8 +2,10 @@ using DotnetBackendSnippets.FileHandling;
 
 namespace DotnetBackendSnippets.Tests.FileHandling;
 
+// テスト対象: File Upload Samples のスニペット動作を確認する。
 public sealed class FileUploadSamplesTests
 {
+    // テスト意図: Validate Upload / Returns Valid / When Metadata Matches Rules を確認する。
     [Fact]
     public void ValidateUpload_ReturnsValid_WhenMetadataMatchesRules()
     {
@@ -19,6 +21,7 @@ public sealed class FileUploadSamplesTests
         Assert.Empty(result.Errors);
     }
 
+    // テスト意図: Validate Upload / Reads Extension Without Depending On Os Path Rules を確認する。
     [Theory]
     [InlineData(@"C:\uploads\avatar.JPG")]
     [InlineData("/uploads/avatar.JPG")]
@@ -36,6 +39,7 @@ public sealed class FileUploadSamplesTests
         Assert.Empty(result.Errors);
     }
 
+    // テスト意図: Validate Upload / Returns Errors / When File Breaks Rules を確認する。
     [Fact]
     public void ValidateUpload_ReturnsErrors_WhenFileBreaksRules()
     {
@@ -53,6 +57,7 @@ public sealed class FileUploadSamplesTests
         Assert.Contains("許可されていない Content-Type です。", result.Errors);
     }
 
+    // テスト意図: Validate Upload / Returns Error / When File Is Empty を確認する。
     [Fact]
     public void ValidateUpload_ReturnsError_WhenFileIsEmpty()
     {
@@ -68,6 +73,7 @@ public sealed class FileUploadSamplesTests
         Assert.Contains("空のファイルはアップロードできません。", result.Errors);
     }
 
+    // テスト意図: Validate Upload / Returns Error / When File Name Is Empty を確認する。
     [Fact]
     public void ValidateUpload_ReturnsError_WhenFileNameIsEmpty()
     {
@@ -83,6 +89,20 @@ public sealed class FileUploadSamplesTests
         Assert.Contains("ファイル名が空です。", result.Errors);
     }
 
+    // テスト意図: Validate Upload / Throws / When Rule Collections Are Null を確認する。
+    [Fact]
+    public void ValidateUpload_Throws_WhenRuleCollectionsAreNull()
+    {
+        var file = new UploadedFileMetadata("report.pdf", 10, "application/pdf");
+        var rules = new FileUploadRules(
+            MaxBytes: 100,
+            AllowedExtensions: null!,
+            AllowedContentTypes: ["application/pdf"]);
+
+        Assert.Throws<ArgumentNullException>(() => FileUploadSamples.ValidateUpload(file, rules));
+    }
+
+    // テスト意図: Normalize Extension / Adds Leading Dot And Lowercases を確認する。
     [Fact]
     public void NormalizeExtension_AddsLeadingDotAndLowercases()
     {
@@ -91,6 +111,7 @@ public sealed class FileUploadSamplesTests
         Assert.Equal(".pdf", result);
     }
 
+    // テスト意図: Has Known File Signature / Checks File Header Bytes を確認する。
     [Theory]
     [InlineData(new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A }, KnownFileType.Png, true)]
     [InlineData(new byte[] { 0xFF, 0xD8, 0xFF, 0xE0 }, KnownFileType.Jpeg, true)]
@@ -103,6 +124,7 @@ public sealed class FileUploadSamplesTests
         Assert.Equal(expected, result);
     }
 
+    // テスト意図: Create Server File Name / Uses Server Generated ID And Original Extension Only を確認する。
     [Fact]
     public void CreateServerFileName_UsesServerGeneratedIdAndOriginalExtensionOnly()
     {

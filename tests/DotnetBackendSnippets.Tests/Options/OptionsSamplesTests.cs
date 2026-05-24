@@ -5,8 +5,10 @@ using Microsoft.Extensions.Options;
 
 namespace DotnetBackendSnippets.Tests.Options;
 
+// テスト対象: Options Samples のスニペット動作を確認する。
 public sealed class OptionsSamplesTests
 {
+    // テスト意図: Add Notification Options / Registers Options / When Configuration Is Valid を確認する。
     [Fact]
     public void AddNotificationOptions_RegistersOptions_WhenConfigurationIsValid()
     {
@@ -22,6 +24,7 @@ public sealed class OptionsSamplesTests
         Assert.Equal(3, options.RetryCount);
     }
 
+    // テスト意図: Add Notification Options / Throws Validation Exception / When Configuration Is Invalid を確認する。
     [Fact]
     public void AddNotificationOptions_ThrowsValidationException_WhenConfigurationIsInvalid()
     {
@@ -35,6 +38,7 @@ public sealed class OptionsSamplesTests
         Assert.Throws<OptionsValidationException>(() => provider.GetRequiredService<IOptions<NotificationOptions>>().Value);
     }
 
+    // テスト意図: Notification Options Reader / Returns Current Options / From Options Monitor を確認する。
     [Fact]
     public void NotificationOptionsReader_ReturnsCurrentOptions_FromOptionsMonitor()
     {
@@ -50,6 +54,17 @@ public sealed class OptionsSamplesTests
 
         Assert.Equal("alerts@example.test", current.SenderEmail);
         Assert.Equal(1, current.RetryCount);
+    }
+
+    // テスト意図: Add Notification Options / Throws Argument Null Exception / When Services Is Null を確認する。
+    [Fact]
+    public void AddNotificationOptions_ThrowsArgumentNullException_WhenServicesIsNull()
+    {
+        IConfiguration configuration = CreateConfiguration("alerts@example.test", "1");
+
+        var exception = Assert.Throws<ArgumentNullException>(() => OptionsSamples.AddNotificationOptions(null!, configuration));
+
+        Assert.Equal("services", exception.ParamName);
     }
 
     private static IConfiguration CreateConfiguration(string senderEmail, string retryCount)

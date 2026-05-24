@@ -106,7 +106,7 @@ public static partial class StringReverseLookupSamples
     {
         ArgumentNullException.ThrowIfNull(value);
 
-        return Convert.ToBase64String(Encoding.UTF8.GetBytes(value)).TrimEnd('=').Replace('+', '-').Replace('/', '_');
+        return ToBase64UrlString(Encoding.UTF8.GetBytes(value));
     }
 
     /// <summary>
@@ -157,7 +157,7 @@ public static partial class StringReverseLookupSamples
             throw new ArgumentOutOfRangeException(nameof(byteLength), "Byte length must be one or greater.");
         }
 
-        return Convert.ToBase64String(RandomNumberGenerator.GetBytes(byteLength)).TrimEnd('=').Replace('+', '-').Replace('/', '_');
+        return ToBase64UrlString(RandomNumberGenerator.GetBytes(byteLength));
     }
 
     /// <summary>
@@ -167,7 +167,7 @@ public static partial class StringReverseLookupSamples
     /// <returns>GUID バイト列を Base64Url 形式にした短い文字列。</returns>
     public static string ToShortGuid(Guid value)
     {
-        return Convert.ToBase64String(value.ToByteArray()).TrimEnd('=').Replace('+', '-').Replace('/', '_');
+        return ToBase64UrlString(value.ToByteArray());
     }
 
     /// <summary>
@@ -351,21 +351,25 @@ public static partial class StringReverseLookupSamples
             throw new ArgumentOutOfRangeException(nameof(maxBytes), "Max bytes must be zero or greater.");
         }
 
-        if (Encoding.UTF8.GetByteCount(suffix) > maxBytes)
+        var suffixByteCount = Encoding.UTF8.GetByteCount(suffix);
+        if (suffixByteCount > maxBytes)
         {
             throw new ArgumentException("Suffix byte length must be less than or equal to max bytes.", nameof(suffix));
         }
 
         var builder = new StringBuilder();
+        var currentByteCount = 0;
+
         foreach (var rune in value.EnumerateRunes())
         {
-            var candidate = builder.ToString() + rune + suffix;
-            if (Encoding.UTF8.GetByteCount(candidate) > maxBytes)
+            var runeByteCount = rune.Utf8SequenceLength;
+            if (currentByteCount + runeByteCount + suffixByteCount > maxBytes)
             {
-                return builder + suffix;
+                return builder.Append(suffix).ToString();
             }
 
             builder.Append(rune);
+            currentByteCount += runeByteCount;
         }
 
         return builder.ToString();

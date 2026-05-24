@@ -2,8 +2,10 @@ using DotnetBackendSnippets.HttpClient;
 
 namespace DotnetBackendSnippets.Tests.HttpClient;
 
+// テスト対象: HTTP Client Samples のスニペット動作を確認する。
 public sealed class HttpClientSamplesTests
 {
+    // テスト意図: Get Message Async / Returns Message / Without Real HTTP Call を確認する。
     [Fact]
     public async Task GetMessageAsync_ReturnsMessage_WithoutRealHttpCall()
     {

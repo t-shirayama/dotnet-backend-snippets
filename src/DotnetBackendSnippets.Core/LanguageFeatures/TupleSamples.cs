@@ -35,13 +35,27 @@ public static class TupleSamples
     {
         ArgumentNullException.ThrowIfNull(values);
 
-        var items = values.ToList();
-        if (items.Count == 0)
+        using var enumerator = values.GetEnumerator();
+        if (!enumerator.MoveNext())
         {
             throw new ArgumentException("Values must contain at least one item.", nameof(values));
         }
 
-        return (items.Min(), items.Max(), (decimal)items.Average());
+        var count = 1;
+        var min = enumerator.Current;
+        var max = enumerator.Current;
+        var total = (decimal)enumerator.Current;
+
+        while (enumerator.MoveNext())
+        {
+            var value = enumerator.Current;
+            min = Math.Min(min, value);
+            max = Math.Max(max, value);
+            total += value;
+            count++;
+        }
+
+        return (min, max, total / count);
     }
 
     /// <summary>

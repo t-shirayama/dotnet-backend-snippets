@@ -137,6 +137,7 @@ public static class ObservabilitySamples
     /// <param name="exception">異常時の例外。</param>
     /// <returns>ヘルスチェック結果。</returns>
     /// <exception cref="ArgumentException"><paramref name="dependencyName"/> が空白の場合。</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="elapsed"/> が負の値の場合。</exception>
     public static HealthCheckResult CreateHealthCheckResult(
         string dependencyName,
         bool isHealthy,
@@ -144,6 +145,11 @@ public static class ObservabilitySamples
         Exception? exception = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(dependencyName);
+
+        if (elapsed < TimeSpan.Zero)
+        {
+            throw new ArgumentOutOfRangeException(nameof(elapsed), "Elapsed time must be zero or greater.");
+        }
 
         Dictionary<string, object> data = new(StringComparer.Ordinal)
         {
@@ -192,6 +198,7 @@ public static class ObservabilitySamples
     /// <returns>実行結果と経過時間。</returns>
     /// <exception cref="ArgumentNullException"><paramref name="logger"/> または <paramref name="operation"/> が <see langword="null"/> の場合。</exception>
     /// <exception cref="ArgumentException"><paramref name="operationName"/> が空白の場合。</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="slowThreshold"/> が負の値の場合。</exception>
     public static async Task<TimedOperationResult<T>> MeasureAndLogAsync<T>(
         ILogger logger,
         string operationName,
@@ -202,6 +209,11 @@ public static class ObservabilitySamples
         ArgumentNullException.ThrowIfNull(logger);
         ArgumentException.ThrowIfNullOrWhiteSpace(operationName);
         ArgumentNullException.ThrowIfNull(operation);
+
+        if (slowThreshold < TimeSpan.Zero)
+        {
+            throw new ArgumentOutOfRangeException(nameof(slowThreshold), "Slow threshold must be zero or greater.");
+        }
 
         TimedOperationResult<T> result = await MeasureAsync(operation, cancellationToken);
 

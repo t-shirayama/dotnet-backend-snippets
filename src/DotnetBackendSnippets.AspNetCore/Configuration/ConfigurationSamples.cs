@@ -21,15 +21,30 @@ public sealed record EnvironmentSettingsFiles(string BaseFile, string Environmen
 /// </summary>
 public static class ConfigurationSamples
 {
+    private static readonly string[] SecretKeyFragments =
+    [
+        "apikey",
+        "connectionstring",
+        "password",
+        "privatekey",
+        "secret",
+        "token",
+    ];
+
     /// <summary>
     /// 必須の設定値を取得します。
     /// </summary>
     /// <param name="configuration">設定ソース。</param>
     /// <param name="key">取得するキー。</param>
     /// <returns>空ではない設定値。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="configuration"/> が <see langword="null"/> の場合。</exception>
+    /// <exception cref="ArgumentException"><paramref name="key"/> が空白の場合。</exception>
     /// <exception cref="InvalidOperationException">設定値が未指定の場合。</exception>
     public static string GetRequiredValue(IConfiguration configuration, string key)
     {
+        ArgumentNullException.ThrowIfNull(configuration);
+        ArgumentException.ThrowIfNullOrWhiteSpace(key);
+
         var value = configuration[key];
 
         if (string.IsNullOrWhiteSpace(value))
@@ -45,9 +60,12 @@ public static class ConfigurationSamples
     /// </summary>
     /// <param name="configuration">設定ソース。</param>
     /// <returns>読み取ったアプリケーション設定。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="configuration"/> が <see langword="null"/> の場合。</exception>
     /// <exception cref="InvalidOperationException">必須値がない、または形式が不正な場合。</exception>
     public static AppSettings ReadAppSettings(IConfiguration configuration)
     {
+        ArgumentNullException.ThrowIfNull(configuration);
+
         var section = configuration.GetSection("App");
         var serviceName = GetRequiredValue(section, "ServiceName");
         var retryCountValue = GetRequiredValue(section, "RetryCount");
@@ -135,10 +153,11 @@ public static class ConfigurationSamples
 
     private static bool IsSecretKey(string key)
     {
-        return key.Contains("password", StringComparison.OrdinalIgnoreCase)
-            || key.Contains("secret", StringComparison.OrdinalIgnoreCase)
-            || key.Contains("token", StringComparison.OrdinalIgnoreCase)
-            || key.Contains("apikey", StringComparison.OrdinalIgnoreCase)
-            || key.Contains("api_key", StringComparison.OrdinalIgnoreCase);
+        string normalized = new(key
+            .Where(char.IsAsciiLetterOrDigit)
+            .Select(char.ToLowerInvariant)
+            .ToArray());
+
+        return SecretKeyFragments.Any(fragment => normalized.Contains(fragment, StringComparison.Ordinal));
     }
 }

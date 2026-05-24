@@ -43,10 +43,7 @@ public static partial class NumberReverseLookupSamples
         decimal unit,
         MidpointRounding midpointRounding = MidpointRounding.AwayFromZero)
     {
-        if (unit <= 0m)
-        {
-            throw new ArgumentOutOfRangeException(nameof(unit), "Unit must be greater than zero.");
-        }
+        ValidatePositiveUnit(unit);
 
         return Math.Round(value / unit, 0, midpointRounding) * unit;
     }
@@ -59,10 +56,7 @@ public static partial class NumberReverseLookupSamples
     /// <returns>指定単位へ切り上げた値。</returns>
     public static decimal CeilingToUnit(decimal value, decimal unit)
     {
-        if (unit <= 0m)
-        {
-            throw new ArgumentOutOfRangeException(nameof(unit), "Unit must be greater than zero.");
-        }
+        ValidatePositiveUnit(unit);
 
         return Math.Ceiling(value / unit) * unit;
     }
@@ -75,10 +69,7 @@ public static partial class NumberReverseLookupSamples
     /// <returns>指定単位へ切り下げた値。</returns>
     public static decimal FloorToUnit(decimal value, decimal unit)
     {
-        if (unit <= 0m)
-        {
-            throw new ArgumentOutOfRangeException(nameof(unit), "Unit must be greater than zero.");
-        }
+        ValidatePositiveUnit(unit);
 
         return Math.Floor(value / unit) * unit;
     }
@@ -316,5 +307,13 @@ public static partial class NumberReverseLookupSamples
         RequireNonNegative(exchangeRate, nameof(exchangeRate));
 
         return RoundAwayFromZero(amount * exchangeRate, decimalPlaces);
+    }
+
+    private static void ValidatePositiveUnit(decimal unit)
+    {
+        if (unit <= 0m)
+        {
+            throw new ArgumentOutOfRangeException(nameof(unit), "Unit must be greater than zero.");
+        }
     }
 }

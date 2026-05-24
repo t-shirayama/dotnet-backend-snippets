@@ -23,9 +23,20 @@ public interface IAccessTokenProvider
 /// <summary>
 /// HTTP リクエストに Bearer トークンを追加します。
 /// </summary>
-/// <param name="accessTokenProvider">アクセストークンの取得元。</param>
-public sealed class BearerTokenHandler(IAccessTokenProvider accessTokenProvider) : DelegatingHandler
+public sealed class BearerTokenHandler : DelegatingHandler
 {
+    private readonly IAccessTokenProvider accessTokenProvider;
+
+    /// <summary>
+    /// <see cref="BearerTokenHandler"/> クラスの新しいインスタンスを初期化します。
+    /// </summary>
+    /// <param name="accessTokenProvider">アクセストークンの取得元。</param>
+    /// <exception cref="ArgumentNullException"><paramref name="accessTokenProvider"/> が <see langword="null"/> の場合。</exception>
+    public BearerTokenHandler(IAccessTokenProvider accessTokenProvider)
+    {
+        this.accessTokenProvider = accessTokenProvider ?? throw new ArgumentNullException(nameof(accessTokenProvider));
+    }
+
     /// <inheritdoc />
     protected override async Task<HttpResponseMessage> SendAsync(
         HttpRequestMessage request,
@@ -95,9 +106,20 @@ public sealed record ExternalApiResult<T>(T? Value, ExternalApiError? Error)
 /// <summary>
 /// 外部商品 API を呼び出すクライアントです。
 /// </summary>
-/// <param name="httpClient">API 呼び出しに使う HTTP クライアント。</param>
-public sealed class ProductApiClient(System.Net.Http.HttpClient httpClient)
+public sealed class ProductApiClient
 {
+    private readonly System.Net.Http.HttpClient httpClient;
+
+    /// <summary>
+    /// <see cref="ProductApiClient"/> クラスの新しいインスタンスを初期化します。
+    /// </summary>
+    /// <param name="httpClient">API 呼び出しに使う HTTP クライアント。</param>
+    /// <exception cref="ArgumentNullException"><paramref name="httpClient"/> が <see langword="null"/> の場合。</exception>
+    public ProductApiClient(System.Net.Http.HttpClient httpClient)
+    {
+        this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+    }
+
     /// <summary>
     /// 商品 ID を指定して商品を取得します。
     /// </summary>
@@ -197,11 +219,27 @@ public static class HttpClientFactorySamples
     /// <param name="baseAddress">外部 API のベースアドレス。</param>
     /// <param name="timeout">HTTP リクエストのタイムアウト。</param>
     /// <returns>登録後のサービスコレクション。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="services"/> または <paramref name="baseAddress"/> が <see langword="null"/> の場合。</exception>
+    /// <exception cref="ArgumentException"><paramref name="baseAddress"/> が絶対 URI ではない場合。</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="timeout"/> が 0 以下の場合。</exception>
     public static IServiceCollection AddProductApiClient(
         this IServiceCollection services,
         Uri baseAddress,
         TimeSpan timeout)
     {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(baseAddress);
+
+        if (!baseAddress.IsAbsoluteUri)
+        {
+            throw new ArgumentException("Base address must be an absolute URI.", nameof(baseAddress));
+        }
+
+        if (timeout <= TimeSpan.Zero)
+        {
+            throw new ArgumentOutOfRangeException(nameof(timeout), "Timeout must be positive.");
+        }
+
         services.AddTransient<BearerTokenHandler>();
 
         services

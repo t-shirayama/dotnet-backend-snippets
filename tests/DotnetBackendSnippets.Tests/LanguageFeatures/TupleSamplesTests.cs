@@ -2,8 +2,10 @@ using DotnetBackendSnippets.LanguageFeatures;
 
 namespace DotnetBackendSnippets.Tests.LanguageFeatures;
 
+// テスト対象: Tuple Samples のスニペット動作を確認する。
 public sealed class TupleSamplesTests
 {
+    // テスト意図: Try Split Full Name / Returns Named Tuple を確認する。
     [Fact]
     public void TrySplitFullName_ReturnsNamedTuple()
     {
@@ -14,6 +16,7 @@ public sealed class TupleSamplesTests
         Assert.Equal("Lovelace", result.LastName);
     }
 
+    // テスト意図: Calculate Summary / Returns Multiple Values を確認する。
     [Fact]
     public void CalculateSummary_ReturnsMultipleValues()
     {
@@ -24,6 +27,16 @@ public sealed class TupleSamplesTests
         Assert.Equal(5m, average);
     }
 
+    // テスト意図: Calculate Summary / Returns Decimal Average / Without Floating Point Rounding を確認する。
+    [Fact]
+    public void CalculateSummary_ReturnsDecimalAverage_WithoutFloatingPointRounding()
+    {
+        var result = TupleSamples.CalculateSummary([1, 2]);
+
+        Assert.Equal(1.5m, result.Average);
+    }
+
+    // テスト意図: To Range Record / Converts Tuple To Named Domain Record を確認する。
     [Fact]
     public void ToRangeRecord_ConvertsTupleToNamedDomainRecord()
     {

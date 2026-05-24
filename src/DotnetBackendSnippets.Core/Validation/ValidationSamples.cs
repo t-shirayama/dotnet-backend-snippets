@@ -142,6 +142,12 @@ public static class ValidationSamples
         for (var index = 0; index < lines.Count; index++)
         {
             OrderLineInput line = lines[index];
+            if (line is null)
+            {
+                errors.Add(new ValidationError($"lines[{index}]", "required", "Order line is required."));
+                continue;
+            }
+
             string skuField = $"lines[{index}].sku";
 
             AddRequiredError(errors, skuField, line.Sku);
