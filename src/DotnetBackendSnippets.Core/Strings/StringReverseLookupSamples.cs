@@ -755,7 +755,9 @@ public static partial class StringReverseLookupSamples
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(value);
 
-        var invalid = Path.GetInvalidFileNameChars().ToHashSet();
+        var invalid = Path.GetInvalidFileNameChars()
+            .Concat(['<', '>', ':', '"', '/', '\\', '|', '?', '*'])
+            .ToHashSet();
         var builder = new StringBuilder(value.Length);
 
         foreach (var character in value)
