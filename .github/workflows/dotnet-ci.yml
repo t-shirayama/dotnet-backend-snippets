@@ -17,7 +17,7 @@ jobs:
       - run: dotnet list package --vulnerable --include-transitive
       - run: dotnet build --no-restore --configuration Release
       - run: dotnet test --no-build --configuration Release --collect:"XPlat Code Coverage" --results-directory TestResults
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: test-results-and-coverage
