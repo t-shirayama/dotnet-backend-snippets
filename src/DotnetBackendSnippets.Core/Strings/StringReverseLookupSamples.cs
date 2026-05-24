@@ -154,7 +154,7 @@ public static partial class StringReverseLookupSamples
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(fileName);
 
-        return ToSlugOrDefault(Path.GetFileNameWithoutExtension(fileName));
+        return ToSlugOrDefault(GetFileNameWithoutExtensionPortable(fileName));
     }
 
     /// <summary>
@@ -755,9 +755,7 @@ public static partial class StringReverseLookupSamples
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(value);
 
-        var invalid = Path.GetInvalidFileNameChars()
-            .Concat(['<', '>', ':', '"', '/', '\\', '|', '?', '*'])
-            .ToHashSet();
+        var invalid = new HashSet<char>(['<', '>', ':', '"', '/', '\\', '|', '?', '*']);
         var builder = new StringBuilder(value.Length);
 
         foreach (var character in value)
@@ -872,7 +870,7 @@ public static partial class StringReverseLookupSamples
         ArgumentNullException.ThrowIfNull(fileName);
         ArgumentNullException.ThrowIfNull(allowedExtensions);
 
-        return allowedExtensions.Contains(Path.GetExtension(fileName));
+        return allowedExtensions.Contains(GetExtensionPortable(fileName));
     }
 
     /// <summary>
@@ -1062,6 +1060,32 @@ public static partial class StringReverseLookupSamples
     private static string CapitalizeInvariant(string value)
     {
         return value.Length == 0 ? value : char.ToUpperInvariant(value[0]) + value[1..].ToLowerInvariant();
+    }
+
+    private static string GetFileNameWithoutExtensionPortable(string path)
+    {
+        var fileName = GetLastPathSegmentPortable(path);
+        var extensionStart = fileName.LastIndexOf('.');
+
+        return extensionStart <= 0 ? fileName : fileName[..extensionStart];
+    }
+
+    private static string GetExtensionPortable(string path)
+    {
+        var fileName = GetLastPathSegmentPortable(path);
+        var extensionStart = fileName.LastIndexOf('.');
+
+        return extensionStart <= 0 || extensionStart == fileName.Length - 1
+            ? string.Empty
+            : fileName[extensionStart..];
+    }
+
+    private static string GetLastPathSegmentPortable(string path)
+    {
+        var normalized = path.Replace('\\', '/');
+        var separatorIndex = normalized.LastIndexOf('/');
+
+        return separatorIndex < 0 ? normalized : normalized[(separatorIndex + 1)..];
     }
 
     private static void WriteMaskedJson(JsonElement element, Utf8JsonWriter writer, ISet<string> fieldNames)

@@ -19,6 +19,23 @@ public sealed class FileUploadSamplesTests
         Assert.Empty(result.Errors);
     }
 
+    [Theory]
+    [InlineData(@"C:\uploads\avatar.JPG")]
+    [InlineData("/uploads/avatar.JPG")]
+    public void ValidateUpload_ReadsExtensionWithoutDependingOnOsPathRules(string fileName)
+    {
+        var file = new UploadedFileMetadata(fileName, 512_000, "IMAGE/JPEG");
+        var rules = new FileUploadRules(
+            MaxBytes: 1_000_000,
+            AllowedExtensions: [".jpg", ".png"],
+            AllowedContentTypes: ["image/jpeg", "image/png"]);
+
+        var result = FileUploadSamples.ValidateUpload(file, rules);
+
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
     [Fact]
     public void ValidateUpload_ReturnsErrors_WhenFileBreaksRules()
     {

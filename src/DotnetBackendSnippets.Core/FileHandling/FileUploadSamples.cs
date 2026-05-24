@@ -43,7 +43,7 @@ public static class FileUploadSamples
             errors.Add($"ファイルサイズは {rules.MaxBytes.ToString(CultureInfo.InvariantCulture)} bytes 以下にしてください。");
         }
 
-        var extension = NormalizeExtension(Path.GetExtension(file.FileName));
+        var extension = NormalizeExtension(GetExtensionPortable(file.FileName));
         var allowedExtensions = NormalizeExtensions(rules.AllowedExtensions);
         if (allowedExtensions.Count > 0 && !allowedExtensions.Contains(extension))
         {
@@ -83,6 +83,18 @@ public static class FileUploadSamples
             .Select(NormalizeExtension)
             .Where(extension => extension.Length > 0)
             .ToHashSet(StringComparer.Ordinal);
+    }
+
+    private static string GetExtensionPortable(string fileName)
+    {
+        var normalized = fileName.Replace('\\', '/');
+        var lastSegmentStart = normalized.LastIndexOf('/') + 1;
+        var lastSegment = normalized[lastSegmentStart..];
+        var extensionStart = lastSegment.LastIndexOf('.');
+
+        return extensionStart <= 0 || extensionStart == lastSegment.Length - 1
+            ? string.Empty
+            : lastSegment[extensionStart..];
     }
 
     private static string NormalizeContentType(string? contentType)

@@ -26,6 +26,8 @@ public sealed class StringReverseLookupSamplesTests
         Assert.Equal("a%2Fb", StringReverseLookupSamples.EncodePathSegment("a/b"));
         Assert.Equal("a+b", StringReverseLookupSamples.EncodeQueryValue("a b"));
         Assert.Equal("monthly-report", StringReverseLookupSamples.FileNameToSlug("Monthly Report.xlsx"));
+        Assert.Equal("monthly-report", StringReverseLookupSamples.FileNameToSlug(@"C:\temp\Monthly Report.xlsx"));
+        Assert.Equal("monthly-report", StringReverseLookupSamples.FileNameToSlug("/tmp/Monthly Report.xlsx"));
         Assert.Equal("monthly-report-2", StringReverseLookupSamples.AppendSlugSuffix("monthly-report", 2));
     }
 
@@ -107,6 +109,8 @@ public sealed class StringReverseLookupSamplesTests
         Assert.True(StringReverseLookupSamples.IsDigitsOnly("123"));
         Assert.True(StringReverseLookupSamples.IsAsciiSlug("backend-snippets"));
         Assert.True(StringReverseLookupSamples.HasAllowedExtension("a.txt", new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".txt" }));
+        Assert.True(StringReverseLookupSamples.HasAllowedExtension(@"C:\temp\a.txt", new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".txt" }));
+        Assert.True(StringReverseLookupSamples.HasAllowedExtension("/tmp/a.txt", new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".txt" }));
         Assert.True(StringReverseLookupSamples.ContainsBlockedWord("bad value", new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "bad" }));
         StringReverseLookupSamples.ValidateMaxLength("abc", 3);
         Assert.Equal("CustomerId", StringReverseLookupSamples.SnakeToPascalCase("customer_id"));
