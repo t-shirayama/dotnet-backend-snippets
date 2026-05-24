@@ -21,6 +21,22 @@ public sealed class FileUploadSamplesTests
         Assert.Empty(result.Errors);
     }
 
+    // テスト意図: Validate Upload Metadata / Returns Valid / When Metadata Matches Rules を確認する。
+    [Fact]
+    public void ValidateUploadMetadata_ReturnsValid_WhenMetadataMatchesRules()
+    {
+        var file = new UploadedFileMetadata("avatar.JPG", 512_000, "IMAGE/JPEG");
+        var rules = new FileUploadRules(
+            MaxBytes: 1_000_000,
+            AllowedExtensions: [".jpg", ".png"],
+            AllowedContentTypes: ["image/jpeg", "image/png"]);
+
+        var result = FileUploadSamples.ValidateUploadMetadata(file, rules);
+
+        Assert.True(result.IsValid);
+        Assert.Empty(result.Errors);
+    }
+
     // テスト意図: Validate Upload / Reads Extension Without Depending On Os Path Rules を確認する。
     [Theory]
     [InlineData(@"C:\uploads\avatar.JPG")]
@@ -124,6 +140,23 @@ public sealed class FileUploadSamplesTests
         Assert.Equal(expected, result);
     }
 
+    // テスト意図: Validate Upload With Signature / Combines Metadata And Header Validation を確認する。
+    [Fact]
+    public void ValidateUploadWithSignature_CombinesMetadataAndHeaderValidation()
+    {
+        var file = new UploadedFileMetadata("avatar.png", 512_000, "image/png");
+        var rules = new FileUploadRules(
+            MaxBytes: 1_000_000,
+            AllowedExtensions: [".png"],
+            AllowedContentTypes: ["image/png"]);
+        byte[] pdfHeader = [0x25, 0x50, 0x44, 0x46, 0x2D];
+
+        var result = FileUploadSamples.ValidateUploadWithSignature(file, rules, pdfHeader, KnownFileType.Png);
+
+        Assert.False(result.IsValid);
+        Assert.Contains("ファイル内容のシグネチャが期待する形式と一致しません。", result.Errors);
+    }
+
     // テスト意図: Create Server File Name / Uses Server Generated ID And Original Extension Only を確認する。
     [Fact]
     public void CreateServerFileName_UsesServerGeneratedIdAndOriginalExtensionOnly()
@@ -133,5 +166,15 @@ public sealed class FileUploadSamplesTests
         var result = FileUploadSamples.CreateServerFileName(@"..\unsafe\Report.PDF", fileId);
 
         Assert.Equal("c7f02e028db24d3188d21f8a2f7a78a6.pdf", result);
+    }
+
+    // テスト意図: Create Server File Name / Throws / When File Id Is Empty を確認する。
+    [Fact]
+    public void CreateServerFileName_Throws_WhenFileIdIsEmpty()
+    {
+        var exception = Assert.Throws<ArgumentException>(
+            () => FileUploadSamples.CreateServerFileName("report.pdf", Guid.Empty));
+
+        Assert.Equal("fileId", exception.ParamName);
     }
 }

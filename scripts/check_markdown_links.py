@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import re
-import string
 import sys
+import unicodedata
 from pathlib import Path
 from urllib.parse import unquote
 
@@ -16,9 +16,17 @@ EXTERNAL_PREFIXES = ("http://", "https://", "mailto:", "#")
 
 def github_anchor(text: str) -> str:
     cleaned = text.strip().lower()
-    cleaned = "".join(ch for ch in cleaned if ch not in string.punctuation.replace("-", ""))
+    cleaned = "".join(ch for ch in cleaned if is_github_anchor_character(ch))
     cleaned = re.sub(r"\s+", "-", cleaned)
     return cleaned
+
+
+def is_github_anchor_character(character: str) -> bool:
+    if character.isspace() or character == "-":
+        return True
+
+    category = unicodedata.category(character)
+    return category[0] in {"L", "M", "N"}
 
 
 def anchors_for(path: Path) -> set[str]:

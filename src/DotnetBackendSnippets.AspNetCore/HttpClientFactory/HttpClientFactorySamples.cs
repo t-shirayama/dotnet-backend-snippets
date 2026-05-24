@@ -126,10 +126,16 @@ public sealed class ProductApiClient
     /// <param name="productId">商品 ID。</param>
     /// <param name="cancellationToken">キャンセル通知。</param>
     /// <returns>商品取得結果。</returns>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="productId"/> が 1 未満の場合。</exception>
     public async Task<ExternalApiResult<ProductDto>> GetProductAsync(
         int productId,
         CancellationToken cancellationToken = default)
     {
+        if (productId < 1)
+        {
+            throw new ArgumentOutOfRangeException(nameof(productId), "Product id must be greater than or equal to 1.");
+        }
+
         using var response = await httpClient.GetAsync($"products/{productId}", cancellationToken);
 
         return await ReadProductResponseAsync(response, cancellationToken);
@@ -215,6 +221,9 @@ public static class HttpClientFactorySamples
     /// <summary>
     /// 商品 API クライアントを DI コンテナーに登録します。
     /// </summary>
+    /// <remarks>
+    /// <see cref="BearerTokenHandler"/> が利用する <see cref="IAccessTokenProvider"/> は、このメソッドの呼び出し前に別途登録してください。
+    /// </remarks>
     /// <param name="services">サービスコレクション。</param>
     /// <param name="baseAddress">外部 API のベースアドレス。</param>
     /// <param name="timeout">HTTP リクエストのタイムアウト。</param>

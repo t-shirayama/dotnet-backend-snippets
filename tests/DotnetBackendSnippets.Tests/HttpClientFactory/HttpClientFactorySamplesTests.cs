@@ -31,6 +31,17 @@ public sealed class HttpClientFactorySamplesTests
         Assert.Equal("test-token", handler.LastRequest?.Headers.Authorization?.Parameter);
     }
 
+    // テスト意図: Get Product Async / Rejects Invalid Product Id を確認する。
+    [Fact]
+    public async Task GetProductAsync_RejectsInvalidProductId()
+    {
+        var client = new ProductApiClient(new System.Net.Http.HttpClient());
+
+        var exception = await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => client.GetProductAsync(0));
+
+        Assert.Equal("productId", exception.ParamName);
+    }
+
     // テスト意図: Build Product Search Path / Adds Encoded Query String を確認する。
     [Fact]
     public void BuildProductSearchPath_AddsEncodedQueryString()

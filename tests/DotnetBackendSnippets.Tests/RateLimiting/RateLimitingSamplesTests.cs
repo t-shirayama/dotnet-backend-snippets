@@ -30,6 +30,25 @@ public sealed class RateLimitingSamplesTests
         Assert.True(limiter.Check(context).IsAllowed);
     }
 
+    // テスト意図: Fixed Window Rate Limiter / Removes Expired Counters を確認する。
+    [Fact]
+    public void FixedWindowRateLimiter_RemovesExpiredCounters()
+    {
+        var now = new DateTimeOffset(2026, 5, 24, 10, 0, 0, TimeSpan.Zero);
+        var limiter = new FixedWindowRateLimiter(
+            new FixedWindowRateLimitRule(2, TimeSpan.FromMinutes(1), RateLimitKeyMode.User),
+            () => now);
+
+        limiter.Check(new RateLimitContext("127.0.0.1", "user-1", "GetOrders"));
+        limiter.Check(new RateLimitContext("127.0.0.2", "user-2", "GetOrders"));
+        Assert.Equal(2, limiter.ActiveKeyCount);
+
+        now = now.AddMinutes(2);
+        limiter.Check(new RateLimitContext("127.0.0.3", "user-3", "GetOrders"));
+
+        Assert.Equal(1, limiter.ActiveKeyCount);
+    }
+
     // テスト意図: Resolve Rate Limit Key / Returns Expected Key を確認する。
     [Theory]
     [InlineData(RateLimitKeyMode.IpAddress, "ip:127.0.0.1")]

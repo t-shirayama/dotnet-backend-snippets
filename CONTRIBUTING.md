@@ -50,8 +50,9 @@ python scripts/check_markdown_links.py
 ## 依存関係と Target Framework
 
 - 現在の基準は `net8.0` です。
+- EF Core 9 は `net8.0` と併用する方針として採用済みです。理由は [net8.0 と EF Core 9 の併用](docs/decisions/net8-ef-core-9.md) に残しています。
 - patch / minor の NuGet 更新は、Dependabot PR と CI 結果を確認して取り込みます。
-- xUnit v3、EF Core 9 / 10、.NET 9 / 10 などのメジャー更新は、移行 PR として扱います。
+- xUnit v3、EF Core 10、.NET 9 / 10 などのメジャー更新は、移行 PR として扱います。
 - メジャー更新では、テスト実行方法、CI の SDK、サンプルの対象読者、docs の Target Framework 記載を同時に確認します。
 
 ## CI とマージ条件
@@ -64,6 +65,9 @@ python scripts/check_markdown_links.py
 
 当面は `DotnetBackendSnippets.Tests` に集約します。次のどれかに当てはまるようになったら、`DotnetBackendSnippets.Core.Tests`、`DotnetBackendSnippets.AspNetCore.Tests`、`DotnetBackendSnippets.EntityFrameworkCore.Tests` のように実装プロジェクト単位で分割を検討します。
 
-- `dotnet test` の実行時間が日常的な確認を妨げる。
-- ASP.NET Core / EF Core / unsafe などで必要なテスト設定が大きく分かれる。
+- `dotnet test --configuration Release` がローカルまたは CI で継続して 2 分を超える。
+- ASP.NET Core の結合テスト、EF Core の SQLite in-memory テスト、大きな共有 fixture が増える。
+- unsafe など、通常スニペットと異なる SDK / build 設定が必要になる。
 - カテゴリごとの所有やレビュー範囲を分けた方が読みやすい。
+
+この条件に近づいたら、いきなり分割せず、先に issue を作って対象カテゴリ、所要時間、分割後の CI ジョブを整理します。

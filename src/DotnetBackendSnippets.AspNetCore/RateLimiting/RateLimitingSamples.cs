@@ -82,6 +82,22 @@ public sealed class FixedWindowRateLimiter
     }
 
     /// <summary>
+    /// 現在保持している rate limit key の数を取得します。
+    /// </summary>
+    /// <value>期限切れ掃除後に残っている key 数。</value>
+    public int ActiveKeyCount
+    {
+        get
+        {
+            lock (syncLock)
+            {
+                RemoveExpiredCounters(getUtcNow());
+                return counters.Count;
+            }
+        }
+    }
+
+    /// <summary>
     /// 現在のリクエストを許可するか判定します。
     /// </summary>
     /// <param name="context">rate limit 入力。</param>
@@ -96,6 +112,8 @@ public sealed class FixedWindowRateLimiter
 
         lock (syncLock)
         {
+            RemoveExpiredCounters(now);
+
             if (!counters.TryGetValue(key, out WindowCounter? counter) || now >= counter.ResetAt)
             {
                 counter = new WindowCounter(0, now.Add(rule.Window));
@@ -109,6 +127,17 @@ public sealed class FixedWindowRateLimiter
 
             counter.Count++;
             return new RateLimitDecision(true, key, rule.PermitLimit - counter.Count, TimeSpan.Zero);
+        }
+    }
+
+    private void RemoveExpiredCounters(DateTimeOffset now)
+    {
+        foreach (string expiredKey in counters
+            .Where(pair => now >= pair.Value.ResetAt)
+            .Select(pair => pair.Key)
+            .ToArray())
+        {
+            counters.Remove(expiredKey);
         }
     }
 

@@ -365,7 +365,6 @@ public static class EfCoreSamples
     {
         ArgumentNullException.ThrowIfNull(dbContext);
 
-        await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
         var post = await dbContext.Posts
             .IgnoreQueryFilters()
             .SingleOrDefaultAsync(candidate => candidate.Id == postId, cancellationToken);
@@ -374,6 +373,8 @@ public static class EfCoreSamples
         {
             return false;
         }
+
+        await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
 
         post.IsDeleted = true;
         post.DeletedAt = DateTimeOffset.UtcNow;
@@ -395,6 +396,7 @@ public static class EfCoreSamples
     /// <returns>更新結果。</returns>
     /// <exception cref="ArgumentNullException"><paramref name="dbContext"/> が <see langword="null"/> の場合。</exception>
     /// <exception cref="ArgumentException"><paramref name="title"/>、<paramref name="expectedConcurrencyStamp"/>、<paramref name="newConcurrencyStamp"/> が空白の場合。</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="newConcurrencyStamp"/> が 40 文字を超える場合。</exception>
     public static async Task<PostTitleUpdateResult> UpdatePostTitleWithConcurrencyAsync(
         SampleBlogDbContext dbContext,
         int postId,
@@ -407,6 +409,11 @@ public static class EfCoreSamples
         ArgumentException.ThrowIfNullOrWhiteSpace(title);
         ArgumentException.ThrowIfNullOrWhiteSpace(expectedConcurrencyStamp);
         ArgumentException.ThrowIfNullOrWhiteSpace(newConcurrencyStamp);
+
+        if (newConcurrencyStamp.Length > 40)
+        {
+            throw new ArgumentOutOfRangeException(nameof(newConcurrencyStamp), "Concurrency stamp must be 40 characters or fewer.");
+        }
 
         BlogPost? post = await dbContext.Posts.SingleOrDefaultAsync(
             candidate => candidate.Id == postId,

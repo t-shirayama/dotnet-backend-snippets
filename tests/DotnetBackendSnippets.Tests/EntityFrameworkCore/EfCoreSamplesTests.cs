@@ -215,6 +215,23 @@ public sealed class EfCoreSamplesTests
         Assert.Equal(PostTitleUpdateResult.ConcurrencyConflict, result);
     }
 
+    // テスト意図: Update Post Title With Concurrency Async / Rejects Too Long New Stamp を確認する。
+    [Fact]
+    public async Task UpdatePostTitleWithConcurrencyAsync_RejectsTooLongNewStamp()
+    {
+        await using var dbContext = CreateDbContext();
+
+        var exception = await Assert.ThrowsAsync<ArgumentOutOfRangeException>(
+            () => EfCoreSamples.UpdatePostTitleWithConcurrencyAsync(
+                dbContext,
+                postId: 1,
+                title: "Title",
+                expectedConcurrencyStamp: "expected",
+                newConcurrencyStamp: new string('x', 41)));
+
+        Assert.Equal("newConcurrencyStamp", exception.ParamName);
+    }
+
     // テスト意図: Is Unique Constraint Violation / Detects SQLite Unique Index Failure を確認する。
     [Fact]
     public async Task IsUniqueConstraintViolation_DetectsSqliteUniqueIndexFailure()

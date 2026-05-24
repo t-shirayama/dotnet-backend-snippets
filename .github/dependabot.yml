@@ -5,11 +5,35 @@ updates:
     schedule:
       interval: weekly
     groups:
-      dotnet-dependencies:
+      efcore:
         patterns:
-          - "*"
+          - "Microsoft.EntityFrameworkCore*"
+        update-types:
+          - minor
+          - patch
+      test-dependencies:
+        patterns:
+          - "xunit*"
+          - "Microsoft.NET.Test.Sdk"
+          - "coverlet.collector"
+        update-types:
+          - minor
+          - patch
+      dotnet-runtime-libraries:
+        patterns:
+          - "Microsoft.AspNetCore.*"
+          - "Microsoft.Extensions.*"
+        exclude-patterns:
+          - "Microsoft.EntityFrameworkCore*"
+        update-types:
+          - minor
+          - patch
 
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    groups:
+      github-actions:
+        patterns:
+          - "*"

@@ -26,6 +26,7 @@ ASP.NET Core で JWT Bearer、Cookie 認証、Policy-based Authorization、claim
 
 ## メモ
 
+- これは最小サンプルです。本番ではログ、監査、鍵管理、脅威モデル、例外設計、利用する ID 基盤の仕様を合わせて確認してください。
 - JWT の署名キー、issuer、audience は環境ごとに設定し、ソースコードへ秘密値を直書きしないでください。
 - role は大まかな権限、claim は tenant、scope、permission のような属性や細かい権限に向いています。
 - 認可ロジックは handler や helper に閉じ込め、`ClaimsPrincipal` を直接組み立てた単体テストで確認すると安全です。

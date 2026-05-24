@@ -23,6 +23,22 @@ public static class FileUploadSamples
         UploadedFileMetadata file,
         FileUploadRules rules)
     {
+        return ValidateUploadMetadata(file, rules);
+    }
+
+    /// <summary>
+    /// アップロードされたファイルのメタデータが指定ルールを満たすか検証します。
+    /// </summary>
+    /// <param name="file">アップロードされたファイルのメタデータ。</param>
+    /// <param name="rules">検証ルール。</param>
+    /// <returns>検証結果とエラー一覧。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="file"/> または <paramref name="rules"/> が <see langword="null"/> の場合。</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="rules"/> の許可拡張子一覧または許可 Content-Type 一覧が <see langword="null"/> の場合。</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="rules"/> の最大バイト数が 0 以下の場合。</exception>
+    public static FileUploadValidationResult ValidateUploadMetadata(
+        UploadedFileMetadata file,
+        FileUploadRules rules)
+    {
         ArgumentNullException.ThrowIfNull(file);
         ArgumentNullException.ThrowIfNull(rules);
         ArgumentNullException.ThrowIfNull(rules.AllowedExtensions);
@@ -61,6 +77,34 @@ public static class FileUploadSamples
         if (allowedContentTypes.Count > 0 && !allowedContentTypes.Contains(contentType))
         {
             errors.Add("許可されていない Content-Type です。");
+        }
+
+        return new FileUploadValidationResult(errors.Count == 0, errors);
+    }
+
+    /// <summary>
+    /// アップロードされたファイルのメタデータとファイルシグネチャをまとめて検証します。
+    /// </summary>
+    /// <param name="file">アップロードされたファイルのメタデータ。</param>
+    /// <param name="rules">検証ルール。</param>
+    /// <param name="headerBytes">ファイル先頭から読み取ったバイト列。</param>
+    /// <param name="expectedFileType">期待するファイル種別。</param>
+    /// <returns>検証結果とエラー一覧。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="file"/> または <paramref name="rules"/> が <see langword="null"/> の場合。</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="rules"/> の許可拡張子一覧または許可 Content-Type 一覧が <see langword="null"/> の場合。</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="rules"/> の最大バイト数または <paramref name="expectedFileType"/> が不正な場合。</exception>
+    public static FileUploadValidationResult ValidateUploadWithSignature(
+        UploadedFileMetadata file,
+        FileUploadRules rules,
+        ReadOnlySpan<byte> headerBytes,
+        KnownFileType expectedFileType)
+    {
+        var metadataResult = ValidateUploadMetadata(file, rules);
+        var errors = metadataResult.Errors.ToList();
+
+        if (!HasKnownFileSignature(headerBytes, expectedFileType))
+        {
+            errors.Add("ファイル内容のシグネチャが期待する形式と一致しません。");
         }
 
         return new FileUploadValidationResult(errors.Count == 0, errors);
@@ -112,6 +156,11 @@ public static class FileUploadSamples
     public static string CreateServerFileName(string originalFileName, Guid fileId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(originalFileName);
+
+        if (fileId == Guid.Empty)
+        {
+            throw new ArgumentException("File id must not be empty.", nameof(fileId));
+        }
 
         var extension = NormalizeExtension(GetExtensionPortable(originalFileName));
 
