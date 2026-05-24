@@ -90,4 +90,26 @@ public sealed class FileUploadSamplesTests
 
         Assert.Equal(".pdf", result);
     }
+
+    [Theory]
+    [InlineData(new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A }, KnownFileType.Png, true)]
+    [InlineData(new byte[] { 0xFF, 0xD8, 0xFF, 0xE0 }, KnownFileType.Jpeg, true)]
+    [InlineData(new byte[] { 0x25, 0x50, 0x44, 0x46, 0x2D }, KnownFileType.Pdf, true)]
+    [InlineData(new byte[] { 0x25, 0x50, 0x44, 0x46, 0x2D }, KnownFileType.Png, false)]
+    public void HasKnownFileSignature_ChecksFileHeaderBytes(byte[] headerBytes, KnownFileType fileType, bool expected)
+    {
+        var result = FileUploadSamples.HasKnownFileSignature(headerBytes, fileType);
+
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void CreateServerFileName_UsesServerGeneratedIdAndOriginalExtensionOnly()
+    {
+        var fileId = Guid.Parse("c7f02e02-8db2-4d31-88d2-1f8a2f7a78a6");
+
+        var result = FileUploadSamples.CreateServerFileName(@"..\unsafe\Report.PDF", fileId);
+
+        Assert.Equal("c7f02e028db24d3188d21f8a2f7a78a6.pdf", result);
+    }
 }

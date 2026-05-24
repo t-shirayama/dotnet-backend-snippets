@@ -1,4 +1,5 @@
 using DotnetBackendSnippets.EntityFrameworkCore;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
@@ -116,6 +117,31 @@ public sealed class EfCoreSamplesTests
         var deleted = await EfCoreSamples.SoftDeletePostInTransactionAsync(dbContext, postId: 999);
 
         Assert.False(deleted);
+    }
+
+    [Fact]
+    public async Task SoftDeletePostInTransactionAsync_CommitsTransaction_WithSqliteInMemoryDatabase()
+    {
+        await using var connection = new SqliteConnection("Data Source=:memory:");
+        await connection.OpenAsync();
+
+        var options = new DbContextOptionsBuilder<SampleBlogDbContext>()
+            .UseSqlite(connection)
+            .Options;
+
+        await using var dbContext = new SampleBlogDbContext(options);
+        await dbContext.Database.EnsureCreatedAsync();
+        await SeedAsync(dbContext);
+
+        var deleted = await EfCoreSamples.SoftDeletePostInTransactionAsync(dbContext, postId: 2);
+
+        Assert.True(deleted);
+        Assert.DoesNotContain(await dbContext.Posts.ToListAsync(), post => post.Id == 2);
+
+        var deletedPost = await dbContext.Posts
+            .IgnoreQueryFilters()
+            .SingleAsync(post => post.Id == 2);
+        Assert.True(deletedPost.IsDeleted);
     }
 
     private static SampleBlogDbContext CreateDbContext()

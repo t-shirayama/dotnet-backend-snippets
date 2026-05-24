@@ -1,20 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <RollForward>Major</RollForward>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="coverlet.collector" Version="6.0.2">
+    <PackageReference Include="coverlet.collector">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.11" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
-    <PackageReference Include="xunit" Version="2.9.2" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -24,6 +24,7 @@
     <ProjectReference Include="..\..\src\DotnetBackendSnippets.AspNetCore\DotnetBackendSnippets.AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\DotnetBackendSnippets.Core\DotnetBackendSnippets.Core.csproj" />
     <ProjectReference Include="..\..\src\DotnetBackendSnippets.EntityFrameworkCore\DotnetBackendSnippets.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="..\..\src\DotnetBackendSnippets.UnsafeSamples\DotnetBackendSnippets.UnsafeSamples.csproj" />
   </ItemGroup>
 
   <ItemGroup>

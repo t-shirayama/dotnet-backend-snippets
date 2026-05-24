@@ -7,8 +7,11 @@ namespace DotnetBackendSnippets.FileHandling;
 /// </summary>
 public static class FileUploadSamples
 {
+    private static readonly byte[] PngSignature = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A];
+    private static readonly byte[] PdfSignature = [0x25, 0x50, 0x44, 0x46, 0x2D];
+
     /// <summary>
-    /// アップロードされたファイルが指定ルールを満たすか検証します。
+    /// アップロードされたファイルのメタデータが指定ルールを満たすか検証します。
     /// </summary>
     /// <param name="file">アップロードされたファイルのメタデータ。</param>
     /// <param name="rules">検証ルール。</param>
@@ -77,6 +80,41 @@ public static class FileUploadSamples
         return trimmed.StartsWith('.') ? trimmed : $".{trimmed}";
     }
 
+    /// <summary>
+    /// ファイル先頭バイトが既知のファイルシグネチャと一致するかを判定します。
+    /// </summary>
+    /// <param name="headerBytes">ファイル先頭から読み取ったバイト列。</param>
+    /// <param name="fileType">期待するファイル種別。</param>
+    /// <returns>期待するファイル種別のシグネチャと一致する場合は true。</returns>
+    public static bool HasKnownFileSignature(ReadOnlySpan<byte> headerBytes, KnownFileType fileType)
+    {
+        return fileType switch
+        {
+            KnownFileType.Png => headerBytes.StartsWith(PngSignature),
+            KnownFileType.Jpeg => headerBytes.Length >= 3
+                && headerBytes[0] == 0xFF
+                && headerBytes[1] == 0xD8
+                && headerBytes[2] == 0xFF,
+            KnownFileType.Pdf => headerBytes.StartsWith(PdfSignature),
+            _ => throw new ArgumentOutOfRangeException(nameof(fileType), "Unknown file type."),
+        };
+    }
+
+    /// <summary>
+    /// 元ファイル名をそのまま使わず、サーバー側で生成した保存名を作成します。
+    /// </summary>
+    /// <param name="originalFileName">拡張子を取り出す元ファイル名。</param>
+    /// <param name="fileId">保存名に使うサーバー側で生成した ID。</param>
+    /// <returns>ID と正規化済み拡張子で構成した保存用ファイル名。</returns>
+    public static string CreateServerFileName(string originalFileName, Guid fileId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(originalFileName);
+
+        var extension = NormalizeExtension(GetExtensionPortable(originalFileName));
+
+        return $"{fileId:N}{extension}";
+    }
+
     private static HashSet<string> NormalizeExtensions(IEnumerable<string> extensions)
     {
         return extensions
@@ -136,3 +174,24 @@ public sealed record FileUploadRules(
 /// <param name="IsValid">検証に成功したかどうか。</param>
 /// <param name="Errors">検証エラーの一覧。</param>
 public sealed record FileUploadValidationResult(bool IsValid, IReadOnlyList<string> Errors);
+
+/// <summary>
+/// シグネチャ確認に使う既知のファイル種別です。
+/// </summary>
+public enum KnownFileType
+{
+    /// <summary>
+    /// PNG 画像。
+    /// </summary>
+    Png,
+
+    /// <summary>
+    /// JPEG 画像。
+    /// </summary>
+    Jpeg,
+
+    /// <summary>
+    /// PDF 文書。
+    /// </summary>
+    Pdf,
+}
