@@ -101,6 +101,7 @@ docs/snippets/logging/basic-logging.md
 - Entity Framework Core
 - Error Handling
 - File Handling
+- Health Checks
 - HttpClient
 - HttpClientFactory
 - LINQ
@@ -108,12 +109,15 @@ docs/snippets/logging/basic-logging.md
 - Language Features
 - Numbers
 - Observability
+- OpenAPI
 - Options
 - Regular Expressions
+- Rate Limiting
 - Security
 - Serialization
 - Strings
 - Type System
+- Testing
 - Unsafe Samples
 - Utilities
 - Validation

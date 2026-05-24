@@ -40,4 +40,4 @@
 - policy based authorization を設定したい → [Authentication / Authorization の基本](../authentication/authentication-authorization-samples.md)
 - role と claim を使い分けたい → [Authentication / Authorization の基本](../authentication/authentication-authorization-samples.md)
 - current user id を取得したい → [Authentication / Authorization の基本](../authentication/authentication-authorization-samples.md)
-- rate limiting を設定したい → 追加候補
+- rate limiting を設定したい → [Rate Limiting の基本](../rate-limiting/rate-limiting-samples.md)

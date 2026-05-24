@@ -77,6 +77,7 @@ TimedOperationResult<string> result = await ObservabilitySamples.MeasureAndLogAs
 - `BeginScope` でリクエスト単位の情報を持たせたい → `CreateScopeState` / `BeginOperationScope`
 - correlation id をログに入れたい → `GetOrCreateCorrelationId`
 - health check を作りたい → `CreateHealthCheckResult`
+- liveness / readiness を分けたい → [Health Check / Readiness の基本](../health-checks/health-check-samples.md)
 - 遅い処理をログに出したい → `MeasureAndLogAsync`
 - OpenTelemetry の trace を追加したい → 追加候補
 - メトリクスをカウンターで出したい → 追加候補

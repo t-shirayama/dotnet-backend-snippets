@@ -14,17 +14,26 @@
 
 ## 使い方
 
-`ConfigurationSamples.ReadAppSettings(configuration)` を呼び出すと、`App:ServiceName` と `App:RetryCount` を読み取って `AppSettings` を返します。必須値がない場合や `RetryCount` が数値でない場合は例外を投げます。
+- `ConfigurationSamples.ReadAppSettings(configuration)` を呼び出すと、`App:ServiceName` と `App:RetryCount` を読み取って `AppSettings` を返します。必須値がない場合や `RetryCount` が数値でない場合は例外を投げます。
+- `CreateEnvironmentSettingsFiles` は `appsettings.json` と `appsettings.Production.json` のような環境別ファイル名を作ります。
+- `CreateEnvironmentVariablePrefix` は環境変数 provider に渡す prefix を作ります。
+- `GetRequiredConnectionString` は必須 connection string を読み取ります。
+- `RedactSecretSettings` はログ出力前に secret らしい設定値をマスクします。
 
 ## メモ
 
 - 設定値は文字列として読まれるため、数値などは明示的に検証します。
 - 起動時に設定を検証すると、実行中の予期しない失敗を減らせます。
+- 設定値をログに出す場合は、password、secret、token、API key を必ずマスクします。
+- connection string は通常の設定値とは別に `ConnectionStrings` セクションから読み、環境変数や secret store で上書きできるようにします。
 
 ## 実務逆引き
 
 - 設定値を必須として読みたい → `GetRequiredValue`
 - 設定セクションを型に変換したい → `ReadAppSettings`
 - 数値設定を不正値として検出したい → `ReadAppSettings`
-- 環境変数で設定を上書きしたい → `ConfigurationBuilder` の provider 順を調整する
-- user secrets をローカル開発で使いたい → 追加候補
+- 環境別 appsettings を扱いたい → `CreateEnvironmentSettingsFiles`
+- 環境変数で設定を上書きしたい → `CreateEnvironmentVariablePrefix`
+- connection string を必須として読みたい → `GetRequiredConnectionString`
+- secret をログに出さないようにしたい → `RedactSecretSettings`
+- user secrets をローカル開発で使いたい → `ConfigurationBuilder` の provider 順を調整する

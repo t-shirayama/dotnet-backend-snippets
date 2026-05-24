@@ -51,4 +51,4 @@ Controller で使う場合は `ApiSamples.ToActionResult(result)` で `ActionRes
 - route parameter と query parameter を扱いたい → `ReadTodoRouteAndQuery`
 - endpoint filter や middleware の判定をテストしたい → `RequireHeader` / `ShouldShortCircuitForMaintenance`
 - CORS policy 名を定数化したい → `CorsPolicyNames`
-- Swagger / OpenAPI の詳細設定をしたい → 追加候補
+- Swagger / OpenAPI の詳細設定をしたい → [OpenAPI / API 仕様の基本](../openapi/openapi-samples.md)

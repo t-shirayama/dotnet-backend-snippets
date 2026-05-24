@@ -38,12 +38,14 @@
 4. [DTO Mapping の基本](dto-mapping/dto-mapping-samples.md)
 5. [Error Handling の基本](error-handling/basic-error-handling.md)
 6. [Caching の基本](caching/caching-samples.md)
-7. [Logging の基本](logging/basic-logging.md)
-8. [Observability の基本](observability/observability-samples.md)
+7. [Testing の基本](testing/testing-samples.md)
+8. [Logging の基本](logging/basic-logging.md)
+9. [Observability の基本](observability/observability-samples.md)
 
 ### Web API 開発セット
 
 - [ASP.NET Core API の基本](api/api-samples.md)
+- [OpenAPI / API 仕様の基本](openapi/openapi-samples.md)
 - [Authentication / Authorization の基本](authentication/authentication-authorization-samples.md)
 - [Validation の基本](validation/basic-validation.md)
 - [DTO Mapping の基本](dto-mapping/dto-mapping-samples.md)
@@ -52,9 +54,12 @@
 - [Options パターン](options/options-samples.md)
 - [HttpClientFactory の基本](http-client-factory/http-client-factory-samples.md)
 - [Observability の基本](observability/observability-samples.md)
+- [Health Check / Readiness の基本](health-checks/health-check-samples.md)
+- [Rate Limiting の基本](rate-limiting/rate-limiting-samples.md)
 
 ### テスト技法セット
 
+- [Testing の基本](testing/testing-samples.md)
 - [HttpClient のテスト可能な呼び出し](http-client/basic-http-client.md)
 - [Configuration の必須値読み取り](configuration/basic-configuration.md)
 - [Dependency Injection のサービス登録](dependency-injection/basic-dependency-injection.md)
@@ -63,6 +68,7 @@
 ### セキュリティ注意セット
 
 - [Authentication / Authorization の基本](authentication/authentication-authorization-samples.md)
+- [Rate Limiting の基本](rate-limiting/rate-limiting-samples.md)
 - [セキュリティ補助](security/security-samples.md)
 - [ファイルアップロード検証](file-handling/file-upload-samples.md)
 - [ASP.NET Core API の基本](api/api-samples.md)
@@ -85,7 +91,9 @@
 - [Entity Framework Core の基本](entity-framework-core/ef-core-samples.md)
 - [Logging の基本](logging/basic-logging.md)
 - [Observability の基本](observability/observability-samples.md)
+- [OpenAPI / API 仕様の基本](openapi/openapi-samples.md)
 - [Options パターン](options/options-samples.md)
+- [Rate Limiting の基本](rate-limiting/rate-limiting-samples.md)
 - [Serialization の基本](serialization/serialization-samples.md)
 - [Validation の基本](validation/basic-validation.md)
 - [DTO Mapping の基本](dto-mapping/dto-mapping-samples.md)
@@ -94,6 +102,7 @@
 - [Error Handling の基本](error-handling/basic-error-handling.md)
 - [セキュリティ補助](security/security-samples.md)
 - [ファイルアップロード検証](file-handling/file-upload-samples.md)
+- [Health Check / Readiness の基本](health-checks/health-check-samples.md)
 - [文字列ユーティリティ](utilities/string-utilities.md)
 
 ## C# 基礎
@@ -106,6 +115,7 @@
 - [コレクション操作](collections/collection-samples.md)
 - [Regular Expressions の基本](regular-expressions/regular-expression-samples.md)
 - [型システム](type-system/type-system-samples.md)
+- [Testing の基本](testing/testing-samples.md)
 - [C# 言語機能サンプル](language-features/language-feature-samples.md)
 
 ## 計画・棚卸し
@@ -140,6 +150,10 @@
 - DTO と entity の境界を作りたい → [DTO Mapping の基本](dto-mapping/dto-mapping-samples.md)
 - regex timeout を設定したい → [Regular Expressions の基本](regular-expressions/regular-expression-samples.md)
 - background job queue を使いたい → [BackgroundService 向け worker ループ](background-services/background-worker-loop.md)
+- OpenAPI metadata を整理したい → [OpenAPI / API 仕様の基本](openapi/openapi-samples.md)
+- rate limit の判定をテストしたい → [Rate Limiting の基本](rate-limiting/rate-limiting-samples.md)
+- liveness / readiness を分けたい → [Health Check / Readiness の基本](health-checks/health-check-samples.md)
+- テストの fake や時刻差し替えを見たい → [Testing の基本](testing/testing-samples.md)
 - C# 言語機能の基本サンプルを見たい → [C# 言語機能サンプル](language-features/language-feature-samples.md)
 - C# 言語機能の実装状況を確認したい → [C# 言語機能の実装状況](language-features/csharp-language-feature-coverage.md)
 
