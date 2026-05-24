@@ -145,7 +145,7 @@
 - GUID を短い文字列表現にしたい: 実装済み `ToShortGuid`
 - ファイル保存用の安全な名前を作りたい: 実装済み `ToSafeFileName`
 - S3 や Blob Storage 用の object key を作りたい: 実装済み `BuildObjectKey`。空や記号だけの segment は例外にします。
-- Redis key を一貫した形式で作りたい: 実装済み `BuildCacheKey`
+- Redis key を一貫した形式で作りたい: 実装済み `BuildCacheKey`。空白だけの segment は例外にします。
 - メッセージ重複排除用の安定ハッシュキーを作りたい: 実装済み `CreateStableHashKey`
 
 ### 検証・判定
@@ -170,6 +170,6 @@
 - `{name}` 形式の placeholder を抽出したい: 実装済み `ExtractPlaceholders`
 - 複数形の簡易表示を作りたい: 実装済み `PluralizeSimple`
 - バイト数表示を人間向けに整えたい: 実装済み `FormatBytes`
-- 文字列を UTF-8 byte 数で制限したい: 実装済み `TruncateUtf8Bytes`
+- 文字列を UTF-8 byte 数で制限したい: 実装済み `TruncateUtf8Bytes`。`suffix` 自体が上限 byte 数を超える場合は例外にします。
 - 環境変数名向けに大文字スネークケースへ変換したい: 実装済み `ToEnvironmentVariableName`
 - 画面表示用と永続化用で文字列変換を分けたい: 実装済み `NormalizeWhitespace` / `NormalizeKey`

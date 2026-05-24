@@ -174,7 +174,16 @@ public static partial class StringReverseLookupSamples
     {
         ArgumentNullException.ThrowIfNull(segments);
 
-        return string.Join(':', segments.Select(segment => StringSamples.NormalizeKey(segment).Replace(' ', ':').ToLowerInvariant()));
+        var normalizedSegments = new List<string>(segments.Length);
+
+        for (var index = 0; index < segments.Length; index++)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(segments[index], $"segments[{index}]");
+
+            normalizedSegments.Add(StringSamples.NormalizeKey(segments[index]).Replace(' ', ':').ToLowerInvariant());
+        }
+
+        return string.Join(':', normalizedSegments);
     }
 
     /// <summary>
@@ -275,6 +284,7 @@ public static partial class StringReverseLookupSamples
     /// <summary>
     /// UTF-8 バイト数を超えないよう文字列を切り詰めます。
     /// </summary>
+    /// <exception cref="ArgumentException"><paramref name="suffix"/> の UTF-8 バイト数が <paramref name="maxBytes"/> を超える場合。</exception>
     public static string TruncateUtf8Bytes(string value, int maxBytes, string suffix = "")
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -283,6 +293,11 @@ public static partial class StringReverseLookupSamples
         if (maxBytes < 0)
         {
             throw new ArgumentOutOfRangeException(nameof(maxBytes), "Max bytes must be zero or greater.");
+        }
+
+        if (Encoding.UTF8.GetByteCount(suffix) > maxBytes)
+        {
+            throw new ArgumentException("Suffix byte length must be less than or equal to max bytes.", nameof(suffix));
         }
 
         var builder = new StringBuilder();

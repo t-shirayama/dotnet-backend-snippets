@@ -19,17 +19,28 @@ public sealed partial class StringReverseLookupSamplesTests
     }
 
     [Fact]
-    public void KeyValidationAndTemplateHelpers_CreateStableIdentifiers()
+    public void RandomTokenHelpers_CreateStableLengthValues()
     {
         Assert.Equal(8, StringReverseLookupSamples.CreateRandomCode(8).Length);
         Assert.Matches("^[0-9]{6}$", StringReverseLookupSamples.CreateNumericCode(6));
         Assert.NotEmpty(StringReverseLookupSamples.CreateUrlSafeToken(8));
         Assert.NotEmpty(StringReverseLookupSamples.ToShortGuid(Guid.Parse("00112233-4455-6677-8899-aabbccddeeff")));
+    }
+
+    [Fact]
+    public void ObjectKeyHelpers_RejectInvalidSegments()
+    {
         Assert.Equal("a-b.txt", StringReverseLookupSamples.ToSafeFileName("a:b.txt"));
         Assert.Equal("tenant/customer-file", StringReverseLookupSamples.BuildObjectKey("Tenant", "Customer File"));
         Assert.Throws<ArgumentException>(() => StringReverseLookupSamples.BuildObjectKey("Tenant", "!!!"));
         Assert.Throws<ArgumentException>(() => StringReverseLookupSamples.BuildObjectKey("Tenant", " "));
         Assert.Equal("tenant:customer:id", StringReverseLookupSamples.BuildCacheKey("Tenant", "Customer Id"));
+        Assert.Throws<ArgumentException>(() => StringReverseLookupSamples.BuildCacheKey("Tenant", " "));
+    }
+
+    [Fact]
+    public void ValidationHelpers_CheckCommonStringShapes()
+    {
         Assert.Equal(64, StringReverseLookupSamples.CreateStableHashKey("value").Length);
         Assert.True(StringReverseLookupSamples.IsBlank(" "));
         Assert.True(StringReverseLookupSamples.IsEmailLike("user@example.com"));
@@ -43,14 +54,30 @@ public sealed partial class StringReverseLookupSamplesTests
         Assert.True(StringReverseLookupSamples.HasAllowedExtension("/tmp/a.txt", new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".txt" }));
         Assert.True(StringReverseLookupSamples.ContainsBlockedWord("bad value", new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "bad" }));
         StringReverseLookupSamples.ValidateMaxLength("abc", 3);
+    }
+
+    [Fact]
+    public void CaseConversionHelpers_ConvertNames()
+    {
         Assert.Equal("CustomerId", StringReverseLookupSamples.SnakeToPascalCase("customer_id"));
         Assert.Equal("customerId", StringReverseLookupSamples.PascalToCamelCase("CustomerId"));
         Assert.Equal("customer-id", StringReverseLookupSamples.PascalToKebabCase("CustomerId"));
+        Assert.Equal("CUSTOMER_ID", StringReverseLookupSamples.ToEnvironmentVariableName("CustomerId"));
+    }
+
+    [Fact]
+    public void TemplateHelpers_RenderAndExtractPlaceholders()
+    {
         Assert.Equal("Hello Ada", StringReverseLookupSamples.RenderTemplate("Hello {name}", new Dictionary<string, string> { ["name"] = "Ada" }));
         Assert.Equal(["name"], StringReverseLookupSamples.ExtractPlaceholders("Hello {name}"));
         Assert.Equal("items", StringReverseLookupSamples.PluralizeSimple("item", 2));
+    }
+
+    [Fact]
+    public void ByteHelpers_FormatAndTruncate()
+    {
         Assert.Equal("1 KB", StringReverseLookupSamples.FormatBytes(1024));
         Assert.True(Encoding.UTF8.GetByteCount(StringReverseLookupSamples.TruncateUtf8Bytes("abcdef", 4)) <= 4);
-        Assert.Equal("CUSTOMER_ID", StringReverseLookupSamples.ToEnvironmentVariableName("CustomerId"));
+        Assert.Throws<ArgumentException>(() => StringReverseLookupSamples.TruncateUtf8Bytes("abcdef", 2, "..."));
     }
 }
