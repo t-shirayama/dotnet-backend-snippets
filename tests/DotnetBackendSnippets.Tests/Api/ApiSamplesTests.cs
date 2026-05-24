@@ -32,6 +32,7 @@ public sealed class ApiSamplesTests
         Assert.Equal(10, result.Value.Id);
         Assert.Equal("Write tests", result.Value.Title);
         Assert.Equal("open", result.Value.Status);
+        Assert.Equal("/todos/10", result.Location);
         Assert.Null(result.Problem);
     }
 
@@ -51,17 +52,34 @@ public sealed class ApiSamplesTests
     }
 
     [Fact]
-    public void ToActionResult_ReturnsValue_WhenEndpointResultSucceeded()
+    public void ToActionResult_PreservesStatusCode_WhenEndpointResultSucceeded()
     {
         var response = new TodoResponse(1, "Ship API", null, "open");
         ApiEndpointResult<TodoResponse> endpointResult = ApiEndpointResult<TodoResponse>.Success(
-            StatusCodes.Status200OK,
+            StatusCodes.Status202Accepted,
             response);
 
         ActionResult<TodoResponse> actionResult = ApiSamples.ToActionResult(endpointResult);
 
-        Assert.Null(actionResult.Result);
-        Assert.Equal(response, actionResult.Value);
+        ObjectResult objectResult = Assert.IsType<ObjectResult>(actionResult.Result);
+
+        Assert.Equal(StatusCodes.Status202Accepted, objectResult.StatusCode);
+        Assert.Same(response, objectResult.Value);
+    }
+
+    [Fact]
+    public void ToActionResult_ReturnsCreatedResult_WhenLocationIsAvailable()
+    {
+        var response = new TodoResponse(1, "Ship API", null, "open");
+        ApiEndpointResult<TodoResponse> endpointResult = ApiEndpointResult<TodoResponse>.Created("/todos/1", response);
+
+        ActionResult<TodoResponse> actionResult = ApiSamples.ToActionResult(endpointResult);
+
+        CreatedResult createdResult = Assert.IsType<CreatedResult>(actionResult.Result);
+
+        Assert.Equal(StatusCodes.Status201Created, createdResult.StatusCode);
+        Assert.Equal("/todos/1", createdResult.Location);
+        Assert.Same(response, createdResult.Value);
     }
 
     [Fact]
@@ -181,6 +199,32 @@ public sealed class ApiSamplesTests
 
         Assert.NotNull(problem);
         Assert.Equal(StatusCodes.Status400BadRequest, problem.Status);
+    }
+
+    [Fact]
+    public void RequireHeader_ReturnsNull_WhenDictionaryHeaderNameDiffersByCase()
+    {
+        Dictionary<string, string?> headers = new(StringComparer.Ordinal)
+        {
+            ["x-request-id"] = "request-123",
+        };
+
+        ProblemDetails? problem = ApiSamples.RequireHeader(headers, "X-Request-Id");
+
+        Assert.Null(problem);
+    }
+
+    [Fact]
+    public void RequireHeader_ReturnsNull_ForAspNetCoreHeaderDictionary()
+    {
+        var headers = new HeaderDictionary
+        {
+            ["x-request-id"] = "request-123",
+        };
+
+        ProblemDetails? problem = ApiSamples.RequireHeader(headers, "X-Request-Id");
+
+        Assert.Null(problem);
     }
 
     [Fact]

@@ -62,7 +62,8 @@ public sealed record TodoRouteQuery(int Id, string? Status, PagingOptions Paging
 /// <param name="StatusCode">HTTP ステータスコード。</param>
 /// <param name="Value">成功時の値。</param>
 /// <param name="Problem">失敗時の Problem Details。</param>
-public sealed record ApiEndpointResult<T>(int StatusCode, T? Value, ProblemDetails? Problem)
+/// <param name="Location">作成結果などで返す Location ヘッダー値。</param>
+public sealed record ApiEndpointResult<T>(int StatusCode, T? Value, ProblemDetails? Problem, string? Location = null)
 {
     /// <summary>
     /// 処理が成功したかどうかを取得します。
@@ -79,6 +80,20 @@ public sealed record ApiEndpointResult<T>(int StatusCode, T? Value, ProblemDetai
     public static ApiEndpointResult<T> Success(int statusCode, T value)
     {
         return new ApiEndpointResult<T>(statusCode, value, null);
+    }
+
+    /// <summary>
+    /// 作成成功を表す結果を作成します。
+    /// </summary>
+    /// <param name="location">作成したリソースの URI。</param>
+    /// <param name="value">成功時の値。</param>
+    /// <returns>201 Created を表す結果。</returns>
+    /// <exception cref="ArgumentException"><paramref name="location"/> が空白の場合。</exception>
+    public static ApiEndpointResult<T> Created(string location, T value)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(location);
+
+        return new ApiEndpointResult<T>(StatusCodes.Status201Created, value, null, location);
     }
 
     /// <summary>
@@ -207,7 +222,7 @@ public static class ApiSamples
             request.DueDate,
             "open");
 
-        return ApiEndpointResult<TodoResponse>.Success(StatusCodes.Status201Created, response);
+        return ApiEndpointResult<TodoResponse>.Created($"/todos/{nextId}", response);
     }
 
     /// <summary>
@@ -221,9 +236,17 @@ public static class ApiSamples
     {
         ArgumentNullException.ThrowIfNull(result);
 
-        if (result.Succeeded && result.Value is not null)
+        if (result.Succeeded)
         {
-            return new ActionResult<T>(result.Value);
+            if (result.StatusCode == StatusCodes.Status201Created && result.Location is not null)
+            {
+                return new CreatedResult(result.Location, result.Value);
+            }
+
+            return new ObjectResult(result.Value)
+            {
+                StatusCode = result.StatusCode,
+            };
         }
 
         return new ObjectResult(result.Problem)
@@ -403,13 +426,32 @@ public static class ApiSamples
         string headerName)
     {
         ArgumentNullException.ThrowIfNull(headers);
+        ArgumentException.ThrowIfNullOrWhiteSpace(headerName);
 
-        return headers.TryGetValue(headerName, out string? value) && !string.IsNullOrWhiteSpace(value)
+        return TryGetHeaderValue(headers, headerName, out string? value) && !string.IsNullOrWhiteSpace(value)
             ? null
-            : CreateProblem(
-                StatusCodes.Status400BadRequest,
-                "Missing required header.",
-                $"Header '{headerName}' is required.");
+            : CreateMissingHeaderProblem(headerName);
+    }
+
+    /// <summary>
+    /// ASP.NET Core のヘッダー一覧から必須ヘッダーが存在するか検証します。
+    /// </summary>
+    /// <param name="headers">ASP.NET Core のヘッダー一覧。</param>
+    /// <param name="headerName">必須ヘッダー名。</param>
+    /// <returns>不足時は Problem Details、存在時は <see langword="null"/>。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="headers"/> が <see langword="null"/> の場合。</exception>
+    /// <exception cref="ArgumentException"><paramref name="headerName"/> が空白の場合。</exception>
+    public static ProblemDetails? RequireHeader(
+        IHeaderDictionary headers,
+        string headerName)
+    {
+        ArgumentNullException.ThrowIfNull(headers);
+        ArgumentException.ThrowIfNullOrWhiteSpace(headerName);
+
+        return headers.TryGetValue(headerName, out var values)
+            && values.Any(value => !string.IsNullOrWhiteSpace(value))
+            ? null
+            : CreateMissingHeaderProblem(headerName);
     }
 
     /// <summary>
@@ -448,5 +490,36 @@ public static class ApiSamples
         }
 
         return errors;
+    }
+
+    private static bool TryGetHeaderValue(
+        IReadOnlyDictionary<string, string?> headers,
+        string headerName,
+        out string? value)
+    {
+        if (headers.TryGetValue(headerName, out value))
+        {
+            return true;
+        }
+
+        foreach (KeyValuePair<string, string?> header in headers)
+        {
+            if (string.Equals(header.Key, headerName, StringComparison.OrdinalIgnoreCase))
+            {
+                value = header.Value;
+                return true;
+            }
+        }
+
+        value = null;
+        return false;
+    }
+
+    private static ProblemDetails CreateMissingHeaderProblem(string headerName)
+    {
+        return CreateProblem(
+            StatusCodes.Status400BadRequest,
+            "Missing required header.",
+            $"Header '{headerName}' is required.");
     }
 }

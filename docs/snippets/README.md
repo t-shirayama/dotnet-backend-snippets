@@ -2,6 +2,17 @@
 
 このディレクトリには、各スニペットの目的・実装・テスト・使い方をまとめています。
 
+## 完成度ステータス
+
+| ステータス | 意味 |
+| --- | --- |
+| Implemented | 実装・テスト・docs が揃っている |
+| Tested | 実装・テストがあり、docs は簡易 |
+| Planned | 追加予定 |
+| Draft | 実験中 |
+
+この索引でリンクしている各カテゴリは原則として Implemented です。ページ内で追加候補を扱う場合は、実装済みのメソッド名と候補を分けて記載します。
+
 - [文字列操作の実務逆引き](strings/string-samples.md#実務逆引き)
 - [数値処理の実務逆引き](numbers/number-samples.md#実務逆引き)
 - [日付・時刻処理の実務逆引き](date-and-time/date-and-time-samples.md#実務逆引き)
