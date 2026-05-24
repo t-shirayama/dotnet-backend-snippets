@@ -92,10 +92,12 @@ docs/snippets/logging/basic-logging.md
 - Authentication / Authorization
 - Async / Await
 - Background Services
+- Caching
 - Collections
 - Configuration
 - Date and Time
 - Dependency Injection
+- DTO Mapping
 - Entity Framework Core
 - Error Handling
 - File Handling
@@ -107,6 +109,7 @@ docs/snippets/logging/basic-logging.md
 - Numbers
 - Observability
 - Options
+- Regular Expressions
 - Security
 - Serialization
 - Strings
@@ -165,9 +168,9 @@ dotnet test tests/DotnetBackendSnippets.Tests/DotnetBackendSnippets.Tests.csproj
 | --- | --- | --- |
 | 高 | Authentication / Authorization の拡充 | JWT 発行、認可 handler、scope / permission、認可失敗レスポンスの統合 |
 | 高 | Serialization の拡充 | polymorphism、versioning、互換性テスト、source generation |
-| 中 | Caching | `IMemoryCache`、分散キャッシュ、キー設計、有効期限、スタンピード対策 |
-| 中 | Regular Expressions | 入力抽出、検証、置換、タイムアウト、コンパイル済み Regex |
-| 中 | DTO Mapping | API DTO とドメイン / EF Core エンティティの境界、過剰公開の防止 |
+| 中 | Caching の拡充 | 分散 lock、stale cache、外部 API キャッシュ、メトリクス |
+| 中 | Regular Expressions の拡充 | 複雑な抽出、ログ parsing、複数 pattern 管理 |
+| 中 | DTO Mapping の拡充 | optional patch、versioned DTO、mapping の共通テスト |
 | 低 | Docker | 開発用 compose、ヘルスチェック、設定注入、非 root 実行 |
 | 低 | Repository Pattern | EF Core と組み合わせる場合の使いどころ、避けるべき抽象化 |
 

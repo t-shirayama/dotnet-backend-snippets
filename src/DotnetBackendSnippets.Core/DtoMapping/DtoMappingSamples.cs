@@ -1,0 +1,193 @@
+namespace DotnetBackendSnippets.DtoMapping;
+
+/// <summary>
+/// 注文作成リクエスト DTO を表します。
+/// </summary>
+/// <param name="CustomerId">顧客 ID。</param>
+/// <param name="Lines">注文明細 DTO。</param>
+/// <param name="IsAdmin">過剰投稿の例として受け取っても domain へ渡さない値。</param>
+public sealed record CreateOrderRequestDto(string CustomerId, IReadOnlyList<CreateOrderLineRequestDto> Lines, bool IsAdmin);
+
+/// <summary>
+/// 注文明細リクエスト DTO を表します。
+/// </summary>
+/// <param name="Sku">商品 SKU。</param>
+/// <param name="Quantity">数量。</param>
+public sealed record CreateOrderLineRequestDto(string Sku, int Quantity);
+
+/// <summary>
+/// 注文作成 command を表します。
+/// </summary>
+/// <param name="CustomerId">顧客 ID。</param>
+/// <param name="RequestedByUserId">操作ユーザー ID。</param>
+/// <param name="Lines">注文明細 command。</param>
+public sealed record CreateOrderCommand(string CustomerId, string RequestedByUserId, IReadOnlyList<CreateOrderLineCommand> Lines);
+
+/// <summary>
+/// 注文明細 command を表します。
+/// </summary>
+/// <param name="Sku">商品 SKU。</param>
+/// <param name="Quantity">数量。</param>
+public sealed record CreateOrderLineCommand(string Sku, int Quantity);
+
+/// <summary>
+/// 注文 domain entity を表します。
+/// </summary>
+public sealed class OrderEntity
+{
+    /// <summary>
+    /// 注文 ID を取得または設定します。
+    /// </summary>
+    /// <value>永続化済み注文 ID。</value>
+    public int Id { get; set; }
+
+    /// <summary>
+    /// 顧客 ID を取得または設定します。
+    /// </summary>
+    /// <value>注文者を表す ID。</value>
+    public string CustomerId { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 注文状態を取得または設定します。
+    /// </summary>
+    /// <value>domain 側の状態文字列。</value>
+    public string Status { get; set; } = "draft";
+
+    /// <summary>
+    /// 注文明細を取得します。
+    /// </summary>
+    /// <value>注文に含まれる明細。</value>
+    public List<OrderLineEntity> Lines { get; } = [];
+}
+
+/// <summary>
+/// 注文明細 domain entity を表します。
+/// </summary>
+public sealed class OrderLineEntity
+{
+    /// <summary>
+    /// 商品 SKU を取得または設定します。
+    /// </summary>
+    /// <value>商品を表す SKU。</value>
+    public string Sku { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 数量を取得または設定します。
+    /// </summary>
+    /// <value>注文数量。</value>
+    public int Quantity { get; set; }
+}
+
+/// <summary>
+/// 注文レスポンス DTO を表します。
+/// </summary>
+/// <param name="Id">注文 ID。</param>
+/// <param name="CustomerId">顧客 ID。</param>
+/// <param name="Status">注文状態。</param>
+/// <param name="Lines">注文明細レスポンス。</param>
+public sealed record OrderResponseDto(int Id, string CustomerId, string Status, IReadOnlyList<OrderLineResponseDto> Lines);
+
+/// <summary>
+/// 注文明細レスポンス DTO を表します。
+/// </summary>
+/// <param name="Sku">商品 SKU。</param>
+/// <param name="Quantity">数量。</param>
+public sealed record OrderLineResponseDto(string Sku, int Quantity);
+
+/// <summary>
+/// 顧客プロフィール entity を表します。
+/// </summary>
+public sealed class CustomerProfileEntity
+{
+    /// <summary>
+    /// 表示名を取得または設定します。
+    /// </summary>
+    /// <value>顧客向け表示名。</value>
+    public string DisplayName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 電話番号を取得または設定します。
+    /// </summary>
+    /// <value>連絡先電話番号。</value>
+    public string? PhoneNumber { get; set; }
+
+    /// <summary>
+    /// 管理者かどうかを取得または設定します。
+    /// </summary>
+    /// <value>権限に関わるため request DTO から直接更新しない値。</value>
+    public bool IsAdmin { get; set; }
+}
+
+/// <summary>
+/// 顧客プロフィール部分更新 DTO を表します。
+/// </summary>
+/// <param name="DisplayName">新しい表示名。null の場合は更新しません。</param>
+/// <param name="PhoneNumber">新しい電話番号。null の場合は更新しません。</param>
+/// <param name="IsAdmin">過剰投稿の例として無視する値。</param>
+public sealed record UpdateCustomerProfileRequestDto(string? DisplayName, string? PhoneNumber, bool? IsAdmin);
+
+/// <summary>
+/// DTO と domain object / entity の手書き mapping サンプルです。
+/// </summary>
+public static class DtoMappingSamples
+{
+    /// <summary>
+    /// request DTO を domain command に変換します。
+    /// </summary>
+    /// <param name="request">注文作成リクエスト DTO。</param>
+    /// <param name="currentUserId">操作ユーザー ID。</param>
+    /// <returns>domain 層へ渡す command。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="request"/> が <see langword="null"/> の場合。</exception>
+    /// <exception cref="ArgumentException"><paramref name="currentUserId"/> が空白の場合。</exception>
+    public static CreateOrderCommand ToCommand(CreateOrderRequestDto request, string currentUserId)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        ArgumentException.ThrowIfNullOrWhiteSpace(currentUserId);
+
+        return new CreateOrderCommand(
+            request.CustomerId,
+            currentUserId,
+            request.Lines.Select(line => new CreateOrderLineCommand(line.Sku, line.Quantity)).ToList());
+    }
+
+    /// <summary>
+    /// entity を API レスポンス DTO に変換します。
+    /// </summary>
+    /// <param name="order">注文 entity。</param>
+    /// <returns>API レスポンス DTO。</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="order"/> が <see langword="null"/> の場合。</exception>
+    public static OrderResponseDto ToResponse(OrderEntity order)
+    {
+        ArgumentNullException.ThrowIfNull(order);
+
+        return new OrderResponseDto(
+            order.Id,
+            order.CustomerId,
+            order.Status,
+            order.Lines.Select(line => new OrderLineResponseDto(line.Sku, line.Quantity)).ToList());
+    }
+
+    /// <summary>
+    /// 部分更新 DTO を entity に反映します。
+    /// </summary>
+    /// <param name="profile">更新対象 entity。</param>
+    /// <param name="request">部分更新 DTO。</param>
+    /// <exception cref="ArgumentNullException"><paramref name="profile"/> または <paramref name="request"/> が <see langword="null"/> の場合。</exception>
+    public static void ApplyProfilePatch(CustomerProfileEntity profile, UpdateCustomerProfileRequestDto request)
+    {
+        ArgumentNullException.ThrowIfNull(profile);
+        ArgumentNullException.ThrowIfNull(request);
+
+        if (request.DisplayName is not null)
+        {
+            profile.DisplayName = request.DisplayName.Trim();
+        }
+
+        if (request.PhoneNumber is not null)
+        {
+            profile.PhoneNumber = string.IsNullOrWhiteSpace(request.PhoneNumber)
+                ? null
+                : request.PhoneNumber.Trim();
+        }
+    }
+}

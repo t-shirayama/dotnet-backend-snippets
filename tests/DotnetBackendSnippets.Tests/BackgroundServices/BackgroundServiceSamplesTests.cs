@@ -73,6 +73,85 @@ public sealed class BackgroundServiceSamplesTests
         Assert.IsType<WorkerLoopHostedService>(provider.GetRequiredService<IHostedService>());
     }
 
+    [Fact]
+    public async Task ChannelBackgroundJobQueue_DequeuesQueuedJob()
+    {
+        var queue = new ChannelBackgroundJobQueue(
+            Microsoft.Extensions.Options.Options.Create(new BackgroundJobQueueOptions { Capacity = 2 }));
+        var job = new BackgroundJob("job-1", static (_, _) => ValueTask.CompletedTask);
+
+        await queue.EnqueueAsync(job);
+        BackgroundJob actual = await queue.DequeueAsync();
+
+        Assert.Same(job, actual);
+    }
+
+    [Fact]
+    public async Task QueuedBackgroundJobProcessor_RetriesFailedJob_AndUsesScopedService()
+    {
+        var queue = new ChannelBackgroundJobQueue(
+            Microsoft.Extensions.Options.Options.Create(new BackgroundJobQueueOptions()));
+        var services = new ServiceCollection();
+        services.AddScoped<ScopedCounter>();
+        using ServiceProvider provider = services.BuildServiceProvider();
+        var poisonHandler = new RecordingPoisonHandler();
+        TestLogger<QueuedBackgroundJobProcessor> logger = new();
+        var processor = new QueuedBackgroundJobProcessor(
+            queue,
+            provider.GetRequiredService<IServiceScopeFactory>(),
+            poisonHandler,
+            logger);
+        var attempts = 0;
+        await queue.EnqueueAsync(new BackgroundJob(
+            "retry-job",
+            (serviceProvider, _) =>
+            {
+                attempts++;
+                ScopedCounter counter = serviceProvider.GetRequiredService<ScopedCounter>();
+                counter.Count++;
+
+                if (attempts == 1)
+                {
+                    throw new InvalidOperationException("temporary");
+                }
+
+                return ValueTask.CompletedTask;
+            }));
+
+        await processor.ProcessNextAsync();
+
+        Assert.Equal(2, attempts);
+        Assert.Empty(poisonHandler.Jobs);
+        Assert.Contains(logger.Entries, entry => entry.Level == LogLevel.Warning);
+    }
+
+    [Fact]
+    public async Task QueuedBackgroundJobProcessor_SendsPoisonMessage_WhenRetriesAreExhausted()
+    {
+        var queue = new ChannelBackgroundJobQueue(
+            Microsoft.Extensions.Options.Options.Create(new BackgroundJobQueueOptions()));
+        var services = new ServiceCollection();
+        using ServiceProvider provider = services.BuildServiceProvider();
+        var poisonHandler = new RecordingPoisonHandler();
+        TestLogger<QueuedBackgroundJobProcessor> logger = new();
+        var processor = new QueuedBackgroundJobProcessor(
+            queue,
+            provider.GetRequiredService<IServiceScopeFactory>(),
+            poisonHandler,
+            logger);
+
+        await queue.EnqueueAsync(new BackgroundJob(
+            "poison-job",
+            static (_, _) => throw new InvalidOperationException("permanent"),
+            MaxAttempts: 2));
+
+        await processor.ProcessNextAsync();
+
+        BackgroundJob job = Assert.Single(poisonHandler.Jobs);
+        Assert.Equal("poison-job", job.Id);
+        Assert.Contains(logger.Entries, entry => entry.Level == LogLevel.Error);
+    }
+
     private sealed class CountingWorker(Action onThirdExecution) : IBackgroundWorker
     {
         public int Count { get; private set; }
@@ -103,6 +182,24 @@ public sealed class BackgroundServiceSamplesTests
         public Task ExecuteAsync(CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
+        }
+    }
+
+    private sealed class ScopedCounter
+    {
+        public int Count { get; set; }
+    }
+
+    private sealed class RecordingPoisonHandler : IBackgroundJobPoisonHandler
+    {
+        private readonly List<BackgroundJob> jobs = [];
+
+        public IReadOnlyList<BackgroundJob> Jobs => jobs;
+
+        public ValueTask HandleAsync(BackgroundJob job, Exception exception, CancellationToken cancellationToken)
+        {
+            jobs.Add(job);
+            return ValueTask.CompletedTask;
         }
     }
 
