@@ -96,7 +96,9 @@ docs/snippets/logging/basic-logging.md
 - Collections
 - Configuration
 - Date and Time
+- Data Protection
 - Dependency Injection
+- Deployment
 - DTO Mapping
 - Entity Framework Core
 - Error Handling

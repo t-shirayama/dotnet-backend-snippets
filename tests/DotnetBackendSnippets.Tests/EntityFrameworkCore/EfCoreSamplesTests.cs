@@ -281,6 +281,86 @@ public sealed class EfCoreSamplesTests
         Assert.Contains("artifacts/efbundle", command.Arguments);
     }
 
+    [Fact]
+    public void CreateApplyMigrationCommand_ReturnsDatabaseUpdateArguments()
+    {
+        EfCliCommand command = EfCoreSamples.CreateApplyMigrationCommand(
+            "src/Data/Data.csproj",
+            "src/Web/Web.csproj",
+            "AppDbContext",
+            "Default");
+
+        Assert.Equal("dotnet", command.FileName);
+        Assert.Equal(
+            [
+                "ef",
+                "database",
+                "update",
+                "--project",
+                "src/Data/Data.csproj",
+                "--startup-project",
+                "src/Web/Web.csproj",
+                "--context",
+                "AppDbContext",
+                "--connection",
+                "Name=ConnectionStrings:Default",
+            ],
+            command.Arguments);
+    }
+
+    [Fact]
+    public async Task ExecuteInTransactionWithRetryAsync_RetriesTransientFailure()
+    {
+        await using var dbContext = CreateDbContext();
+        var attempts = 0;
+
+        int result = await EfCoreSamples.ExecuteInTransactionWithRetryAsync(
+            dbContext,
+            (_, _) =>
+            {
+                attempts++;
+
+                if (attempts == 1)
+                {
+                    throw new TimeoutException("temporary");
+                }
+
+                return Task.FromResult(42);
+            },
+            exception => exception is TimeoutException,
+            new TransactionRetryOptions(2, TimeSpan.Zero),
+            static (_, _) => Task.CompletedTask);
+
+        Assert.Equal(42, result);
+        Assert.Equal(2, attempts);
+    }
+
+    [Fact]
+    public async Task AuditSaveChangesInterceptor_SetsAuditValuesDuringSaveChanges()
+    {
+        var now = new DateTimeOffset(2026, 5, 24, 12, 0, 0, TimeSpan.Zero);
+        var options = new DbContextOptionsBuilder<SampleBlogDbContext>()
+            .UseInMemoryDatabase(CreateDatabaseName())
+            .ConfigureWarnings(warnings => warnings.Ignore(InMemoryEventId.TransactionIgnoredWarning))
+            .AddInterceptors(new AuditSaveChangesInterceptor(new FixedTimeProvider(now)))
+            .Options;
+        await using var dbContext = new SampleBlogDbContext(options);
+        var blog = new Blog { Id = 20, Name = "Interceptor" };
+        blog.Posts.Add(new BlogPost
+        {
+            Id = 20,
+            Title = "Audit interceptor",
+            PublishedAt = now,
+        });
+        dbContext.Blogs.Add(blog);
+
+        await dbContext.SaveChangesAsync();
+
+        BlogPost post = await dbContext.Posts.SingleAsync(candidate => candidate.Id == 20);
+        Assert.Equal(now, post.CreatedAt);
+        Assert.Equal(now, post.UpdatedAt);
+    }
+
     private static SampleBlogDbContext CreateDbContext()
     {
         var options = new DbContextOptionsBuilder<SampleBlogDbContext>()
@@ -351,5 +431,13 @@ public sealed class EfCoreSamplesTests
     private static string CreateDatabaseName()
     {
         return $"ef-core-samples-{Guid.NewGuid():N}";
+    }
+
+    private sealed class FixedTimeProvider(DateTimeOffset utcNow) : TimeProvider
+    {
+        public override DateTimeOffset GetUtcNow()
+        {
+            return utcNow;
+        }
     }
 }

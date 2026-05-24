@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DotnetBackendSnippets.EntityFrameworkCore;
@@ -177,6 +179,13 @@ public sealed record PagedResult<T>(IReadOnlyList<T> Items, int PageNumber, int 
 /// <param name="FileName">実行ファイル名。</param>
 /// <param name="Arguments">個別に渡す引数。</param>
 public sealed record EfCliCommand(string FileName, IReadOnlyList<string> Arguments);
+
+/// <summary>
+/// transaction retry の設定を表します。
+/// </summary>
+/// <param name="MaxAttempts">最大試行回数。</param>
+/// <param name="Delay">リトライ間の待機時間。</param>
+public sealed record TransactionRetryOptions(int MaxAttempts, TimeSpan Delay);
 
 /// <summary>
 /// 記事タイトル更新の結果を表します。
@@ -448,6 +457,63 @@ public static class EfCoreSamples
     }
 
     /// <summary>
+    /// EF Core の transaction 内処理を一時的な失敗だけ retry します。
+    /// </summary>
+    /// <typeparam name="T">戻り値の型。</typeparam>
+    /// <param name="dbContext">ブログ DbContext。</param>
+    /// <param name="operation">transaction 内で実行する処理。</param>
+    /// <param name="isTransient">例外を一時的な失敗として扱うか判定する関数。</param>
+    /// <param name="options">retry 設定。</param>
+    /// <param name="delayAsync">待機処理の差し替え関数。</param>
+    /// <param name="cancellationToken">キャンセル通知。</param>
+    /// <returns>operation の戻り値。</returns>
+    /// <exception cref="ArgumentNullException">必須引数が <see langword="null"/> の場合。</exception>
+    /// <exception cref="ArgumentOutOfRangeException">最大試行回数が 1 未満、または待機時間が負の値の場合。</exception>
+    public static async Task<T> ExecuteInTransactionWithRetryAsync<T>(
+        SampleBlogDbContext dbContext,
+        Func<SampleBlogDbContext, CancellationToken, Task<T>> operation,
+        Func<Exception, bool> isTransient,
+        TransactionRetryOptions options,
+        Func<TimeSpan, CancellationToken, Task>? delayAsync = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(dbContext);
+        ArgumentNullException.ThrowIfNull(operation);
+        ArgumentNullException.ThrowIfNull(isTransient);
+        ArgumentNullException.ThrowIfNull(options);
+
+        if (options.MaxAttempts < 1)
+        {
+            throw new ArgumentOutOfRangeException(nameof(options), "Max attempts must be positive.");
+        }
+
+        if (options.Delay < TimeSpan.Zero)
+        {
+            throw new ArgumentOutOfRangeException(nameof(options), "Delay must be zero or greater.");
+        }
+
+        delayAsync ??= Task.Delay;
+
+        for (var attempt = 1; ; attempt++)
+        {
+            await using IDbContextTransaction transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
+
+            try
+            {
+                T result = await operation(dbContext, cancellationToken);
+                await transaction.CommitAsync(cancellationToken);
+                return result;
+            }
+            catch (Exception exception) when (attempt < options.MaxAttempts && isTransient(exception))
+            {
+                await transaction.RollbackAsync(cancellationToken);
+                dbContext.ChangeTracker.Clear();
+                await delayAsync(options.Delay, cancellationToken);
+            }
+        }
+    }
+
+    /// <summary>
     /// 保存例外が代表的な unique constraint violation かどうかを判定します。
     /// </summary>
     /// <param name="exception">EF Core の保存例外。</param>
@@ -538,5 +604,78 @@ public static class EfCoreSamples
         }
 
         return new EfCliCommand("dotnet", arguments);
+    }
+
+    /// <summary>
+    /// migration を DB に適用する dotnet-ef コマンドを組み立てます。
+    /// </summary>
+    /// <param name="projectPath">DbContext を含むプロジェクトパス。</param>
+    /// <param name="startupProjectPath">起動プロジェクトパス。</param>
+    /// <param name="contextName">DbContext 名。</param>
+    /// <param name="connectionStringName">利用する connection string 名。</param>
+    /// <returns>実行ファイル名と引数を分けたコマンド。</returns>
+    /// <exception cref="ArgumentException">いずれかの引数が空白の場合。</exception>
+    public static EfCliCommand CreateApplyMigrationCommand(
+        string projectPath,
+        string startupProjectPath,
+        string contextName,
+        string connectionStringName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(projectPath);
+        ArgumentException.ThrowIfNullOrWhiteSpace(startupProjectPath);
+        ArgumentException.ThrowIfNullOrWhiteSpace(contextName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(connectionStringName);
+
+        return new EfCliCommand(
+            "dotnet",
+            [
+                "ef",
+                "database",
+                "update",
+                "--project",
+                projectPath,
+                "--startup-project",
+                startupProjectPath,
+                "--context",
+                contextName,
+                "--connection",
+                $"Name=ConnectionStrings:{connectionStringName}",
+            ]);
+    }
+}
+
+/// <summary>
+/// SaveChanges 時に監査カラムを設定する interceptor です。
+/// </summary>
+/// <param name="timeProvider">現在時刻の取得元。</param>
+public sealed class AuditSaveChangesInterceptor(TimeProvider timeProvider) : SaveChangesInterceptor
+{
+    /// <inheritdoc />
+    public override InterceptionResult<int> SavingChanges(
+        DbContextEventData eventData,
+        InterceptionResult<int> result)
+    {
+        ApplyAuditValues(eventData.Context);
+        return base.SavingChanges(eventData, result);
+    }
+
+    /// <inheritdoc />
+    public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
+        DbContextEventData eventData,
+        InterceptionResult<int> result,
+        CancellationToken cancellationToken = default)
+    {
+        ApplyAuditValues(eventData.Context);
+        return base.SavingChangesAsync(eventData, result, cancellationToken);
+    }
+
+    private void ApplyAuditValues(DbContext? dbContext)
+    {
+        if (dbContext is null)
+        {
+            return;
+        }
+
+        EfCoreSamples.ApplyAuditValues(dbContext.ChangeTracker, timeProvider.GetUtcNow());
     }
 }

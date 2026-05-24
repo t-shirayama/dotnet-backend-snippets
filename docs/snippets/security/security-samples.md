@@ -36,6 +36,8 @@
 - secret を設定ファイルに直書きしていないか見たい → `FindPotentialSecrets`
 - HTML 表示用に入力をエンコードしたい → `HtmlEncodeForDisplay`
 - SQL 識別子をホワイトリスト検証したい → `QuoteSqlIdentifier`
+- Data Protection で短い秘密値を保護したい → [Data Protection / 秘密情報管理の基本](data-protection-samples.md)
+- secret store を抽象化したい → [Data Protection / 秘密情報管理の基本](data-protection-samples.md)
 - JWT bearer authentication を設定したい → [Authentication / Authorization の基本](../authentication/authentication-authorization-samples.md)
 - policy based authorization を設定したい → [Authentication / Authorization の基本](../authentication/authentication-authorization-samples.md)
 - role と claim を使い分けたい → [Authentication / Authorization の基本](../authentication/authentication-authorization-samples.md)
