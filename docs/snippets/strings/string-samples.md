@@ -145,7 +145,7 @@
 - GUID を短い文字列表現にしたい: 実装済み `ToShortGuid`
 - ファイル保存用の安全な名前を作りたい: 実装済み `ToSafeFileName`
 - S3 や Blob Storage 用の object key を作りたい: 実装済み `BuildObjectKey`。空や記号だけの segment は例外にします。
-- Redis key を一貫した形式で作りたい: 実装済み `BuildCacheKey`。空白だけの segment は例外にします。
+- Redis key を一貫した形式で作りたい: 実装済み `BuildCacheKey`。空白だけの segment は例外にします。人間が読みやすいキー向けで、segment の厳密な復元は想定しません。
 - メッセージ重複排除用の安定ハッシュキーを作りたい: 実装済み `CreateStableHashKey`
 
 ### 検証・判定

@@ -199,9 +199,10 @@ public static partial class StringReverseLookupSamples
 
     /// <summary>
     /// キャッシュキー用の文字列を作成します。
+    /// 人間が読みやすいキー向けで、区切り文字から元の segment を厳密に復元する用途は想定していません。
     /// </summary>
     /// <param name="segments">キーを構成するセグメント。</param>
-    /// <returns>各セグメントを正規化して <c>:</c> で結合したキャッシュキー。</returns>
+    /// <returns>各セグメントを正規化し、空白と segment 境界を <c>:</c> で表したキャッシュキー。</returns>
     public static string BuildCacheKey(params string[] segments)
     {
         ArgumentNullException.ThrowIfNull(segments);
