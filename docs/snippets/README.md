@@ -18,6 +18,55 @@
 - [日付・時刻処理の実務逆引き](date-and-time/date-and-time-samples.md#実務逆引き)
 - [LINQ 実務逆引き](linq/linq-samples.md#実務逆引き)
 
+## 学習ルート
+
+### 初学者向けおすすめ順
+
+1. [文字列操作](strings/string-samples.md)
+2. [数値計算](numbers/number-samples.md)
+3. [日付操作](date-and-time/date-and-time-samples.md)
+4. [コレクション操作](collections/collection-samples.md)
+5. [LINQ 操作](linq/linq-samples.md)
+6. [非同期処理](async/async-samples.md)
+7. [C# 言語機能サンプル](language-features/language-feature-samples.md)
+
+### 実務でよく使う順
+
+1. [Configuration の必須値読み取り](configuration/basic-configuration.md)
+2. [Dependency Injection のサービス登録](dependency-injection/basic-dependency-injection.md)
+3. [Validation の基本](validation/basic-validation.md)
+4. [Error Handling の基本](error-handling/basic-error-handling.md)
+5. [Logging の基本](logging/basic-logging.md)
+6. [Observability の基本](observability/observability-samples.md)
+
+### Web API 開発セット
+
+- [ASP.NET Core API の基本](api/api-samples.md)
+- [Validation の基本](validation/basic-validation.md)
+- [Options パターン](options/options-samples.md)
+- [HttpClientFactory の基本](http-client-factory/http-client-factory-samples.md)
+- [Observability の基本](observability/observability-samples.md)
+
+### テスト技法セット
+
+- [HttpClient のテスト可能な呼び出し](http-client/basic-http-client.md)
+- [Configuration の必須値読み取り](configuration/basic-configuration.md)
+- [Dependency Injection のサービス登録](dependency-injection/basic-dependency-injection.md)
+- [Entity Framework Core の基本](entity-framework-core/ef-core-samples.md)
+
+### セキュリティ注意セット
+
+- [セキュリティ補助](security/security-samples.md)
+- [ファイルアップロード検証](file-handling/file-upload-samples.md)
+- [ASP.NET Core API の基本](api/api-samples.md)
+
+### EF Core 実務セット
+
+- [Entity Framework Core の基本](entity-framework-core/ef-core-samples.md)
+- [LINQ 操作](linq/linq-samples.md)
+- [数値計算](numbers/number-samples.md)
+- [日付操作](date-and-time/date-and-time-samples.md)
+
 ## バックエンド開発
 
 - [ASP.NET Core API の基本](api/api-samples.md)
@@ -82,9 +131,11 @@
 - `Theory` と `InlineData` で境界値テストを書きたい → 既存テスト群
 - `HttpMessageHandler` を fake にしたい → [HttpClient のテスト可能な呼び出し](http-client/basic-http-client.md)
 - DI / Configuration をテストで組み立てたい → [Configuration の必須値読み取り](configuration/basic-configuration.md) / [Dependency Injection のサービス登録](dependency-injection/basic-dependency-injection.md)
-- GitHub Actions で restore / build / test / format を回したい → `/.github/workflows/dotnet.yml`
-- `dotnet format --verify-no-changes` を CI で確認したい → `/.github/workflows/dotnet.yml`
+- GitHub Actions で restore / build / test / coverage を回したい → `/.github/workflows/dotnet-ci.yml`
+- `dotnet format --verify-no-changes` を CI で確認したい → `/.github/workflows/format.yml`
+- Markdown のリンクを CI で確認したい → `/.github/workflows/docs.yml`
+- CodeQL で C# の静的解析をしたい → `/.github/workflows/codeql.yml`
 - 警告をエラーとして扱いたい → `/Directory.Build.props`
 - nullable reference types を全体で有効化したい → `/Directory.Build.props`
 - `.editorconfig` でコードスタイルを揃えたい → `/.editorconfig`
-- 新しいスニペットの実装・テスト・ドキュメントを同時に追加したい → [README の追加ルール](../../README.md)
+- 新しいスニペットの実装・テスト・ドキュメントを同時に追加したい → [README の追加ルール](../../README.md) / [CONTRIBUTING](../../CONTRIBUTING.md)
