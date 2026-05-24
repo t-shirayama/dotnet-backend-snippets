@@ -63,7 +63,3 @@ public sealed record OrderSearchCriteria(
 /// <param name="Category">カテゴリ。</param>
 /// <param name="Amount">金額。</param>
 public sealed record OrderListItem(int Id, int CustomerId, string Category, decimal Amount);
-
-/// <summary>
-/// LINQ で逆引きしやすい実務向けサンプルを提供します。
-

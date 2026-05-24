@@ -10,6 +10,10 @@ public static partial class NumberReverseLookupSamples
     /// <summary>
     /// 桁区切り付きの数値文字列に整形します。
     /// </summary>
+    /// <param name="value">整形する値。</param>
+    /// <param name="decimalPlaces">小数点以下の桁数。</param>
+    /// <param name="provider">数値書式に使う任意のカルチャ情報。</param>
+    /// <returns>桁区切り付きの数値文字列。</returns>
     public static string FormatThousands(decimal value, int decimalPlaces = 0, IFormatProvider? provider = null)
     {
         ValidateDecimalPlaces(decimalPlaces);
@@ -20,6 +24,10 @@ public static partial class NumberReverseLookupSamples
     /// <summary>
     /// 固定小数点の数値文字列に整形します。
     /// </summary>
+    /// <param name="value">整形する値。</param>
+    /// <param name="decimalPlaces">小数点以下の桁数。</param>
+    /// <param name="provider">数値書式に使う任意のカルチャ情報。</param>
+    /// <returns>固定小数点形式の数値文字列。</returns>
     public static string FormatFixedDecimal(decimal value, int decimalPlaces = 2, IFormatProvider? provider = null)
     {
         ValidateDecimalPlaces(decimalPlaces);
@@ -30,6 +38,11 @@ public static partial class NumberReverseLookupSamples
     /// <summary>
     /// 通貨コード付きの金額文字列に整形します。
     /// </summary>
+    /// <param name="value">整形する金額。</param>
+    /// <param name="currencyCode">表示する通貨コード。</param>
+    /// <param name="decimalPlaces">小数点以下の桁数。</param>
+    /// <param name="provider">数値書式に使う任意のカルチャ情報。</param>
+    /// <returns>通貨コード付きの金額文字列。</returns>
     public static string FormatCurrencyCode(
         decimal value,
         string currencyCode,
@@ -47,6 +60,9 @@ public static partial class NumberReverseLookupSamples
     /// <summary>
     /// decimal の末尾ゼロを省いた文字列に整形します。
     /// </summary>
+    /// <param name="value">整形する値。</param>
+    /// <param name="provider">数値書式に使う任意のカルチャ情報。</param>
+    /// <returns>末尾ゼロを省いた数値文字列。</returns>
     public static string TrimTrailingZeros(decimal value, IFormatProvider? provider = null)
     {
         return value.ToString("0.############################", provider ?? CultureInfo.InvariantCulture);
@@ -55,6 +71,10 @@ public static partial class NumberReverseLookupSamples
     /// <summary>
     /// 比率をパーセント文字列に整形します。
     /// </summary>
+    /// <param name="ratio">パーセント表示する比率。</param>
+    /// <param name="decimalPlaces">小数点以下の桁数。</param>
+    /// <param name="provider">数値書式に使う任意のカルチャ情報。</param>
+    /// <returns>パーセント記号付きの文字列。</returns>
     public static string FormatPercent(decimal ratio, int decimalPlaces = 2, IFormatProvider? provider = null)
     {
         ValidateDecimalPlaces(decimalPlaces);
@@ -65,6 +85,10 @@ public static partial class NumberReverseLookupSamples
     /// <summary>
     /// 負数を括弧で表す会計形式に整形します。
     /// </summary>
+    /// <param name="value">整形する値。</param>
+    /// <param name="decimalPlaces">小数点以下の桁数。</param>
+    /// <param name="provider">数値書式に使う任意のカルチャ情報。</param>
+    /// <returns>会計形式の数値文字列。</returns>
     public static string FormatAccounting(decimal value, int decimalPlaces = 2, IFormatProvider? provider = null)
     {
         ValidateDecimalPlaces(decimalPlaces);
@@ -77,6 +101,11 @@ public static partial class NumberReverseLookupSamples
     /// <summary>
     /// 単位付きの数値文字列に整形します。
     /// </summary>
+    /// <param name="value">整形する値。</param>
+    /// <param name="unit">末尾に付ける単位。</param>
+    /// <param name="decimalPlaces">小数点以下の桁数。</param>
+    /// <param name="provider">数値書式に使う任意のカルチャ情報。</param>
+    /// <returns>単位付きの数値文字列。</returns>
     public static string FormatWithUnit(decimal value, string unit, int decimalPlaces = 0, IFormatProvider? provider = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(unit);
@@ -88,6 +117,9 @@ public static partial class NumberReverseLookupSamples
     /// <summary>
     /// ファイルサイズを読みやすい単位付き文字列に整形します。
     /// </summary>
+    /// <param name="bytes">バイト数。</param>
+    /// <param name="decimalPlaces">小数点以下の桁数。</param>
+    /// <returns>読みやすい単位付きのファイルサイズ文字列。</returns>
     public static string FormatFileSize(long bytes, int decimalPlaces = 2)
     {
         if (bytes < 0)
@@ -113,6 +145,10 @@ public static partial class NumberReverseLookupSamples
     /// <summary>
     /// 時間間隔をミリ秒または秒の文字列に整形します。
     /// </summary>
+    /// <param name="duration">整形する時間間隔。</param>
+    /// <param name="decimalPlaces">小数点以下の桁数。</param>
+    /// <param name="provider">数値書式に使う任意のカルチャ情報。</param>
+    /// <returns>ミリ秒または秒で表した時間間隔の文字列。</returns>
     public static string FormatDuration(TimeSpan duration, int decimalPlaces = 2, IFormatProvider? provider = null)
     {
         ValidateDecimalPlaces(decimalPlaces);
@@ -125,4 +161,3 @@ public static partial class NumberReverseLookupSamples
         return $"{duration.TotalSeconds.ToString($"F{decimalPlaces}", provider ?? CultureInfo.InvariantCulture)} sec";
     }
 }
-

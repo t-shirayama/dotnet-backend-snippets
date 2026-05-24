@@ -11,6 +11,9 @@ public static partial class StringReverseLookupSamples
     /// <summary>
     /// 文字列を ASCII スラッグへ変換し、空の場合は既定値を返します。
     /// </summary>
+    /// <param name="value">スラッグ化する文字列。</param>
+    /// <param name="fallback">スラッグ化後に空になる場合の既定値。</param>
+    /// <returns>ASCII スラッグ。空になる場合は <paramref name="fallback"/>。</returns>
     public static string ToSlugOrDefault(string value, string fallback = "item")
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -24,6 +27,9 @@ public static partial class StringReverseLookupSamples
     /// <summary>
     /// スラッグを指定長に切り詰めます。
     /// </summary>
+    /// <param name="slug">切り詰めるスラッグ。</param>
+    /// <param name="maxLength">最大文字数。</param>
+    /// <returns>指定長以内に切り詰め、ASCII スラッグとして正規化した文字列。</returns>
     public static string TruncateSlug(string slug, int maxLength)
     {
         ArgumentNullException.ThrowIfNull(slug);
@@ -39,6 +45,8 @@ public static partial class StringReverseLookupSamples
     /// <summary>
     /// ファイル名から拡張子を除いたスラッグを作成します。
     /// </summary>
+    /// <param name="fileName">スラッグ化するファイル名。</param>
+    /// <returns>拡張子を除いたファイル名から作成した ASCII スラッグ。</returns>
     public static string FileNameToSlug(string fileName)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(fileName);
@@ -49,6 +57,9 @@ public static partial class StringReverseLookupSamples
     /// <summary>
     /// スラッグに連番サフィックスを付けます。
     /// </summary>
+    /// <param name="slug">元のスラッグ。</param>
+    /// <param name="suffix">付与する 1 以上の連番。</param>
+    /// <returns><paramref name="slug"/> に連番サフィックスを付けた文字列。</returns>
     public static string AppendSlugSuffix(string slug, int suffix)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(slug);
@@ -64,6 +75,9 @@ public static partial class StringReverseLookupSamples
     /// <summary>
     /// 空文字列を指定した既定値へ置き換えます。
     /// </summary>
+    /// <param name="value">判定する文字列。</param>
+    /// <param name="fallback">空文字列または <see langword="null"/> の場合に返す文字列。</param>
+    /// <returns><paramref name="value"/> が空文字列または <see langword="null"/> の場合は <paramref name="fallback"/>。それ以外は元の文字列。</returns>
     public static string DefaultIfEmpty(string? value, string fallback)
     {
         ArgumentNullException.ThrowIfNull(fallback);
@@ -74,6 +88,8 @@ public static partial class StringReverseLookupSamples
     /// <summary>
     /// UTF-8 文字列を Base64 へ変換します。
     /// </summary>
+    /// <param name="value">Base64 へ変換する文字列。</param>
+    /// <returns>UTF-8 バイト列を Base64 表現にした文字列。</returns>
     public static string ToBase64(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -84,6 +100,8 @@ public static partial class StringReverseLookupSamples
     /// <summary>
     /// UTF-8 文字列を Base64Url へ変換します。
     /// </summary>
+    /// <param name="value">Base64Url へ変換する文字列。</param>
+    /// <returns>UTF-8 バイト列を Base64Url 表現にした文字列。</returns>
     public static string ToBase64Url(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -94,6 +112,8 @@ public static partial class StringReverseLookupSamples
     /// <summary>
     /// Base64Url 文字列を UTF-8 文字列へ戻します。
     /// </summary>
+    /// <param name="value">Base64Url 形式の文字列。</param>
+    /// <returns>デコードした UTF-8 文字列。</returns>
     public static string FromBase64Url(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -108,6 +128,8 @@ public static partial class StringReverseLookupSamples
     /// <summary>
     /// 英数字のランダムコードを作成します。
     /// </summary>
+    /// <param name="length">作成するコードの文字数。</param>
+    /// <returns>英数字で構成されたランダムコード。</returns>
     public static string CreateRandomCode(int length)
     {
         return CreateRandomFromAlphabet(length, TokenAlphabet);
@@ -116,6 +138,8 @@ public static partial class StringReverseLookupSamples
     /// <summary>
     /// 数字だけのランダムコードを作成します。
     /// </summary>
+    /// <param name="length">作成するコードの文字数。</param>
+    /// <returns>数字だけで構成されたランダムコード。</returns>
     public static string CreateNumericCode(int length)
     {
         return CreateRandomFromAlphabet(length, "0123456789");
@@ -124,6 +148,8 @@ public static partial class StringReverseLookupSamples
     /// <summary>
     /// URL で扱いやすいランダムトークンを作成します。
     /// </summary>
+    /// <param name="byteLength">乱数として生成するバイト数。</param>
+    /// <returns>URL で扱いやすい Base64Url 形式のランダムトークン。</returns>
     public static string CreateUrlSafeToken(int byteLength = 32)
     {
         if (byteLength < 1)
@@ -137,6 +163,8 @@ public static partial class StringReverseLookupSamples
     /// <summary>
     /// GUID を短い URL 安全文字列へ変換します。
     /// </summary>
+    /// <param name="value">変換する GUID。</param>
+    /// <returns>GUID バイト列を Base64Url 形式にした短い文字列。</returns>
     public static string ToShortGuid(Guid value)
     {
         return Convert.ToBase64String(value.ToByteArray()).TrimEnd('=').Replace('+', '-').Replace('/', '_');
@@ -145,6 +173,8 @@ public static partial class StringReverseLookupSamples
     /// <summary>
     /// オブジェクトストレージ用のキーを作成します。
     /// </summary>
+    /// <param name="segments">キーを構成するセグメント。</param>
+    /// <returns>各セグメントをスラッグ化して <c>/</c> で結合したオブジェクトキー。</returns>
     public static string BuildObjectKey(params string[] segments)
     {
         ArgumentNullException.ThrowIfNull(segments);
@@ -170,6 +200,8 @@ public static partial class StringReverseLookupSamples
     /// <summary>
     /// キャッシュキー用の文字列を作成します。
     /// </summary>
+    /// <param name="segments">キーを構成するセグメント。</param>
+    /// <returns>各セグメントを正規化して <c>:</c> で結合したキャッシュキー。</returns>
     public static string BuildCacheKey(params string[] segments)
     {
         ArgumentNullException.ThrowIfNull(segments);
@@ -189,6 +221,8 @@ public static partial class StringReverseLookupSamples
     /// <summary>
     /// 文字列から安定した SHA-256 ハッシュキーを作成します。
     /// </summary>
+    /// <param name="value">ハッシュ化する文字列。</param>
+    /// <returns>SHA-256 ハッシュを小文字の 16 進文字列にしたキー。</returns>
     public static string CreateStableHashKey(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -199,6 +233,8 @@ public static partial class StringReverseLookupSamples
     /// <summary>
     /// snake_case を PascalCase に変換します。
     /// </summary>
+    /// <param name="value">変換する snake_case 文字列。</param>
+    /// <returns>PascalCase に変換した文字列。</returns>
     public static string SnakeToPascalCase(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -209,6 +245,8 @@ public static partial class StringReverseLookupSamples
     /// <summary>
     /// PascalCase を camelCase に変換します。
     /// </summary>
+    /// <param name="value">変換する PascalCase 文字列。</param>
+    /// <returns>camelCase に変換した文字列。</returns>
     public static string PascalToCamelCase(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -219,6 +257,8 @@ public static partial class StringReverseLookupSamples
     /// <summary>
     /// PascalCase を kebab-case に変換します。
     /// </summary>
+    /// <param name="value">変換する PascalCase 文字列。</param>
+    /// <returns>kebab-case に変換した文字列。</returns>
     public static string PascalToKebabCase(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -229,6 +269,9 @@ public static partial class StringReverseLookupSamples
     /// <summary>
     /// プレースホルダー付きテンプレートを値で置き換えます。
     /// </summary>
+    /// <param name="template">置換対象のテンプレート文字列。</param>
+    /// <param name="values">プレースホルダー名と置換値の辞書。</param>
+    /// <returns>一致したプレースホルダーを辞書の値で置き換えた文字列。</returns>
     public static string RenderTemplate(string template, IReadOnlyDictionary<string, string> values)
     {
         ArgumentNullException.ThrowIfNull(template);
@@ -241,6 +284,8 @@ public static partial class StringReverseLookupSamples
     /// <summary>
     /// テンプレート内のプレースホルダー名を抽出します。
     /// </summary>
+    /// <param name="template">検索対象のテンプレート文字列。</param>
+    /// <returns>テンプレート内に含まれる重複なしのプレースホルダー名リスト。</returns>
     public static IReadOnlyList<string> ExtractPlaceholders(string template)
     {
         ArgumentNullException.ThrowIfNull(template);
@@ -251,6 +296,10 @@ public static partial class StringReverseLookupSamples
     /// <summary>
     /// 件数に応じて単純な複数形へ変換します。
     /// </summary>
+    /// <param name="singular">単数形の単語。</param>
+    /// <param name="count">件数。</param>
+    /// <param name="plural">明示的に使用する複数形。未指定の場合は末尾に <c>s</c> を付けます。</param>
+    /// <returns><paramref name="count"/> が 1 の場合は単数形、それ以外は複数形。</returns>
     public static string PluralizeSimple(string singular, int count, string? plural = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(singular);
@@ -261,6 +310,8 @@ public static partial class StringReverseLookupSamples
     /// <summary>
     /// バイト数を読みやすい単位付き文字列に整形します。
     /// </summary>
+    /// <param name="bytes">整形するバイト数。</param>
+    /// <returns>B、KB、MB、GB、TB のいずれかの単位を付けた文字列。</returns>
     public static string FormatBytes(long bytes)
     {
         if (bytes < 0)
@@ -284,6 +335,10 @@ public static partial class StringReverseLookupSamples
     /// <summary>
     /// UTF-8 バイト数を超えないよう文字列を切り詰めます。
     /// </summary>
+    /// <param name="value">切り詰める文字列。</param>
+    /// <param name="maxBytes">許可する UTF-8 バイト数の最大値。</param>
+    /// <param name="suffix">切り詰めた場合に末尾へ付ける文字列。</param>
+    /// <returns>UTF-8 バイト数が <paramref name="maxBytes"/> 以下になるよう切り詰めた文字列。</returns>
     /// <exception cref="ArgumentException"><paramref name="suffix"/> の UTF-8 バイト数が <paramref name="maxBytes"/> を超える場合。</exception>
     public static string TruncateUtf8Bytes(string value, int maxBytes, string suffix = "")
     {
@@ -318,6 +373,8 @@ public static partial class StringReverseLookupSamples
     /// <summary>
     /// 環境変数名として使いやすい形式へ変換します。
     /// </summary>
+    /// <param name="value">変換する文字列。</param>
+    /// <returns>英数字とアンダースコアで構成された大文字の環境変数名。</returns>
     public static string ToEnvironmentVariableName(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
