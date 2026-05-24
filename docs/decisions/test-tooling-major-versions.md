@@ -2,7 +2,7 @@
 
 ## 背景
 
-このリポジトリは Target Framework を `net8.0` に固定しつつ、テスト実行基盤の一部に major version が新しいパッケージを使っています。
+このリポジトリは Target Framework を `net10.0` に固定しつつ、テスト実行基盤の一部に major version が新しいパッケージを使っています。
 
 対象:
 
@@ -12,7 +12,7 @@
 
 ## 方針
 
-テスト系パッケージは、実装スニペットの公開 API や対象 Target Framework を直接変えないため、CI で `net8.0` の restore / build / test / coverage が通るものは採用します。
+テスト系パッケージは、実装スニペットの公開 API や対象 Target Framework を直接変えないため、CI で `net10.0` の restore / build / test / coverage が通るものは採用します。
 
 ただし、次の変更は移行 PR として扱います。
 
@@ -24,7 +24,7 @@
 ## 理由
 
 - テスト基盤はセキュリティ更新や runner 対応を早めに取り込む価値があるため。
-- 実装プロジェクトは `net8.0` のまま維持し、利用者向けのスニペット互換性を優先するため。
+- 実装プロジェクトは `net10.0` に統一し、利用者向けのスニペット再現性を優先するため。
 - major version の採用理由を残し、Dependabot PR のレビュー観点を明確にするため。
 
 ## 運用
